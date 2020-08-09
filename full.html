@@ -1,0 +1,32 @@
+
+
+<body>
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<rect id="box" x="0" y="0" width="10" height="10" fill="red" monster="42"
+        transform="translate(10 10)" />
+</svg>
+<script>
+
+  box.data = {x:10, y:10};
+  
+  function getInt(obj, key) {
+    return Number.parseInt(obj.getAttribute(key))
+  };
+  
+  function set(obj, key, val) {
+    obj.setAttribute(key, val)
+  };
+  
+  function mod(obj, key, delta) {
+    set(obj, key, getInt(obj, key)+delta)
+  };
+  
+  // Game loop (30fps)
+  setInterval(e => {
+  
+    mod(box, "x", +1)
+    //box.setAttribute('transform',`translate(${box.data.x},${box.data.y})`);
+  
+  }, 33)
+</script>
+</body>
