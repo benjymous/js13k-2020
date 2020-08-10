@@ -3,26 +3,23 @@
     <rect id="box" width="10" height="10" fill="red" />
   </svg>
   <script>
-  
-    box.data = {x:0, y:0};
+    box.d = {x:0, y:0};
     
-    function translate(obj) {
-      obj.setAttribute('transform', `translate(${obj.data.x} ${obj.data.y})`)
-    }
+    translate = o => o.setAttribute('transform', `translate(${obj.d.x} ${obj.d.y})`);
 
     mx = 0; my = 0;
     scale = 640/c.clientWidth;
 
     c.addEventListener('mousemove', e => {
-      mx = e.x* scale;
+      mx = e.x * scale;
       my = e.y * scale
     });
 
     // Game loop (30fps)
     setInterval(e => {
 
-      box.data.x = (box.data.x*0.9) + (mx*0.1);
-      box.data.y = (box.data.y*0.9) + (my*0.1);
+      box.d.x = (box.d.x*0.9) + (mx*0.1);
+      box.d.y = (box.d.y*0.9) + (my*0.1);
       
       translate(box)
 
