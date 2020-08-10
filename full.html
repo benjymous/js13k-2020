@@ -1,10 +1,8 @@
 <body>
-  <svg id="c" viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg">
-    <rect id="box" x="0" y="0" width="10" height="10" fill="red" />
+  <svg id="c" viewBox="0 0 640 360">
+    <rect id="box" width="10" height="10" fill="red" />
   </svg>
   <script>
-
-    //box.data = {x:10, y:10};
 
     function getInt(obj, key) {
       return Number.parseInt(obj.getAttribute(key))
@@ -22,6 +20,9 @@
       current = getInt(obj, key);
       set(obj, key, ((current*0.9)+(targetVal*0.1)))
     };
+    
+    set(box, 'x', 0);
+    set(box, 'y', 0);
 
     mx = 0; my = 0;
     scale = 640/c.clientWidth;
