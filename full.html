@@ -1,11 +1,42 @@
 <body>
   <svg id="c" viewBox="0 0 640 360">
-    <rect id="box" width="10" height="10" fill="red" />
+    <defs>
+      <filter id="glow" filterUnits="userSpaceOnUse"
+              x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur"/>
+        <feGaussianBlur in="SourceGraphic" stdDeviation="15" result="blur2"/>
+        <feGaussianBlur in="SourceGraphic" stdDeviation="20" result="blur3"/>
+        <!-- merge all the blurs except for the first one -->
+        <feMerge result="blur-merged">
+          <feMergeNode in="blur"/>
+          <feMergeNode in="blur2"/>
+          <feMergeNode in="blur3"/>
+          <feMergeNode in="SourceGraphic"/> 
+        </feMerge>
+      </filter>
+    </defs>
+    <rect width="100%" height="100%" fill="black"/>
+    <rect id="box0" width="20" height="20" stroke="#f00" filter="url(#glow)" fill-opacity="0"/>
+    <rect id="box1" width="20" height="20" stroke="#f70" filter="url(#glow)" fill-opacity="0"/>
+    <rect id="box2" width="20" height="20" stroke="#ff0" filter="url(#glow)" fill-opacity="0"/>
+    <rect id="box3" width="20" height="20" stroke="#7f0" filter="url(#glow)" fill-opacity="0"/>
+    <rect id="box4" width="20" height="20" stroke="#0f0" filter="url(#glow)" fill-opacity="0"/>
+    <rect id="box5" width="20" height="20" stroke="#0f7" filter="url(#glow)" fill-opacity="0"/>
+    <rect id="box6" width="20" height="20" stroke="#0ff" filter="url(#glow)" fill-opacity="0"/>
+    <rect id="box7" width="20" height="20" stroke="#07f" filter="url(#glow)" fill-opacity="0"/>
+    <rect id="box8" width="20" height="20" stroke="#00f" filter="url(#glow)" fill-opacity="0"/>
+    <rect id="box9" width="20" height="20" stroke="#70f" filter="url(#glow)" fill-opacity="0"/>
+    <rect id="box10" width="20" height="20" stroke="#f0f" filter="url(#glow)" fill-opacity="0"/>
+    <rect id="box11" width="20" height="20" stroke="#f07" filter="url(#glow)" fill-opacity="0"/>
+
   </svg>
   <script>
-    box.d = {x:0, y:0};
-    
-    translate = o => o.setAttribute('transform', `translate(${o.d.x} ${o.d.y})`);
+    boxes = [box0, box1, box2, box3, box4, box5, box6, box7, box8, box9, box10, box11];
+
+    s = 0.01;
+    boxes.forEach(box => box.d = { r:0, x:Math.random()*640, y:Math.random()*640, s:s+=0.01});
+
+    translate = o => o.setAttribute('transform', `translate(${o.d.x} ${o.d.y}) rotate(${o.d.r})`);
 
     mx = 0; my = 0;
     scale = 640/c.clientWidth;
@@ -18,11 +49,16 @@
     // Game loop (30fps)
     setInterval(e => {
 
-      box.d.x = (box.d.x*0.9) + (mx*0.1);
-      box.d.y = (box.d.y*0.9) + (my*0.1);
-      
-      translate(box)
+      tx = mx; ty = my;
 
+      boxes.forEach(box => {
+        box.d.r += box.d.s*5;
+        box.d.x = (box.d.x*(1-box.d.s)) + (tx*box.d.s);
+        box.d.y = (box.d.y*(1-box.d.s)) + (ty*box.d.s);
+        tx = box.d.x;
+        ty = box.d.y;
+        translate(box);
+      })
     }, 33)
   </script>
 </body>
