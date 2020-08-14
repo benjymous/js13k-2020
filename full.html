@@ -2,7 +2,7 @@
   <svg id="c" viewBox="0 0 640 640">
     <defs>
       <filter id="glow" filterUnits="userSpaceOnUse">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="0.5" result="blur" />
+        <feGaussianBlur in="SourceGraphic" stdDeviation="1" result="blur" />
         <feGaussianBlur in="SourceGraphic" stdDeviation="20" result="blur2" />
         <feGaussianBlur in="SourceGraphic" stdDeviation="15" result="blur3" />
         <!-- merge all the blurs except for the first one -->
@@ -49,7 +49,13 @@
     // Game loop (30fps)
     setInterval(e => {
 
-      tx = mx; ty = my;
+      //tx = mx; ty = my;
+
+      d = new Date();
+      n = d.getTime()/2000;
+
+      tx=320+(Math.sin(n)*300);
+      ty=320+(Math.cos(n)*300);
 
       boxes.forEach(box => {
         box.d.r += box.d.s * 5;
@@ -57,7 +63,7 @@
         box.d.y = (box.d.y * (1 - box.d.s)) + (ty * box.d.s);
         tx = box.d.x;
         ty = box.d.y;
-        translate(box);
+        translate(box)
       })
     }, 33)
   </script>
