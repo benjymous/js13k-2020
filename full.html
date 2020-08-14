@@ -1,26 +1,42 @@
 <style>
-html, body { margin:0; padding:0; overflow:hidden; background-color: #000; }
-svg { position:fixed; top:0; left:0; height:100%; width:100% }
+  html,
+  body {
+    background-color: #000
+  }
+
+  svg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%
+  }
 </style>
+<!--
+  ///#define boxes bs
+  ///#define star s
+  ///#define box b
+  ///#define update u
+-->
+
 <body>
-  <svg id="c" viewBox="0 0 640 640">
-    <defs>
-      <filter id="glow" filterUnits="userSpaceOnUse">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="b1" />
-        <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="b2" />
-        <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="b3" />
-        <feMerge result="blur-merged">
-          <feMergeNode in="b1"/>
-          <feMergeNode in="b2"/>
-          <feMergeNode in="b3"/>
-        </feMerge>
-      </filter>
-      <filter id="fade" filterUnits="userSpaceOnUse">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="3"/>
-      </filter>
-    </defs>
-    <rect width="640" height="640" fill="black" />
-    <g filter="url(#fade)">
+  <svg viewBox="0 0 640 640">
+    <filter id="g" filterUnits="userSpaceOnUse">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="z1"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="z2"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="z3"/>
+      <feMerge>
+        <feMergeNode in="z1"/>
+        <feMergeNode in="z2"/>
+        <feMergeNode in="z3"/>
+      </feMerge>
+    </filter>
+    <filter id="f" filterUnits="userSpaceOnUse">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3"/>
+    </filter>
+
+    <rect width="640" height="640" fill="#000"/>
+    <g filter="url(#f)">
       <rect id="star0" width="2" height="2" fill="#f00"/>
       <rect id="star1" width="2" height="2" fill="#f70"/>
       <rect id="star2" width="2" height="2" fill="#ff0"/>
@@ -32,7 +48,7 @@ svg { position:fixed; top:0; left:0; height:100%; width:100% }
       <rect id="star8" width="2" height="2" fill="#00f"/>
       <rect id="star9" width="2" height="2" fill="#70f"/>
       <rect id="star10" width="2" height="2" fill="#f0f"/>
-      <rect id="star11" width="2" height="2" fill="#f07"/>  
+      <rect id="star11" width="2" height="2" fill="#f07"/>
       <rect id="star22" width="2" height="2" fill="#f00"/>
       <rect id="star23" width="2" height="2" fill="#f70"/>
       <rect id="star12" width="2" height="2" fill="#ff0"/>
@@ -44,23 +60,23 @@ svg { position:fixed; top:0; left:0; height:100%; width:100% }
       <rect id="star18" width="2" height="2" fill="#00f"/>
       <rect id="star19" width="2" height="2" fill="#70f"/>
       <rect id="star20" width="2" height="2" fill="#f0f"/>
-      <rect id="star21" width="2" height="2" fill="#f07"/> 
+      <rect id="star21" width="2" height="2" fill="#f07"/>
     </g>
-    <g filter="url(#glow)">
-      <rect id="box0" width="20" height="20" stroke="#f00"  fill-opacity="0" />
-      <rect id="box1" width="20" height="20" stroke="#f70"  fill-opacity="0" />
-      <rect id="box2" width="20" height="20" stroke="#ff0"  fill-opacity="0" />
-      <rect id="box3" width="20" height="20" stroke="#7f0"  fill-opacity="0" />
-      <rect id="box4" width="20" height="20" stroke="#0f0"  fill-opacity="0" />
-      <rect id="box5" width="20" height="20" stroke="#0f7"  fill-opacity="0" />
-      <rect id="box6" width="20" height="20" stroke="#0ff"  fill-opacity="0" />
-      <rect id="box7" width="20" height="20" stroke="#07f"  fill-opacity="0" />
-      <rect id="box8" width="20" height="20" stroke="#00f"  fill-opacity="0" />
-      <rect id="box9" width="20" height="20" stroke="#70f"  fill-opacity="0" />
-      <rect id="box10" width="20" height="20" stroke="#f0f"  fill-opacity="0" />
-      <rect id="box11" width="20" height="20" stroke="#f07"  fill-opacity="0" />
+    <g filter="url(#g)">
+      <rect id="box0" width="20" height="20" stroke="#f00" fill-opacity="0"/>
+      <rect id="box1" width="20" height="20" stroke="#f70" fill-opacity="0"/>
+      <rect id="box2" width="20" height="20" stroke="#ff0" fill-opacity="0"/>
+      <rect id="box3" width="20" height="20" stroke="#7f0" fill-opacity="0"/>
+      <rect id="box4" width="20" height="20" stroke="#0f0" fill-opacity="0"/>
+      <rect id="box5" width="20" height="20" stroke="#0f7" fill-opacity="0"/>
+      <rect id="box6" width="20" height="20" stroke="#0ff" fill-opacity="0"/>
+      <rect id="box7" width="20" height="20" stroke="#07f" fill-opacity="0"/>
+      <rect id="box8" width="20" height="20" stroke="#00f" fill-opacity="0"/>
+      <rect id="box9" width="20" height="20" stroke="#70f" fill-opacity="0"/>
+      <rect id="box10" width="20" height="20" stroke="#f0f" fill-opacity="0"/>
+      <rect id="box11" width="20" height="20" stroke="#f07" fill-opacity="0"/>
     </g>
-    
+
   </svg>
   <script>
 
@@ -68,54 +84,53 @@ svg { position:fixed; top:0; left:0; height:100%; width:100% }
     boxes = [box0, box1, box2, box3, box4, box5, box6, box7, box8, box9, box10, box11];
 
     s = 0.1;
-    boxes.forEach(box => box.d = { r: 0, x: Math.random() * 640, y: Math.random() * 640, s: s += 0.0005 });
-    stars.forEach(star => star.d = { r: Math.random(), x: 300 + (Math.random()*40), y: 300 + (Math.random()*40), z:0.1 });
+    boxes.forEach(o => o.d = { r: 0, x: Math.random() * 640, y: Math.random() * 640, s: s += 0.0005 });
+    stars.forEach(o => o.d = { r: Math.random(), x: 300 + (Math.random() * 40), y: 300 + (Math.random() * 40), z: 0.1 });
 
-    updateBox = o => o.setAttribute('transform', `translate(${o.d.x} ${o.d.y}) rotate(${o.d.r}) scale(${o.d.z})`);
-    updateStar = o => o.setAttribute('transform', `translate(${o.d.x} ${o.d.y}) scale(${o.d.z}) rotate(${o.d.r})`);
+    update = o => o.setAttribute("transform", `translate(${o.d.x} ${o.d.y}) rotate(${o.d.r}) scale(${o.d.z})`);
+    
+    //mx = 0; my = 0;
+    //scale = 640 / c.clientWidth;
 
-    mx = 0; my = 0;
-    scale = 640 / c.clientWidth;
-
-    //c.addEventListener('mousemove', e => {
+    //c.addEventListener("mousemove", e => {
     //  mx = e.x * scale;
     //  my = e.y * scale
     //});
 
+    n = 0;
     // Game loop
     setInterval(e => {
 
       //tx = mx; ty = my;
 
-      d = new Date();
-      n = d.getTime()/2000;
+      n += 50 / 2000;
 
-      tx=320+(Math.sin(n)*250);
-      ty=320+(Math.cos(n)*250);
+      x = 320 + (Math.sin(n) * 250);
+      y = 320 + (Math.cos(n) * 250);
 
-      boxes.forEach(box => {
-        box.d.r += box.d.s * 5;
-        box.d.x = (box.d.x * (1 - box.d.s)) + (tx * box.d.s);
-        box.d.y = (box.d.y * (1 - box.d.s)) + (ty * box.d.s);
-        box.d.z = 2.0 + Math.sin(n-(box.d.s*100));
-        tx = box.d.x;
-        ty = box.d.y;
-        updateBox(box)
+      boxes.forEach(o => {
+        o.d.r += o.d.s * 5;
+        o.d.x = (o.d.x * (1 - o.d.s)) + (x * o.d.s);
+        o.d.y = (o.d.y * (1 - o.d.s)) + (y * o.d.s);
+        o.d.z = 2.0 + Math.sin(n - (o.d.s * 100));
+        x = o.d.x;
+        y = o.d.y;
+        update(o)
       });
 
-      stars.forEach(star => {
-        multipler = 1.1+((Math.abs(star.d.x-320))/500);
-        star.d.z += multipler/10;
-        star.d.r += 1;
-        star.d.x = ((star.d.x-320)*multipler)+320;
-        star.d.y = ((star.d.y-320)*multipler)+320;
-        if (star.d.x<0 || star.d.x >640 || star.d.y<0 || star.d.y>640) {
-          star.d.x = 305 + (Math.random()*30);
-          star.d.y = 305 + (Math.random()*30);
-          star.d.z = 0.5;
-        }
-        updateStar(star)
-      })      
+      stars.forEach(o => {
+        m = 1.1 + ((Math.abs(o.d.x - 320)) / 500);
+        o.d.z += m / 10;
+        o.d.r += 1;
+        o.d.x = ((o.d.x - 320) * m) + 320;
+        o.d.y = ((o.d.y - 320) * m) + 320;
+        if (o.d.x < 0 || o.d.x > 640 || o.d.y < 0 || o.d.y > 640) {
+          o.d.x = 305 + (Math.random() * 30);
+          o.d.y = 305 + (Math.random() * 30);
+          o.d.z = 0.5
+        };
+        update(o)
+      })
 
     }, 50)
   </script>
