@@ -1,20 +1,51 @@
+<style>
+html, body { margin:0; padding:0; overflow:hidden; background-color: #000; }
+svg { position:fixed; top:0; left:0; height:100%; width:100% }
+</style>
 <body>
   <svg id="c" viewBox="0 0 640 640">
     <defs>
       <filter id="glow" filterUnits="userSpaceOnUse">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="1" result="blur" />
-        <feGaussianBlur in="SourceGraphic" stdDeviation="20" result="blur2" />
-        <feGaussianBlur in="SourceGraphic" stdDeviation="15" result="blur3" />
-        <!-- merge all the blurs except for the first one -->
+        <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="b1" />
+        <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="b2" />
+        <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="b3" />
         <feMerge result="blur-merged">
-          <feMergeNode in="blur" />
-          <feMergeNode in="blur2" />
-          <feMergeNode in="blur3" />
-         <!-- <feMergeNode in="SourceGraphic" /> -->
+          <feMergeNode in="b1"/>
+          <feMergeNode in="b2"/>
+          <feMergeNode in="b3"/>
         </feMerge>
+      </filter>
+      <filter id="fade" filterUnits="userSpaceOnUse">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="3"/>
       </filter>
     </defs>
     <rect width="640" height="640" fill="black" />
+    <g filter="url(#fade)">
+      <rect id="star0" width="2" height="2" fill="#f00"/>
+      <rect id="star1" width="2" height="2" fill="#f70"/>
+      <rect id="star2" width="2" height="2" fill="#ff0"/>
+      <rect id="star3" width="2" height="2" fill="#7f0"/>
+      <rect id="star4" width="2" height="2" fill="#0f0"/>
+      <rect id="star5" width="2" height="2" fill="#0f7"/>
+      <rect id="star6" width="2" height="2" fill="#0ff"/>
+      <rect id="star7" width="2" height="2" fill="#07f"/>
+      <rect id="star8" width="2" height="2" fill="#00f"/>
+      <rect id="star9" width="2" height="2" fill="#70f"/>
+      <rect id="star10" width="2" height="2" fill="#f0f"/>
+      <rect id="star11" width="2" height="2" fill="#f07"/>  
+      <rect id="star22" width="2" height="2" fill="#f00"/>
+      <rect id="star23" width="2" height="2" fill="#f70"/>
+      <rect id="star12" width="2" height="2" fill="#ff0"/>
+      <rect id="star13" width="2" height="2" fill="#7f0"/>
+      <rect id="star14" width="2" height="2" fill="#0f0"/>
+      <rect id="star15" width="2" height="2" fill="#0f7"/>
+      <rect id="star16" width="2" height="2" fill="#0ff"/>
+      <rect id="star17" width="2" height="2" fill="#07f"/>
+      <rect id="star18" width="2" height="2" fill="#00f"/>
+      <rect id="star19" width="2" height="2" fill="#70f"/>
+      <rect id="star20" width="2" height="2" fill="#f0f"/>
+      <rect id="star21" width="2" height="2" fill="#f07"/> 
+    </g>
     <g filter="url(#glow)">
       <rect id="box0" width="20" height="20" stroke="#f00"  fill-opacity="0" />
       <rect id="box1" width="20" height="20" stroke="#f70"  fill-opacity="0" />
@@ -29,24 +60,29 @@
       <rect id="box10" width="20" height="20" stroke="#f0f"  fill-opacity="0" />
       <rect id="box11" width="20" height="20" stroke="#f07"  fill-opacity="0" />
     </g>
+    
   </svg>
   <script>
+
+    stars = [star0, star1, star2, star3, star4, star5, star6, star7, star8, star9, star10, star11, star22, star23, star12, star13, star14, star15, star16, star17, star18, star19, star20, star21];
     boxes = [box0, box1, box2, box3, box4, box5, box6, box7, box8, box9, box10, box11];
 
     s = 0.1;
-    boxes.forEach(box => box.d = { r: 0, x: Math.random() * 640, y: Math.random() * 640, s: s += 0.01 });
+    boxes.forEach(box => box.d = { r: 0, x: Math.random() * 640, y: Math.random() * 640, s: s += 0.0005 });
+    stars.forEach(star => star.d = { r: Math.random(), x: 300 + (Math.random()*40), y: 300 + (Math.random()*40), z:0.1 });
 
-    translate = o => o.setAttribute('transform', `translate(${o.d.x} ${o.d.y}) rotate(${o.d.r})`);
+    updateBox = o => o.setAttribute('transform', `translate(${o.d.x} ${o.d.y}) rotate(${o.d.r}) scale(${o.d.z})`);
+    updateStar = o => o.setAttribute('transform', `translate(${o.d.x} ${o.d.y}) scale(${o.d.z}) rotate(${o.d.r})`);
 
     mx = 0; my = 0;
     scale = 640 / c.clientWidth;
 
-    c.addEventListener('mousemove', e => {
-      mx = e.x * scale;
-      my = e.y * scale
-    });
+    //c.addEventListener('mousemove', e => {
+    //  mx = e.x * scale;
+    //  my = e.y * scale
+    //});
 
-    // Game loop (30fps)
+    // Game loop
     setInterval(e => {
 
       //tx = mx; ty = my;
@@ -54,17 +90,33 @@
       d = new Date();
       n = d.getTime()/2000;
 
-      tx=320+(Math.sin(n)*300);
-      ty=320+(Math.cos(n)*300);
+      tx=320+(Math.sin(n)*250);
+      ty=320+(Math.cos(n)*250);
 
       boxes.forEach(box => {
         box.d.r += box.d.s * 5;
         box.d.x = (box.d.x * (1 - box.d.s)) + (tx * box.d.s);
         box.d.y = (box.d.y * (1 - box.d.s)) + (ty * box.d.s);
+        box.d.z = 2.0 + Math.sin(n-(box.d.s*100));
         tx = box.d.x;
         ty = box.d.y;
-        translate(box)
-      })
-    }, 33)
+        updateBox(box)
+      });
+
+      stars.forEach(star => {
+        multipler = 1.1+((Math.abs(star.d.x-320))/500);
+        star.d.z += multipler/10;
+        star.d.r += 1;
+        star.d.x = ((star.d.x-320)*multipler)+320;
+        star.d.y = ((star.d.y-320)*multipler)+320;
+        if (star.d.x<0 || star.d.x >640 || star.d.y<0 || star.d.y>640) {
+          star.d.x = 305 + (Math.random()*30);
+          star.d.y = 305 + (Math.random()*30);
+          star.d.z = 0.5;
+        }
+        updateStar(star)
+      })      
+
+    }, 50)
   </script>
 </body>
