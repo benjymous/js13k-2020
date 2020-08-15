@@ -36,8 +36,12 @@
     </filter>
 
     <rect width="640" height="640" fill="#000"/>
-    <g filter="url(#f)" id="l0">&nbsp;</g>
-    <g filter="url(#g)" id="l1">&nbsp;</g>
+    <g filter="url(#f)" id="l0">
+      <rect width="0.01" height="0.01" fill-opacity="0"/>
+    </g>
+    <g filter="url(#g)" id="l1">
+      <rect width="0.01" height="0.01" fill-opacity="0"/>
+    </g>
     <g style="visibility: hidden">
       <rect id="star" width="2" height="2" fill="#f00"/>
       <rect id="box" width="20" height="20" stroke="#f00" fill-opacity="0"/>
@@ -61,6 +65,12 @@
       e=box.cloneNode();
       e.setAttribute("stroke", cols[i%cols.length]);
       e.removeAttribute("id");
+      e.onmouseenter = _ => {
+        _.target.d.h=true
+      };
+      e.onmouseleave = _ => {
+        _.target.d.h=false
+      };
       boxes.push(e);
       l1.appendChild(e)
     };
@@ -94,7 +104,7 @@
         o.d.r += o.d.s * 5;
         o.d.x = (o.d.x * (1 - o.d.s)) + (x * o.d.s);
         o.d.y = (o.d.y * (1 - o.d.s)) + (y * o.d.s);
-        o.d.z = 2.0 + Math.sin(n - (o.d.s * 100));
+        o.d.z = 2.0 + Math.sin(n - (o.d.s * 100)) + (o.d.h ? 1 : 0);
         x = o.d.x;
         y = o.d.y;
         update(o)
