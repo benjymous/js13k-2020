@@ -1,17 +1,4 @@
-<style>
-  html,
-  body {
-    background-color: #000
-  }
 
-  svg {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%
-  }
-</style>
 <!--
   ///#define boxes bs
   ///#define star s
@@ -19,8 +6,8 @@
   ///#define update u
 -->
 
-<body>
-  <svg viewBox="0 0 640 640">
+<body style="background: #000">
+  <svg viewBox="0 0 640 640" style="top:0;left:0;height:100%;width:100%">
     <filter id="g" filterUnits="userSpaceOnUse">
       <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="z1"/>
       <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="z2"/>
@@ -54,46 +41,35 @@
     stars=[]; boxes=[];
 
     for(i=0; i<100; ++i) {
-      e=star.cloneNode();
-      e.setAttribute("fill", cols[i%cols.length]);
-      e.removeAttribute("id");
-      stars.push(e);
-      l0.appendChild(e)
-    };
-
-    for(i=0; i<50; ++i) {
-      e=box.cloneNode();
-      e.setAttribute("stroke", cols[i%cols.length]);
-      e.removeAttribute("id");
-      e.onmouseenter = _ => {
-        _.target.d.h=true
-      };
-      e.onmouseleave = _ => {
-        _.target.d.h=false
-      };
-      boxes.push(e);
-      l1.appendChild(e)
+      o=star.cloneNode();
+      o.setAttribute("fill", cols[i%cols.length]);
+      o.removeAttribute("id");
+      o.d = { r: Math.random(), x: 300 + (Math.random() * 40), y: 300 + (Math.random() * 40), z: 0.1 };
+      stars.push(o);
+      l0.appendChild(o)
     };
 
     s = 0.1;
-    boxes.forEach(o => o.d = { r: 0, x: Math.random() * 640, y: Math.random() * 640, s: s += 0.0005 });
-    stars.forEach(o => o.d = { r: Math.random(), x: 300 + (Math.random() * 40), y: 300 + (Math.random() * 40), z: 0.1 });
+    for(i=0; i<50; ++i) {
+      o=box.cloneNode();
+      o.setAttribute("stroke", cols[i%cols.length]);
+      o.removeAttribute("id");
+      o.onmouseenter = _ => {
+        _.target.d.h=true
+      };
+      o.onmouseleave = _ => {
+        _.target.d.h=false
+      };
+      o.d = { r: 0, x: Math.random() * 640, y: Math.random() * 640, s: s += 0.0005 };
+      boxes.push(o);
+      l1.appendChild(o)
+    };
 
-    update = o => o.setAttribute("transform", `translate(${o.d.x} ${o.d.y}) rotate(${o.d.r}) scale(${o.d.z})`);
+    update = o => o.setAttribute("transform", "translate("+o.d.x+" "+o.d.y+") rotate("+o.d.r+") scale("+o.d.z+")");
     
-    //mx = 0; my = 0;
-    //scale = 640 / c.clientWidth;
-
-    //c.addEventListener("mousemove", e => {
-    //  mx = e.x * scale;
-    //  my = e.y * scale
-    //});
-
     n = 0;
     // Game loop
-    setInterval(e => {
-
-      //tx = mx; ty = my;
+    setInterval(o => {
 
       n += 50 / 2000;
 
