@@ -36,34 +36,31 @@
     </filter>
 
     <rect width="640" height="640" fill="#000"/>
-    <g filter="url(#f)" id="l0">
-     <rect width="2" height="2" fill="#f00"/>
-    </g>
-    <g filter="url(#g)" id="l1">
-     <rect width="20" height="20" stroke="#f00" fill-opacity="0"/>
+    <g filter="url(#f)" id="l0"/>
+    <g filter="url(#g)" id="l1"/>
+    <g style="visibility: hidden">
+      <rect id="star" width="2" height="2" fill="#f00"/>
+      <rect id="box" width="20" height="20" stroke="#f00" fill-opacity="0"/>
     </g>
   </svg>
   <script>
 
-    cols=["#f70", "#ff0", "#7f0", "#0f0", "#0f7", "#0ff", "#07f", "#00f", "#70f", "#f0f", "#f07", "#f00"];
+    cols=["#f00", "#f70", "#ff0", "#7f0", "#0f0", "#0f7", "#0ff", "#07f", "#00f", "#70f", "#f0f", "#f07"];
 
     stars=[]; boxes=[];
 
-    x=l0.getElementsByTagName("rect")[0];
-    console.log(x);
-    stars.push(x);
     for(i=0; i<100; ++i) {
-      e=x.cloneNode();
+      e=star.cloneNode();
       e.setAttribute("fill", cols[i%cols.length]);
+      e.removeAttribute("id");
       stars.push(e);
       l0.appendChild(e)
     };
 
-    x=l1.getElementsByTagName("rect")[0];
-    boxes.push(x);
     for(i=0; i<50; ++i) {
-      e=x.cloneNode();
+      e=box.cloneNode();
       e.setAttribute("stroke", cols[i%cols.length]);
+      e.removeAttribute("id");
       boxes.push(e);
       l1.appendChild(e)
     };
