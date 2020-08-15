@@ -36,52 +36,37 @@
     </filter>
 
     <rect width="640" height="640" fill="#000"/>
-    <g filter="url(#f)">
-      <rect id="star0" width="2" height="2" fill="#f00"/>
-      <rect id="star1" width="2" height="2" fill="#f70"/>
-      <rect id="star2" width="2" height="2" fill="#ff0"/>
-      <rect id="star3" width="2" height="2" fill="#7f0"/>
-      <rect id="star4" width="2" height="2" fill="#0f0"/>
-      <rect id="star5" width="2" height="2" fill="#0f7"/>
-      <rect id="star6" width="2" height="2" fill="#0ff"/>
-      <rect id="star7" width="2" height="2" fill="#07f"/>
-      <rect id="star8" width="2" height="2" fill="#00f"/>
-      <rect id="star9" width="2" height="2" fill="#70f"/>
-      <rect id="star10" width="2" height="2" fill="#f0f"/>
-      <rect id="star11" width="2" height="2" fill="#f07"/>
-      <rect id="star22" width="2" height="2" fill="#f00"/>
-      <rect id="star23" width="2" height="2" fill="#f70"/>
-      <rect id="star12" width="2" height="2" fill="#ff0"/>
-      <rect id="star13" width="2" height="2" fill="#7f0"/>
-      <rect id="star14" width="2" height="2" fill="#0f0"/>
-      <rect id="star15" width="2" height="2" fill="#0f7"/>
-      <rect id="star16" width="2" height="2" fill="#0ff"/>
-      <rect id="star17" width="2" height="2" fill="#07f"/>
-      <rect id="star18" width="2" height="2" fill="#00f"/>
-      <rect id="star19" width="2" height="2" fill="#70f"/>
-      <rect id="star20" width="2" height="2" fill="#f0f"/>
-      <rect id="star21" width="2" height="2" fill="#f07"/>
+    <g filter="url(#f)" id="l0">
+     <rect width="2" height="2" fill="#f00"/>
     </g>
-    <g filter="url(#g)">
-      <rect id="box0" width="20" height="20" stroke="#f00" fill-opacity="0"/>
-      <rect id="box1" width="20" height="20" stroke="#f70" fill-opacity="0"/>
-      <rect id="box2" width="20" height="20" stroke="#ff0" fill-opacity="0"/>
-      <rect id="box3" width="20" height="20" stroke="#7f0" fill-opacity="0"/>
-      <rect id="box4" width="20" height="20" stroke="#0f0" fill-opacity="0"/>
-      <rect id="box5" width="20" height="20" stroke="#0f7" fill-opacity="0"/>
-      <rect id="box6" width="20" height="20" stroke="#0ff" fill-opacity="0"/>
-      <rect id="box7" width="20" height="20" stroke="#07f" fill-opacity="0"/>
-      <rect id="box8" width="20" height="20" stroke="#00f" fill-opacity="0"/>
-      <rect id="box9" width="20" height="20" stroke="#70f" fill-opacity="0"/>
-      <rect id="box10" width="20" height="20" stroke="#f0f" fill-opacity="0"/>
-      <rect id="box11" width="20" height="20" stroke="#f07" fill-opacity="0"/>
+    <g filter="url(#g)" id="l1">
+     <rect width="20" height="20" stroke="#f00" fill-opacity="0"/>
     </g>
-
   </svg>
   <script>
 
-    stars = [star0, star1, star2, star3, star4, star5, star6, star7, star8, star9, star10, star11, star22, star23, star12, star13, star14, star15, star16, star17, star18, star19, star20, star21];
-    boxes = [box0, box1, box2, box3, box4, box5, box6, box7, box8, box9, box10, box11];
+    cols=["#f70", "#ff0", "#7f0", "#0f0", "#0f7", "#0ff", "#07f", "#00f", "#70f", "#f0f", "#f07", "#f00"];
+
+    stars=[]; boxes=[];
+
+    x=l0.getElementsByTagName("rect")[0];
+    console.log(x);
+    stars.push(x);
+    for(i=0; i<100; ++i) {
+      e=x.cloneNode();
+      e.setAttribute("fill", cols[i%cols.length]);
+      stars.push(e);
+      l0.appendChild(e)
+    };
+
+    x=l1.getElementsByTagName("rect")[0];
+    boxes.push(x);
+    for(i=0; i<50; ++i) {
+      e=x.cloneNode();
+      e.setAttribute("stroke", cols[i%cols.length]);
+      boxes.push(e);
+      l1.appendChild(e)
+    };
 
     s = 0.1;
     boxes.forEach(o => o.d = { r: 0, x: Math.random() * 640, y: Math.random() * 640, s: s += 0.0005 });
