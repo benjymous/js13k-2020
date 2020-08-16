@@ -60,30 +60,30 @@
         o.d = {x:x, y:y};
         
         if (x==shipx && y==shipy) {
-          o.setAttribute("stroke","#ff0");
+          o.setAttribute("stroke","#ff0")
         } else {
-          o.setAttribute("stroke","#fff2");
-        }
+          o.setAttribute("stroke","#fff2")
+        };
         
         o.removeAttribute("id");
         o.setAttribute("transform","translate("+x*20+" "+y*20+")");
         o.onmouseenter = _ => {
-          _.target.setAttribute("stroke","#fff");
+          _.target.setAttribute("stroke","#fff")
         };
         o.onmouseleave = _ => {
           if (o.d.x==shipx && o.d.y==shipy) {
-            _.target.setAttribute("stroke","#ff0");
+            _.target.setAttribute("stroke","#ff0")
           } else {
-            _.target.setAttribute("stroke","#fff2");
+            _.target.setAttribute("stroke","#fff2")
           }
         };
         o.onclick = _ => {
-          showgame();
+          showgame()
         };
         
-        map.appendChild(o);
+        map.appendChild(o)
       }
-    }
+    };
 
     for(i=0; i<100; ++i) {
       o=star.cloneNode();
