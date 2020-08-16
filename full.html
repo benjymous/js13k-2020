@@ -22,16 +22,20 @@
       <feGaussianBlur in="SourceGraphic" stdDeviation="3"/>
     </filter>
 
+ 
     <path d="M0 0h640v640H0z" fill="#000"/>
+
+
     <g filter="url(#f)" id="l0">
-        <path d="M0 0h.01v.01H0z" fill-opacity="0"/>
+        &nbsp;
     </g>
     <g filter="url(#g)" id="l1">
-        <path d="M0 0h.01v.01H0z" fill-opacity="0"/>
+        &nbsp;
     </g>
     <g style="visibility:hidden">
-        <path id="s" d="M0 0h2v2H0z"/>
-        <path id="b" d="M0 0h20v20H0z" fill-opacity="0"/>
+        <path id="star" d="M0 0h2v2H0z"/>
+        <path id="box" d="M0 0h20v20H0z" fill-opacity="0"/>
+        <path id="galaxy" fill="#fff5" transform="scale(4) translate(-5 0)" d="m0 89c0-39.4 31.6-77 74-77 33.8 0 61 23.2 61 58 0 20.8-16.2 44-41 44-22 0-34-14-34-31-3.6 0-6 6-6 12 0 16.6 19.8 34 43 34 30.4 0 62-27.8 62-69 0-25.6-12.4-47-23-60 13 11 32 32.8 32 67 0 39.4-31.6 77-74 77-33.8 0-61-23.2-61-58 0-20.8 16.2-44 41-44 22 0 34 14 34 31 3.6 0 6-6 6-12 0-16.6-19.8-34-43-34-30.4 0-62 27.8-62 69 0 25.6 12.4 47 23 60-13-11-32-32.8-32-67z"/>
     </g>
   </svg>
   <script>
@@ -67,11 +71,15 @@
 
     update = o => o.setAttribute("transform", "translate("+o.d.x+" "+o.d.y+") rotate("+o.d.r+") scale("+o.d.z+")");
     
+    focus=true;
+    window.onfocus = _ => focus=true;
+    window.onblur= _ => focus=false;
     n = 0;
     // Game loop
-    setInterval(o => {
+    setInterval(_ => {
+      if(!focus) return;
 
-      n += 50 / 2000;
+      n += 0.025;
 
       x = 320 + (Math.sin(n) * 250);
       y = 320 + (Math.cos(n) * 250);
