@@ -78,10 +78,10 @@
         
         if (x==shipx && y==shipy) {
           o.setAttribute("stroke","#ff0");
-          ship = o;
+          ship = o
         } else {
-          o.setAttribute("stroke","#fff2");
-        }
+          o.setAttribute("stroke","#fff2")
+        };
         
         o.removeAttribute("id");
         o.setAttribute("transform","translate("+x*20+" "+y*20+")");
@@ -89,17 +89,17 @@
           fuelneed = calcfuel(_.target.d);
           bottomtext.textContent = "Warp requires "+fuelneed+ "mgb.  Fuel available: "+fuel + "mgb";
           if (fuelneed <= fuel) {
-            _.target.setAttribute("stroke","#fff");
+            _.target.setAttribute("stroke","#fff")
           } else {
-            _.target.setAttribute("stroke","#f00");
+            _.target.setAttribute("stroke","#f00")
           }
           
         };
         o.onmouseleave = _ => {
           if (_.target.d.x==shipx && _.target.d.y==shipy) {
-            _.target.setAttribute("stroke","#ff0");
+            _.target.setAttribute("stroke","#ff0")
           } else {
-            _.target.setAttribute("stroke","#fff2");
+            _.target.setAttribute("stroke","#fff2")
           }
         };
         o.onclick = _ => {
@@ -116,9 +116,9 @@
           }
         };
         
-        map.appendChild(o);
+        map.appendChild(o)
       }
-    }
+    };
 
     // build stars
     for(i=0; i<2000; ++i) {
