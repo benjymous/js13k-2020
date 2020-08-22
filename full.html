@@ -37,10 +37,14 @@
 
     <g id="game">
       <g filter="url(#f3)" id="l0">
-          &nbsp;
+        &nbsp;
       </g>
       <g filter="url(#g)" id="l1">
-          &nbsp;
+        &nbsp;
+        <g id="ship">
+          <path d="M0 -7 L-5 4 L0 8 L5 4 Z" stroke-width="0.2" stroke="#fff" fill-opacity="0"/>
+          <path d="M-5 4 L0 1 L5 4" stroke-width="0.2" stroke="#fff" fill-opacity="0"/>
+        </g>
       </g>
     </g>
     <g filter="url(#g)" id="map">
@@ -50,15 +54,15 @@
       <text filter="url(#f1)" id="bottomtext" x=10 y=630 fill="#ff0" class="heavy">Hello</text>
     </g>
     <g style="visibility:hidden">
-        <path id="star" d="M0 0h2v2H0z"/>
-        <path id="box" d="M0 0h20v20H0z" fill-opacity="0"/>
+        <path id="star" d="M-2 -2h2v2h-2z"/>
+        <path id="box" d="M-10 -10h20v20h-20z" fill-opacity="0"/>
     </g>
   </svg>
   <script>
 
     cols=["#f00", "#f70", "#ff0", "#7f0", "#0f0", "#0f7", "#0ff", "#07f", "#00f", "#70f", "#f0f", "#f07"];
 
-    stars=[]; boxes=[]; ship = null;
+    stars=[]; boxes=[]; shipcell = null;
 
     shipx = 10+Math.floor(Math.random()*12);
     shipy = 10+Math.floor(Math.random()*12);
@@ -78,13 +82,13 @@
         
         if (x==shipx && y==shipy) {
           o.setAttribute("stroke","#ff0");
-          ship = o
+          shipcell = o
         } else {
           o.setAttribute("stroke","#fff2")
         };
         
         o.removeAttribute("id");
-        o.setAttribute("transform","translate("+x*20+" "+y*20+")");
+        o.setAttribute("transform","translate("+((x*20)+10)+" "+((y*20)+10)+")");
         o.onmouseenter = _ => {
           fuelneed = calcfuel(_.target.d);
           bottomtext.textContent = "Warp requires "+fuelneed+ "mgb.  Fuel available: "+fuel + "mgb";
@@ -106,12 +110,12 @@
           fuelneed = calcfuel(_.target.d);
           if (fuelneed <= fuel) {
             fuel -= fuelneed;
-            warpdistance = fuelneed;
+            warpdistance = fuelneed*100;
             shipx = _.target.d.x;
             shipy = _.target.d.y;
             _.target.setAttribute("stroke","#ff0");
-            ship.setAttribute("stroke","#fff2");
-            ship = _.target;
+            shipcell.setAttribute("stroke","#fff2");
+            shipcell = _.target;
             showgame()
           }
         };
@@ -127,7 +131,7 @@
       o.removeAttribute("id");
       o.d = { r: Math.random(), x: 300 + (Math.random() * 40), y: 300 + (Math.random() * 40), z: 0.1 };
       stars.push(o);
-      l0.appendChild(o)
+      l0.insertBefore(o, l0.firstChild)
     };
 
     s = 0.1;
@@ -143,7 +147,7 @@
       };
       o.d = { r: 0, x: Math.random() * 640, y: Math.random() * 640, s: s += 0.0005 };
       boxes.push(o);
-      l1.appendChild(o)
+      l1.insertBefore(o, l1.firstChild)
     };
 
     mapshown=false;
@@ -159,6 +163,9 @@
     window.onblur= _ => focus=false;
     n = 0;
 
+    ship.d = {r:0, x:320, y:550, z:10};
+    update(ship);
+
     showmap();
 
     // Game loop
@@ -170,8 +177,8 @@
       n += 0.025;
       warpdistance -= 1;
 
-      x = 320 + (Math.sin(n) * 250);
-      y = 320 + (Math.cos(n) * 250);
+      x = 320 + (Math.sin(n) * 150);
+      y = 200 + (Math.cos(n) * 150);
 
       boxes.forEach(o => {
         o.d.r += o.d.s * 5;
@@ -195,7 +202,11 @@
           o.d.z = 0.5
         };
         update(o)
-      })
+      });
+
+      ship.d.x = (Math.sin(n)*50)+320;
+
+      update(ship)
 
     }, 50)
   </script>
