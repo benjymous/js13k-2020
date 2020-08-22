@@ -1,13 +1,13 @@
 
 <!--
-  ///#define boxes bs
-  ///#define star s
-  ///#define box b
-  ///#define update u
+  //#define boxes bs
+  //#define star s
+  //#define box b
+  //#define update u
 -->
 
 <body style="background: #000">
-  <svg viewBox="0 0 640 640" style="top:0;left:0;height:100%;width:100%">
+  <svg id="c" viewBox="0 0 640 640" style="top:0;left:0;height:100%;width:100%">
     <style>
       .heavy { font: bold 20px sans-serif; }
     </style>
@@ -62,7 +62,8 @@
 
     cols=["#f00", "#f70", "#ff0", "#7f0", "#0f0", "#0f7", "#0ff", "#07f", "#00f", "#70f", "#f0f", "#f07"];
 
-    stars=[]; boxes=[]; shipcell = null;
+    stars=[]; boxes=[]; targets=[]; targetsa=[]; shipcell = null;
+    mousedown = false;
 
     shipx = 10+Math.floor(Math.random()*12);
     shipy = 10+Math.floor(Math.random()*12);
@@ -134,13 +135,22 @@
       l0.insertBefore(o, l0.firstChild)
     };
 
+    // enemy box things
     s = 0.1;
     for(i=0; i<50; ++i) {
       o=box.cloneNode();
       o.setAttribute("stroke", cols[i%cols.length]);
       o.removeAttribute("id");
       o.onmouseenter = _ => {
-        _.target.d.h=true
+        if (mousedown) {
+          _.target.d.h=true;
+          if (targets.length>0) {
+            t = targets.pop();
+            t.d.t = _.target.d;
+            t.d.z = 100;
+            targetsa.push(t)
+          }
+        }
       };
       o.onmouseleave = _ => {
         _.target.d.h=false
@@ -148,6 +158,17 @@
       o.d = { r: 0, x: Math.random() * 640, y: Math.random() * 640, s: s += 0.0005 };
       boxes.push(o);
       l1.insertBefore(o, l1.firstChild)
+    };
+  
+    // target boxes
+    for (i=0; i<8; ++i) {
+      o=box.cloneNode();
+      o.setAttribute("stroke", "#fff");
+      o.setAttribute("stroke-width", "0.3");
+      o.removeAttribute("id");
+      o.d = { r: 90, x: -100, y: -100, z: 1, t: null };
+      targets.push(o);
+      l1.insertBefore(o, ship)
     };
 
     mapshown=false;
@@ -157,6 +178,7 @@
     hide = o => o.setAttribute("style","visibility:hidden");
     showmap = _ => { mapshown=true; hide(game); show(map) };
     showgame = _ => { mapshown=false; show(game); hide(map); bottomtext.textContent = "Entering Warp" };
+    fire = _ => { targets = targets.concat(targetsa); targetsa=[] };
     
     focus=true;
     window.onfocus = _ => focus=true;
@@ -167,6 +189,18 @@
     update(ship);
 
     showmap();
+
+    c.onmousedown = _ => { 
+      if (!mapshown) {
+        mousedown = true 
+      }
+    };
+    c.onmouseup = _ => { 
+      if (!mapshown) {
+        fire(); 
+        mousedown = false 
+      }
+    };
 
     // Game loop
     setInterval(_ => {
@@ -201,6 +235,20 @@
           o.d.y = 305 + (Math.random() * 30);
           o.d.z = 0.5
         };
+        update(o)
+      });
+
+      targets.forEach(o => {
+        o.d.x = -100;
+        o.d.y = -100;
+        update(o)
+      });
+
+      targetsa.forEach(o => {
+        o.d.x = o.d.t.x;
+        o.d.y = o.d.t.y;
+        o.d.r = (0+o.d.r)/2;
+        o.d.z = (3+o.d.z)/2;
         update(o)
       });
 
