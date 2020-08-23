@@ -4,7 +4,9 @@
 let KBSIZE=13
 
 # preprocess - run ///#define macros
+rm -f index_pp.html
 filepp -kc "///#" full.html >index_pp.html
+chmod -w index_pp.html
 
 # minify resultant preprocessed output to final file
 /usr/bin/minify index_pp.html >index.html
