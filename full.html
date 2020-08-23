@@ -141,7 +141,7 @@
       o=box.cloneNode();
       o.setAttribute("stroke", cols[i%cols.length]);
       o.removeAttribute("id");
-      o.onmouseenter = _ => {
+      o.onpointerenter = _ => {
         if (mousedown) {
           _.target.d.h=true;
           if (targets.length>0) {
@@ -152,7 +152,7 @@
           }
         }
       };
-      o.onmouseleave = _ => {
+      o.onpointerleave = _ => {
         _.target.d.h=false
       };
       o.d = { r: 0, x: Math.random() * 640, y: Math.random() * 640, s: s += 0.0005 };
@@ -190,12 +190,12 @@
 
     showmap();
 
-    c.onmousedown = _ => { 
+    c.onpointerdown = _ => { 
       if (!mapshown) {
         mousedown = true 
       }
     };
-    c.onmouseup = _ => { 
+    c.onpointerup = _ => { 
       if (!mapshown) {
         fire(); 
         mousedown = false 
