@@ -126,7 +126,7 @@
     };
 
     // build stars
-    for(i=0; i<2000; ++i) {
+    for(i=0; i<200; ++i) {
       o=star.cloneNode();
       o.setAttribute("fill", cols[i%cols.length]);
       o.removeAttribute("id");
@@ -137,7 +137,7 @@
 
     // enemy box things
     s = 0.1;
-    for(i=0; i<50; ++i) {
+    for(i=0; i<10; ++i) {
       o=box.cloneNode();
       o.setAttribute("stroke", cols[i%cols.length]);
       o.removeAttribute("id");
