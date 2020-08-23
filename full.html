@@ -41,7 +41,7 @@
       </g>
       <g filter="url(#g)" id="l1">
         &nbsp;
-        <g id="ship">
+         <g id="ship">
           <path d="M0 -7 L-5 4 L0 8 L5 4 Z" stroke-width="0.2" stroke="#fff" fill-opacity="0"/>
           <path d="M-5 4 L0 1 L5 4" stroke-width="0.2" stroke="#fff" fill-opacity="0"/>
         </g>
@@ -57,12 +57,18 @@
         <path id="star" d="M-2 -2h2v2h-2z"/>
         <path id="box" d="M-10 -10h20v20h-20z" fill-opacity="0"/>
     </g>
+
+    <path id="g1" d="M0 100 L100 100 L 200 110" stroke-width="5" stroke="#fff" fill-opacity="0"/>
+
   </svg>
   <script>
 
     cols=["#f00", "#f70", "#ff0", "#7f0", "#0f0", "#0f7", "#0ff", "#07f", "#00f", "#70f", "#f0f", "#f07"];
 
     stars=[]; boxes=[]; targets=[]; targetsa=[]; shipcell = null;
+
+    objects = [];
+
     mousedown = false;
 
     shipx = 10+Math.floor(Math.random()*12);
@@ -131,7 +137,22 @@
       o.setAttribute("fill", cols[i%cols.length]);
       o.removeAttribute("id");
       o.d = { r: Math.random(), x: 300 + (Math.random() * 40), y: 300 + (Math.random() * 40), z: 0.1 };
-      stars.push(o);
+
+      o.d.onUpdate = (o,g)=> {
+        m = 1.1 + ((Math.abs(o.d.x - 320)) / 500);
+        o.d.z += m / 10;
+        o.d.r += 1;
+        o.d.x = ((o.d.x - 320) * m) + 320;
+        o.d.y = ((o.d.y - 320) * m) + 320;
+        if (o.d.x < 0 || o.d.x > 640 || o.d.y < 0 || o.d.y > 640) {
+          o.d.x = 305 + (Math.random() * 30);
+          o.d.y = 305 + (Math.random() * 30);
+          o.d.z = 0.5
+        };
+        update(o)
+      };
+
+      objects.push(o);
       l0.insertBefore(o, l0.firstChild)
     };
 
@@ -141,6 +162,10 @@
       o=box.cloneNode();
       o.setAttribute("stroke", cols[i%cols.length]);
       o.removeAttribute("id");
+
+
+
+      /*
       o.onpointerenter = _ => {
         if (mousedown) {
           _.target.d.h=true;
@@ -155,8 +180,21 @@
       o.onpointerleave = _ => {
         _.target.d.h=false
       };
+      */
       o.d = { r: 0, x: Math.random() * 640, y: Math.random() * 640, s: s += 0.0005 };
-      boxes.push(o);
+
+      o.d.onUpdate = (o, g) => {
+        o.d.r += o.d.s * 5;
+        o.d.x = (o.d.x * (1 - o.d.s)) + (g.x * o.d.s);
+        o.d.y = (o.d.y * (1 - o.d.s)) + (g.y * o.d.s);
+        o.d.z = 2.0 + Math.sin(n - (o.d.s * 100)) + (o.d.h ? 1 : 0);
+        
+        g.x = o.d.x;
+        g.y = o.d.y;
+        update(o)
+      };
+
+      objects.push(o);
       l1.insertBefore(o, l1.firstChild)
     };
   
@@ -211,9 +249,16 @@
       n += 0.025;
       warpdistance -= 1;
 
-      x = 320 + (Math.sin(n) * 150);
-      y = 200 + (Math.cos(n) * 150);
+      g = {
+        x: 320 + (Math.sin(n) * 150),
+        y: 200 + (Math.cos(n) * 150)
+      };
+  
+      objects.forEach(o => {
+        if (o.d.onUpdate) o.d.onUpdate(o, g)
+      });
 
+/*
       boxes.forEach(o => {
         o.d.r += o.d.s * 5;
         o.d.x = (o.d.x * (1 - o.d.s)) + (x * o.d.s);
@@ -253,6 +298,14 @@
       });
 
       ship.d.x = (Math.sin(n)*50)+320;
+
+      str="M0 100";
+      for(x=10; x<640; x+=10){
+        str += `L ${x} ${100+(Math.random()*25)}`
+      }
+      g1.setAttribute("d", str)
+
+      */
 
       update(ship)
 
