@@ -1,6 +1,9 @@
-
 <body style="background: #000;cursor: none">
-  <svg id="c" viewBox="0 0 640 640" style="top:0;left:0;height:100%;width:100%">
+
+
+
+
+  <svg id="c" viewBox="0 0 640 640" style="position:absolute;top:0;left:0;height:100%;width:100%">
     <style>
       .heavy {
         font: bold 20px sans-serif;
@@ -22,6 +25,9 @@
     <filter id="f1" filterUnits="userSpaceOnUse">
       <feGaussianBlur in="SourceGraphic" stdDeviation="1" />
     </filter>
+    <filter id="f1.5" filterUnits="userSpaceOnUse">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" />
+    </filter>
     <filter id="f3" filterUnits="userSpaceOnUse">
       <feGaussianBlur in="SourceGraphic" stdDeviation="3" />
     </filter>
@@ -33,6 +39,14 @@
 
     <g clip-path="url(#clip)">
 
+      <g id="title" filter="url(#f1.5)">
+        <path d="M0 0h640v640H0z" fill="#000"/>
+        <text x="54" y="557" font-size="37" font-family="'Courier New', Courier, monospace" fill="#fff">a game by richard munn</text>
+        <text
+          x="12" y="112" font-size="37" font-family="'Courier New', Courier, monospace" fill="#fff">the legend of yeti-404</text>
+        <text y="150" x="370" font-size="21" font-family="'Courier New', Courier, monospace" fill="#fff">#js13k 2020</text>
+      </g>
+
       <g id="game">
         <!--<g filter="url(#f3)" id="l0">
         &nbsp;
@@ -40,16 +54,18 @@
         <g filter="url(#g)" id="l1">
           <g id="l10">&nbsp;</g> <!-- landscape -->
           <g id="l11">&nbsp;</g> <!-- missiles and targets -->
-          <path d="M0 0 H640 V640 H-640 Z" fill="#000" fill-opacity="0.1"/>
-          <path id="vsync" d="M0 0 H640 V100 H-640 Z" fill="#000" fill-opacity="0.2"/>
+          <path d="M0 0 H640 V640 H-640 Z" fill="#000" fill-opacity="0.1" />
+          
           <g id="l12">&nbsp;</g> <!-- enemies -->
           <path id="ship" d="M0 0" stroke-width="0.2" stroke="#fff" fill-opacity="0" />
-          
+
           <path id="cursor" d="M0 0 m-10 0 h -50 m60 0 h 50 m-55 5 v 50 m0 -60 v -50" stroke-width="0.7" stroke="#fff"
             fill-opacity="0" />
-         
+
         </g>
       </g>
+
+      <path id="vsync" filter="url(#f10)" d="M-10 0 H650 V200 H-640 Z" fill="#303" fill-opacity="0.2" style="pointer-events:none" />
 
       <g filter="url(#g)" id="map">
         <path id="galaxy" filter="url(#f3)" fill="#fff2" transform="scale(4) translate(-5 0)"
@@ -58,20 +74,18 @@
       <g>
         <text filter="url(#f1)" id="bottomtext" x=10 y=630 fill="#ff0" class="heavy"> </text>
       </g>
-      <g style="visibility:hidden">
-        <path id="star" d="M-2 -2h2v2h-2z" />
-        <path id="box" d="M-10 -10h20v20h-20z" fill-opacity="0" />
-        <path id="ground" d="M0 0" stroke-width="0.6" stroke="#fff" fill-opacity="0" />
-      </g>
-    </g>
 
+    </g>
+  </svg>
+  <svg style="visibility:hidden;">
+    <g style="visibility:hidden">
+      <path id="star" d="M-2 -2h2v2h-2z" />
+      <path id="box" d="M-10 -10h20v20h-20z" fill-opacity="0" />
+      <path id="ground" d="M0 0" stroke-width="0.6" stroke="#fff" fill-opacity="0" />
+    </g>
   </svg>
 
   <script>
-
-    // adapted from https://gist.github.com/blixt/f17b47c62508be59987b
-    //Random = function (t) { this._seed = t % 2147483647, this._seed <= 0 && (this._seed += 2147483646) }; Random.prototype.next = function () { return this._seed = 16807 * this._seed % 2147483647 }, Random.prototype.random = function () { return (this.next() - 1) / 2147483646 };
-
     // adapted from https://gist.github.com/banksean/304522
     SN = function (t) { null == t && (t = Math), this.grad3 = [[1, 1, 0], [-1, 1, 0], [1, -1, 0], [-1, -1, 0], [1, 0, 1], [-1, 0, 1], [1, 0, -1], [-1, 0, -1], [0, 1, 1], [0, -1, 1], [0, 1, -1], [0, -1, -1]], this.p = []; for (var r = 0; r < 256; r++)this.p[r] = Math.floor(256 * t.random()); this.perm = []; for (r = 0; r < 512; r++)this.perm[r] = this.p[255 & r] }; SN.prototype.dot = function (t, r, i) { return t[0] * r + t[1] * i }, SN.prototype.n = function (t, r) { var i, h, o = (t + r) * (.5 * (Math.sqrt(3) - 1)), s = Math.floor(t + o), e = Math.floor(r + o), p = (3 - Math.sqrt(3)) / 6, a = (s + e) * p, m = t - (s - a), n = r - (e - a); m > n ? (i = 1, h = 0) : (i = 0, h = 1); var d = m - i + p, f = n - h + p, l = m - 1 + 2 * p, u = n - 1 + 2 * p, M = 255 & s, g = 255 & e, v = this.perm[M + this.perm[g]] % 12, c = this.perm[M + i + this.perm[g + h]] % 12, x = this.perm[M + 1 + this.perm[g + 1]] % 12, N = .5 - m * m - n * n, S = .5 - d * d - f * f, q = .5 - l * l - u * u; return 70 * ((N < 0 ? 0 : (N *= N) * N * this.dot(this.grad3[v], m, n)) + (S < 0 ? 0 : (S *= S) * S * this.dot(this.grad3[c], d, f)) + (q < 0 ? 0 : (q *= q) * q * this.dot(this.grad3[x], l, u))) };
     sn = new SN();
@@ -81,14 +95,15 @@
     u = o => o.setAttribute("transform", "translate(" + o.d.x + " " + o.d.y + ") rotate(" + o.d.r + ") scale(" + o.d.z + ")");
     show = o => o.removeAttribute("style");
     hide = o => o.setAttribute("style", "visibility:hidden");
-    showmap = _ => { mapshown = true; hide(game); show(map) };
-    showgame = _ => { mapshown = false; show(game); hide(map); /*bottomtext.textContent = "" /*"Entering Warp"*/ };
+    showtitle = _ => { gameloop = false; hide(game); hide(map); show(title) };
+    showmap = _ => { gameloop = false; hide(game); show(map); hide(title) };
+    showgame = _ => { gameloop = true; show(game); hide(map); hide(title) };
 
     cols = ["#f00", "#f70", "#ff0", "#7f0", "#0f0", "#0f7", "#0ff", "#07f", "#00f", "#70f", "#f0f", "#f07"];
 
     targets = []; shipcell = null;
 
-    objects = [];
+    objects = []; fxobjects = [];
 
     mousedown = false;
 
@@ -101,6 +116,8 @@
 
     sqr = x => x * x;
     calcfuel = d => sqr(Math.abs(d.x - shipx)) + sqr(Math.abs(d.y - shipy));
+
+    title.onclick = _ => showgame();
 
     if (map != undefined) {
       // build map
@@ -347,7 +364,7 @@
     };
 
     missiletime = 0;
-    mapshown = false;
+    gameloop = false;
     warpdistance = 10000;
 
     focus = true;
@@ -380,25 +397,27 @@
     objects.push(cursor);
     u(cursor);
 
-    vsync.d = {r:0, x:0, y:0, z:1};
-    vsync.d.u = (o,g) => {
+    vsync.d = { r: 0, x: 0, y: 0, z: 1 };
+    vsync.d.u = (o, g) => {
       o.d.y += 16;
-      if (o.d.y > 640) o.d.y = -100;
+      if (o.d.y > 640) o.d.y = -200;
       u(o)
     };
-    objects.push(vsync);
+    fxobjects.push(vsync);
 
+    showtitle();
     //showmap();
-    showgame();
+    //showgame();
 
     c.onpointerdown = _ => {
       focus = true;
-      if (!mapshown) {
+      if (gameloop) {
         mousedown = true
-      }
+      } 
+
     };
     c.onpointerup = _ => {
-      if (!mapshown) {
+      if (gameloop) {
         mousedown = false;
         missiletime = 0;
         targetc = 0
@@ -426,7 +445,13 @@
 
     // Game loop
     setInterval(_ => {
-      if (!focus || mapshown) return;
+      if (!focus) return;
+
+      fxobjects.forEach(o => {
+        if (o.d.u) o.d.u(o, g);
+      });
+
+      if (!gameloop) return;
 
       //if (warpdistance <= 0) showmap();
 
