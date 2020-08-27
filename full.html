@@ -1,79 +1,85 @@
-
 <body style="background: #000;cursor: none">
-  <svg id="c" viewBox="0 0 640 640" style="top:0;left:0;height:100%;width:100%">
+  <svg id="c" viewBox="0 0 640 640" style="position:absolute;top:0;left:0;height:100%;width:100%">
     <style>
       .heavy {
         font: bold 20px sans-serif;
       }
     </style>
     <clipPath id="clip">
-      <path d="M0 0h640v640H0z" />
+      <path d="M0 0h640v640H0z"/>
     </clipPath>
     <filter id="g" filterUnits="userSpaceOnUse">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="z1" />
-      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="z2" />
-      <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="z3" />
+      <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="z1"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="z2"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="z3"/>
       <feMerge>
-        <feMergeNode in="z1" />
-        <feMergeNode in="z2" />
-        <feMergeNode in="z3" />
+        <feMergeNode in="z1"/>
+        <feMergeNode in="z2"/>
+        <feMergeNode in="z3"/>
       </feMerge>
     </filter>
     <filter id="f1" filterUnits="userSpaceOnUse">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="1" />
+      <feGaussianBlur in="SourceGraphic" stdDeviation="1"/>
+    </filter>
+    <filter id="f1.5" filterUnits="userSpaceOnUse">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="1.5"/>
     </filter>
     <filter id="f3" filterUnits="userSpaceOnUse">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="3" />
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3"/>
     </filter>
     <filter id="f10" filterUnits="userSpaceOnUse">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="10" />
+      <feGaussianBlur in="SourceGraphic" stdDeviation="10"/>
     </filter>
 
     <!-- <path d="M0 0h640v640H0z" fill="#000"/> -->
 
     <g clip-path="url(#clip)">
 
-      <g id="game">
+      <g id="title" filter="url(#f1)" style="visibility:hidden">
+        <path fill="#000" d="M0 0h640v640H0"/>
+        <path fill="#fff"
+          d="M46.784 95.618V100h-11.2V76.942h-5.593V72.56h5.593v-8.092h4.627v8.092h6.573v4.382h-6.573v18.676h6.573zM71.179 100h4.865V72.56H61.379V58.875h-4.62V100h4.62V76.942h9.8V100zm34.006-11.193H90.891v6.811h14.42V100H86.019V72.56h19.166v16.247zM90.891 77.061v7.245h9.856v-7.245h-9.856zm41.433-18.186h-4.627V100h4.627V58.875zm29.078 29.932h-14.294v6.811h14.42V100h-19.292V72.56h19.166v16.247zm-14.294-11.746v7.245h9.856v-7.245h-9.856zM171.622 100h14.301v6.874h-14.42v4.319h19.285V72.56h-19.166V100zm14.301-22.939v18.438h-9.8V77.061h9.8zm34.006 11.746h-14.294v6.811h14.42V100h-19.292V72.56h19.166v16.247zm-14.294-11.746v7.245h9.856v-7.245h-9.856zM244.45 100h4.865V72.56H230.03V100h4.627V76.942h9.793V100zm14.847-27.44h14.721V58.875h4.564V100h-19.285V72.56zm4.865 22.876l9.856.063V76.942h-9.856v18.494zM320.253 100h-19.285V72.56h19.285V100zm-4.557-4.382V77.061l-9.856.063v18.494h9.856zm14.539-18.676v-4.319h5.964V60.758h13.321v4.319h-8.701v7.546h8.701v4.319h-8.701V100h-4.62V76.942h-5.964zm56.091-4.382h4.872v38.633h-19.292v-4.319h14.42V100h-14.294V72.56h4.501v22.939h9.793V72.56zm34.013 16.247h-14.301v6.811h14.42V100h-19.285V72.56h19.166v16.247zm-14.301-11.746v7.245h9.856v-7.245h-9.856zm41.188 18.557V100h-11.193V76.942h-5.593V72.56h5.593v-8.092h4.627v8.092h6.566v4.382h-6.566v18.676h6.566zm14.602-23.058l-4.62.063V100h4.62V72.56zm0-13.685h-4.62v8.092h4.62v-8.092zm6.51 28.651h16.793v-4.319h-16.793v4.319zm28.959 7.91h7.728V82.115l-7.728 13.321zm12.6 4.564v6.209h-4.872V100l-13.685-.063v-4.746l13.685-22.631h4.872v22.876h3.71V100h-3.71zm33.152 0h-19.348V72.56h19.348V100zm-4.62-4.382V77.061l-9.856.063v18.494h9.856zm21.168-.182h7.728V82.115l-7.728 13.321zm12.6 4.564v6.209h-4.872V100l-13.685-.063v-4.746l13.685-22.631h4.872v22.876h3.71V100h-3.71zM374.716 139.428h1.65v-2.136h-1.65v2.136zm3.738 3.174h-2.088v-1.344h-1.62v1.344h-2.088v-1.344h-1.602v-1.83h1.602v-2.136h-1.602v-1.806h1.572v-1.884h2.088v1.884h1.626v-1.884h2.088v1.884h1.344v1.806h-1.344v2.136h1.344v1.83h-1.32v1.344zm4.434-6.6v-3.432h1.962v3.432h-1.962zm1.962 17.97h-4.05v-1.962h2.088v-13.614h1.962v15.576zm10.314-5.904h-4.152v-.984h-1.962V150l8.124-.024v-5.958l-6.06-1.416v-2.298h4.176v2.298h1.938v-4.23h-8.178v6.084l6.114 1.416v2.196zm13.356-9.696V150h-1.938v-9.774h-4.458v-1.83l6.396-.024zm8.634 6.576h3.996v3.12h-4.152v-1.494h-1.956V150h8.196v-6.6h-2.988l2.934-2.988v-2.016l-8.142-.024v1.932h5.076l-2.964 3.096v1.548zM433.78 150h3.048l-5.16-6.006 4.902-5.598h-2.814l-3.942 4.926V132.57h-1.962V150h1.962v-5.106h.384L433.78 150zm15.24-1.932h5.076V150l-8.142-.024v-2.01l6.084-5.082v-2.58h-4.176v2.298H445.9v-4.23h8.196v5.826l-5.076 3.87zM467.296 150H459.1v-11.628h8.196V150zm-1.956-1.854v-7.866l-4.176.024v7.842h4.176zm10.08-.078h5.076V150l-8.142-.024v-2.01l6.084-5.082v-2.58h-4.176v2.298H472.3v-4.23h8.196v5.826l-5.076 3.87zM493.696 150H485.5v-11.628h8.196V150zm-1.956-1.854v-7.866l-4.176.024v7.842h4.176zM58.332 543.284h12.12v-5.832H58.224v-3.708h16.344V557H58.332v-13.716zm12.12 9.9v-6.132h-8.304v6.132h8.304zM93.648 557h12.12v5.832H93.552v3.66h16.344v-32.748H93.648V557zm12.12-19.44v15.624h-8.304V537.56h8.304zm12.684 5.724h12.12v-5.832h-12.216v-3.708H134.7V557h-16.248v-13.716zm12.12 9.9v-6.132h-8.304v6.132h8.304zm28.92-15.732V557h-4.224v-19.548h-8.196V557h-3.924v-23.256h28.512V557h-4.116v-19.548h-8.052zm36.816 10.056H184.2v5.784h12.216V557h-16.344v-23.256h16.236v13.764zM184.2 537.56v6.132h8.352v-6.132H184.2zm35.112-15.42v11.604h12.42V557h-16.344v-34.86h3.924zm0 15.312v15.732l8.304-.048v-15.684h-8.304zm33.096-3.708h4.128v32.748h-16.344v-3.66h12.216V557H240.3v-23.256h3.816v19.44h8.292v-19.44zm32.904 8.46v-4.644l-5.676.048V557h-4.128v-23.256h13.716v8.46h-3.912zm15.204-8.46l-3.912.048V557h3.912v-23.256zm0-11.604h-3.912v6.864h3.912v-6.864zm20.892 20.064v-4.596h-8.352v15.684h11.796V557h-15.924v-23.256h16.344v8.46h-3.864zM345.948 557h4.128v-23.256h-12.432V522.14h-3.912V557h3.912v-19.548h8.304V557zm12.684-13.716h12.12v-5.832h-12.228v-3.708h16.344V557h-16.236v-13.716zm12.12 9.9v-6.132h-8.304v6.132h8.304zm22.38-10.98v-4.644l-5.676.048V557h-4.128v-23.256h13.716v8.46h-3.912zm11.292-8.46h12.468V522.14h3.876V557h-16.344v-23.256zm4.116 19.392l8.352.048v-15.732h-8.352v15.684zm47.544-15.684V557h-4.224v-19.548h-8.208V557h-3.912v-23.256h28.512V557h-4.128v-19.548h-8.04zm32.796-3.708h4.128V557h-16.356v-23.256h3.924v19.548h8.304v-19.548zM513.684 557h4.116v-23.256h-16.344V557h3.924v-19.548h8.304V557zm24.792 0h4.128v-23.256H526.26V557h3.924v-19.548h8.292V557z"/>
+      </g>
+      <g id="game" style="visibility:hidden">
         <!--<g filter="url(#f3)" id="l0">
         &nbsp;
       </g>-->
         <g filter="url(#g)" id="l1">
-          <g id="l10">&nbsp;</g> <!-- landscape -->
-          <g id="l11">&nbsp;</g> <!-- missiles and targets -->
+          <g id="l10">.</g> <!-- landscape -->
+          <g id="l11">.</g> <!-- missiles and targets -->
           <path d="M0 0 H640 V640 H-640 Z" fill="#000" fill-opacity="0.1"/>
-          <path id="vsync" d="M0 0 H640 V100 H-640 Z" fill="#000" fill-opacity="0.2"/>
-          <g id="l12">&nbsp;</g> <!-- enemies -->
-          <path id="ship" d="M0 0" stroke-width="0.2" stroke="#fff" fill-opacity="0" />
-          
+
+          <g id="l12">.</g> <!-- enemies -->
+          <path id="ship" d="M0 0" stroke-width="0.2" stroke="#fff" fill-opacity="0"/>
+
           <path id="cursor" d="M0 0 m-10 0 h -50 m60 0 h 50 m-55 5 v 50 m0 -60 v -50" stroke-width="0.7" stroke="#fff"
-            fill-opacity="0" />
-         
+            fill-opacity="0"/>
+
         </g>
       </g>
 
-      <g filter="url(#g)" id="map">
-        <path id="galaxy" filter="url(#f3)" fill="#fff2" transform="scale(4) translate(-5 0)"
-          d="m0 89c0-39.4 31.6-77 74-77 33.8 0 61 23.2 61 58 0 20.8-16.2 44-41 44-22 0-34-14-34-31-3.6 0-6 6-6 12 0 16.6 19.8 34 43 34 30.4 0 62-27.8 62-69 0-25.6-12.4-47-23-60 13 11 32 32.8 32 67 0 39.4-31.6 77-74 77-33.8 0-61-23.2-61-58 0-20.8 16.2-44 41-44 22 0 34 14 34 31 3.6 0 6-6 6-12 0-16.6-19.8-34-43-34-30.4 0-62 27.8-62 69 0 25.6 12.4 47 23 60-13-11-32-32.8-32-67z" />
+      <path id="vsync" filter="url(#f10)" d="M-10 0 H650 V200 H-640 Z" fill="#303" fill-opacity="0.2"
+        style="pointer-events:none"/>
+
+      <g filter="url(#f1.5)" id="map" style="visibility:hidden">
+        <path id="galaxy" filter="url(#f10)" fill="#fff2"
+          d="M-20 356c0-157.6 126.4-308 296-308 135.2 0 244 92.8 244 232 0 83.2-64.8 176-164 176-88 0-136-56-136-124-14.4 0-24 24-24 48 0 66.4 79.2 136 172 136 121.6 0 248-111.2 248-276 0-102.4-49.6-188-92-240 52 44 128 131.2 128 268 0 157.6-126.4 308-296 308-135.2 0-244-92.8-244-232 0-83.2 64.8-176 164-176 88 0 136 56 136 124 14.4 0 24-24 24-48 0-66.4-79.2-136-172-136-121.6 0-248 111.2-248 276 0 102.4 49.6 188 92 240C56 580-20 492.8-20 356z"/>
       </g>
       <g>
         <text filter="url(#f1)" id="bottomtext" x=10 y=630 fill="#ff0" class="heavy"> </text>
       </g>
-      <g style="visibility:hidden">
-        <path id="star" d="M-2 -2h2v2h-2z" />
-        <path id="box" d="M-10 -10h20v20h-20z" fill-opacity="0" />
-        <path id="ground" d="M0 0" stroke-width="0.6" stroke="#fff" fill-opacity="0" />
-      </g>
     </g>
-
+    <g style="visibility:hidden">
+      <path id="star" d="M-2 -2h2v2h-2z"/>
+      <path id="box" d="M-10 -10h20v20h-20z" fill-opacity="0"/>
+      <path id="ground" d="M0 0" stroke-width="0.6" stroke="#fff" fill-opacity="0"/>
+    </g>
   </svg>
 
   <script>
-
-    // adapted from https://gist.github.com/blixt/f17b47c62508be59987b
-    //Random = function (t) { this._seed = t % 2147483647, this._seed <= 0 && (this._seed += 2147483646) }; Random.prototype.next = function () { return this._seed = 16807 * this._seed % 2147483647 }, Random.prototype.random = function () { return (this.next() - 1) / 2147483646 };
-
     // adapted from https://gist.github.com/banksean/304522
-    SN = function (t) { null == t && (t = Math), this.grad3 = [[1, 1, 0], [-1, 1, 0], [1, -1, 0], [-1, -1, 0], [1, 0, 1], [-1, 0, 1], [1, 0, -1], [-1, 0, -1], [0, 1, 1], [0, -1, 1], [0, 1, -1], [0, -1, -1]], this.p = []; for (var r = 0; r < 256; r++)this.p[r] = Math.floor(256 * t.random()); this.perm = []; for (r = 0; r < 512; r++)this.perm[r] = this.p[255 & r] }; SN.prototype.dot = function (t, r, i) { return t[0] * r + t[1] * i }, SN.prototype.n = function (t, r) { var i, h, o = (t + r) * (.5 * (Math.sqrt(3) - 1)), s = Math.floor(t + o), e = Math.floor(r + o), p = (3 - Math.sqrt(3)) / 6, a = (s + e) * p, m = t - (s - a), n = r - (e - a); m > n ? (i = 1, h = 0) : (i = 0, h = 1); var d = m - i + p, f = n - h + p, l = m - 1 + 2 * p, u = n - 1 + 2 * p, M = 255 & s, g = 255 & e, v = this.perm[M + this.perm[g]] % 12, c = this.perm[M + i + this.perm[g + h]] % 12, x = this.perm[M + 1 + this.perm[g + 1]] % 12, N = .5 - m * m - n * n, S = .5 - d * d - f * f, q = .5 - l * l - u * u; return 70 * ((N < 0 ? 0 : (N *= N) * N * this.dot(this.grad3[v], m, n)) + (S < 0 ? 0 : (S *= S) * S * this.dot(this.grad3[c], d, f)) + (q < 0 ? 0 : (q *= q) * q * this.dot(this.grad3[x], l, u))) };
+    SN = function (t) { null == t && (t = Math), this.g3 = [[1, 1, 0], [-1, 1, 0], [1, -1, 0], [-1, -1, 0], [1, 0, 1], [-1, 0, 1], [1, 0, -1], [-1, 0, -1], [0, 1, 1], [0, -1, 1], [0, 1, -1], [0, -1, -1]], this.p = []; for (var r = 0; r < 256; r++)this.p[r] = Math.floor(256 * t.random()); this.m = []; for (r = 0; r < 512; r++)this.m[r] = this.p[255 & r] }; SN.prototype.n = function (t, r) { var i, h, o = (t + r) * (.5 * (Math.sqrt(3) - 1)), s = Math.floor(t + o), e = Math.floor(r + o), p = (3 - Math.sqrt(3)) / 6, a = (s + e) * p, m = t - (s - a), n = r - (e - a); m > n ? (i = 1, h = 0) : (i = 0, h = 1); var d = m - i + p, f = n - h + p, l = m - 1 + 2 * p, u = n - 1 + 2 * p, M = 255 & s, g = 255 & e, v = this.m[M + this.m[g]] % 12, c = this.m[M + i + this.m[g + h]] % 12, x = this.m[M + 1 + this.m[g + 1]] % 12, N = .5 - m * m - n * n, S = .5 - d * d - f * f, q = .5 - l * l - u * u; return 70 * ((N < 0 ? 0 : (N *= N) * N * dot(this.g3[v], m, n)) + (S < 0 ? 0 : (S *= S) * S * dot(this.g3[c], d, f)) + (q < 0 ? 0 : (q *= q) * q * dot(this.g3[x], l, u))) };
+    dot = (t, r, i) => t[0] * r + t[1] * i;
     sn = new SN();
 
     clamp = (i, n, x) => i < n ? n : i > x ? x : i;
@@ -81,14 +87,17 @@
     u = o => o.setAttribute("transform", "translate(" + o.d.x + " " + o.d.y + ") rotate(" + o.d.r + ") scale(" + o.d.z + ")");
     show = o => o.removeAttribute("style");
     hide = o => o.setAttribute("style", "visibility:hidden");
-    showmap = _ => { mapshown = true; hide(game); show(map) };
-    showgame = _ => { mapshown = false; show(game); hide(map); /*bottomtext.textContent = "" /*"Entering Warp"*/ };
+    text = o => bottomtext.textContent = o;
+    showtitle = _ => { gameloop = false; hide(game); hide(map); show(title); text() };
+    showmap = _ => { gameloop = false; hide(game); show(map); hide(title); text() };
+    showgame = _ => { gameloop = true; show(game); hide(map); hide(title); text() };
 
     cols = ["#f00", "#f70", "#ff0", "#7f0", "#0f0", "#0f7", "#0ff", "#07f", "#00f", "#70f", "#f0f", "#f07"];
+    factionCol = ["#000", "#f0f", "#ff0", "#05f"];
 
     targets = []; shipcell = null;
 
-    objects = [];
+    objects = []; fxobjects = [];
 
     mousedown = false;
 
@@ -97,10 +106,54 @@
 
     fuel = 100;
     warpdistance = 0;
-    //bottomtext.textContent = "Galaxy Map Active";
 
     sqr = x => x * x;
     calcfuel = d => sqr(Math.abs(d.x - shipx)) + sqr(Math.abs(d.y - shipy));
+
+    title.onclick = _ => showgame();
+
+    factionmap = [];
+
+    for (y = 0; y < 32; ++y) {
+      factionmap[y] = [];
+      for (x = 0; x < 32; ++x) {
+        factionmap[y][x] = 0
+      }
+    };
+
+    x = 5 + Math.floor(Math.random() * 22);
+    y = 5 + Math.floor(Math.random() * 22);
+
+    for (i = 1; i < 4; ++i) {
+      factionSize = 50 + Math.floor(Math.random() * 250);
+      while (factionmap[y][x] != 0) {
+        x = 10 + Math.floor(Math.random() * 22);
+        y = 10 + Math.floor(Math.random() * 22)
+      };
+      factionmap[y][x] = i;
+
+      seeds = [];
+
+      seeds.push([x,y]);
+
+      j = 0;
+      fail = 0;
+      while (j < factionSize && fail < 500) {
+
+        v = seeds[Math.floor(Math.random() * seeds.length)];
+
+        x = clamp( v[0] - 5 + Math.floor(Math.random() * 10), 0, 31);
+        y = clamp( v[1] - 5 + Math.floor(Math.random() * 10), 0, 31);
+
+        if (factionmap[y][x] == 0) {
+          factionmap[y][x] = i;
+          seeds.push([x,y]);
+          ++j
+        } else {
+          fail++
+        }
+      }
+    };
 
     if (map != undefined) {
       // build map
@@ -116,11 +169,16 @@
             o.setAttribute("stroke", "#fff2")
           };
 
+          if (factionmap[y][x] != 0) {
+            o.setAttribute("fill", factionCol[factionmap[y][x]]);
+            o.setAttribute("fill-opacity", "0.25")
+          };
+
           o.removeAttribute("id");
           o.setAttribute("transform", "translate(" + ((x * 20) + 10) + " " + ((y * 20) + 10) + ")");
           o.onmouseenter = _ => {
             fuelneed = calcfuel(_.target.d);
-            bottomtext.textContent = "Warp requires " + fuelneed + "mgb.  Fuel available: " + fuel + "mgb";
+            text("Warp requires " + fuelneed + "mgb.  Fuel available: " + fuel + "mgb");
             if (fuelneed <= fuel) {
               _.target.setAttribute("stroke", "#fff")
             } else {
@@ -347,7 +405,7 @@
     };
 
     missiletime = 0;
-    mapshown = false;
+    gameloop = false;
     warpdistance = 10000;
 
     focus = true;
@@ -380,25 +438,27 @@
     objects.push(cursor);
     u(cursor);
 
-    vsync.d = {r:0, x:0, y:0, z:1};
-    vsync.d.u = (o,g) => {
+    vsync.d = { r: 0, x: 0, y: 0, z: 1 };
+    vsync.d.u = (o, g) => {
       o.d.y += 16;
-      if (o.d.y > 640) o.d.y = -100;
+      if (o.d.y > 640) o.d.y = -200;
       u(o)
     };
-    objects.push(vsync);
+    fxobjects.push(vsync);
 
+    showtitle();
     //showmap();
-    showgame();
+    //showgame();
 
     c.onpointerdown = _ => {
       focus = true;
-      if (!mapshown) {
+      if (gameloop) {
         mousedown = true
       }
+
     };
     c.onpointerup = _ => {
-      if (!mapshown) {
+      if (gameloop) {
         mousedown = false;
         missiletime = 0;
         targetc = 0
@@ -426,7 +486,13 @@
 
     // Game loop
     setInterval(_ => {
-      if (!focus || mapshown) return;
+      if (!focus) return;
+
+      fxobjects.forEach(o => {
+        if (o.d.u) o.d.u(o, g)
+      });
+
+      if (!gameloop) return;
 
       //if (warpdistance <= 0) showmap();
 
