@@ -93,7 +93,36 @@
     showgame = _ => { gameloop = true; show(game); hide(map); hide(title); text() };
 
     cols = ["#f00", "#f70", "#ff0", "#7f0", "#0f0", "#0f7", "#0ff", "#07f", "#00f", "#70f", "#f0f", "#f07"];
-    factionCol = ["#000", "#f0f", "#ff0", "#05f"];
+    factionCol = ["#f0f", "#ff0", "#05f"];
+    factions = [
+      {name:"Independent Trade Federation", sci:3, trade:6, war:1},
+      {name:"Greater Science Union",        sci:5, trade:4, war:1},
+      {name:"Glorious Empire",              sci:1, trade:3, war:6}
+    ];
+
+    items = [
+      {name:"Salvage",               sci:2, trade:2, war:1},
+      {name:"Luxury goods",          sci:4, trade:8, war:5},
+      {name:"Advamced technology",   sci:7, trade:9, war:8},
+      {name:"Entertainment devices", sci:2, trade:6, war:2},
+      {name:"Mysterious boxes",      sci:6, trade:3, war:1},
+      {name:"Small furry creatures", sci:5, trade:7, war:1},
+      {name:"Lab grown meat",        sci:3, trade:2, war:4},
+      {name:"Exotic weapons",        sci:4, trade:6, war:9},
+      {name:"Service robots",        sci:5, trade:4, war:2},
+      {name:"", sci:0, trade:0, war:0},
+      {name:"", sci:0, trade:0, war:0},
+      {name:"", sci:0, trade:0, war:0},
+      {name:"", sci:0, trade:0, war:0},
+      {name:"", sci:0, trade:0, war:0},
+      {name:"", sci:0, trade:0, war:0},
+      {name:"", sci:0, trade:0, war:0},
+      {name:"", sci:0, trade:0, war:0},
+      {name:"", sci:0, trade:0, war:0},
+      {name:"", sci:0, trade:0, war:0},
+      {name:"", sci:0, trade:0, war:0},
+      {name:"", sci:0, trade:0, war:0}
+    ];
 
     targets = []; shipcell = null;
 
@@ -170,7 +199,7 @@
           };
 
           if (factionmap[y][x] != 0) {
-            o.setAttribute("fill", factionCol[factionmap[y][x]]);
+            o.setAttribute("fill", factionCol[factionmap[y][x]-1]);
             o.setAttribute("fill-opacity", "0.25")
           };
 
@@ -446,8 +475,8 @@
     };
     fxobjects.push(vsync);
 
-    showtitle();
-    //showmap();
+    //showtitle();
+    showmap();
     //showgame();
 
     c.onpointerdown = _ => {
