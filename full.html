@@ -108,6 +108,7 @@
     <g style="visibility:hidden">
       <path id="star" d="M-2 -2h2v2h-2z"/>
       <path id="box" d="M-10 -10h20v20h-20z" fill-opacity="0"/>
+      <path id="enemybox" d="M0 0" />
       <path id="mapcell" d="M0 0h15v15h-15z" fill-opacity="0"/>
       <path id="ground" d="M0 0" stroke-width="0.6" stroke="#fff" fill-opacity="0"/>
     </g>
@@ -119,9 +120,8 @@
     dot = (t, r, i) => t[0] * r + t[1] * i;
     sn = new SN();
 
-    critter = _ => {
-      for(i=30;!t&&i--;Math.random()>(X**2+(Y-4)**2)**.5/5&&f(7)+f(-7))X=i&3,Y=i>>2&7,f=m=>x.fillRect(60*(i>>5&7)+20-X*m,90*(i>>8)+00+Y*7,7,7)
-    };
+    // adapted from https://www.dwitter.net/d/3078
+    z = _ => {p="";f=m=>p+=`M${((i>>5&1)-X*m/7)} ${(j>>8)-4+Y}h1v1h-1v-1`;for(j=30;j--;Math.random()>(X**2+(Y-4)**2)**.5/5&&f(7)+f(-7))X=j&3,Y=j>>2&7;return p};
 
     clamp = (i, n, x) => i < n ? n : i > x ? x : i;
 
@@ -172,7 +172,7 @@
           economy = "arms"
         } else if (war > trade && war > sci) {
           economy = "warfare"
-        } else if (science == war && war > trade) {
+        } else if (sci == war && war > trade) {
           economy = "espionage"
         };
 
@@ -299,7 +299,7 @@
     updatemap = (x,y) => {
       if (factionmap[y][x].scanned) {
         factionmap[y][x].mapcell.setAttribute("fill", factionCol[factionmap[y][x].faction]);
-        factionmap[y][x].mapcell.setAttribute("fill-opacity", factionmap[y][x].visited ? "0.6" : "0.25");    
+        factionmap[y][x].mapcell.setAttribute("fill-opacity", factionmap[y][x].visited ? "0.6" : "0.25")
       }
     };
 
@@ -493,10 +493,13 @@
       // enemy box things
       wave1();
       s = 0.1;
-      for (i = 0; i < 10; ++i) {
-        o = box.cloneNode();
-        o.setAttribute("stroke", cols[i % cols.length]);
+
+      for (i = 0; i < 10; ++i) { 
+        o = enemybox.cloneNode();
         o.removeAttribute("id");
+        
+        o.setAttribute("d", z());
+        o.setAttribute("fill",cols[i % cols.length]);
 
         o.onpointerenter = _ => {
           if (mousedown) {
@@ -517,10 +520,10 @@
         o.d = { r: 0, x: Math.random() * 640, ry: Math.random() * 640, s: s += 0.0005, z: 0.1 };
 
         o.d.u = (o, g) => {
-          o.d.r += o.d.s * 1000;
+          //o.d.r += o.d.s * 1000;
           o.d.x = (o.d.x * (1 - o.d.s)) + (g.x * o.d.s);
           o.d.ry = (o.d.ry * (1 - o.d.s)) + (g.y * o.d.s);
-          o.d.z = (o.d.z * 0.95) + (2.0 + Math.sin(n - (o.d.s * 100))) * 0.05;
+          o.d.z = (o.d.z * 0.95) + (5.0 + Math.sin(n - (o.d.s * 500))) * 0.05;
 
           if (!o.d.dead) {
             o.d.y = 250 - o.d.ry + gh * (o.d.z * 2);
