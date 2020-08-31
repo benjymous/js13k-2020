@@ -121,7 +121,32 @@
     sn = new SN();
 
     // adapted from https://www.dwitter.net/d/3078
-    z = _ => {p="";f=m=>p+=`M${((i>>5&1)-X*m/7)} ${(j>>8)-4+Y}h1v1h-1v-1`;for(j=30;j--;Math.random()>(X**2+(Y-4)**2)**.5/5&&f(7)+f(-7))X=j&3,Y=j>>2&7;return p};
+    z = _ => {p="";f=m=>p+=`M${((i>>5&1)-X*m/7)} ${(j>>8)-4+Y}h1v1h-1v-1  `;for(j=30;j--;Math.random()>(X**2+(Y-4)**2)**.5/5&&f(7)+f(-7))X=j&3,Y=j>>2&7;return p};
+
+    // decompose a critter into individual 'pixels'
+    d = o => {
+      p = o.getAttribute("d");
+      s = p.split("  ");
+      for (i=0; i<s.length; ++i) {
+        newo=o.cloneNode();
+        newo.removeAttribute("id");
+        newo.setAttribute("d", s[i]);
+        newo.d = {x: o.d.x, ry: o.d.ry, r: o.d.r, s: o.d.s, z: o.d.z, dx: o.d.dx + Math.random()*6-3, dy: o.d.dy + Math.random()*6-3, a: 1};
+        newo.d.u = (o, g) => {
+          o.d.x += o.d.dx;
+          o.d.ry += o.d.dy;
+          o.d.y = 250 - o.d.ry + gh * (o.d.z * 2);
+          o.d.a-=0.01;
+          if (o.d.a<=0)  {
+            o.d.dead = true
+          };
+          o.setAttribute("fill-opacity", o.d.a);
+          u(o)
+        };
+        l12.appendChild(newo);
+        objects.push(newo)
+      }
+    };
 
     clamp = (i, n, x) => i < n ? n : i > x ? x : i;
 
@@ -443,29 +468,26 @@
       o.setAttribute("stroke", "#fff");
       o.setAttribute("stroke-width", "2");
       o.removeAttribute("id");
-      o.d = { r: 0, x: -200, y: -200, z: 1, t: null };
+      o.d = { r: 0, x: -200, y: -200, z: 1, t: null, f:0 };
       o.d.u = (o, g) => {
         if (o.d.t && !o.d.t.dead) {
           o.d.x = (o.d.x * 0.85) + (o.d.t.x * 0.15);
           o.d.y = (o.d.y * 0.85) + (o.d.t.y * 0.15);
           o.d.z = o.d.z * 0.95;
+          o.d.f++;
 
           if (o.d.z < 0.001) {
-            o.remove();
-            o.dead = true
+            o.d.dead = true
           };
 
-          if ((Math.abs(o.d.x - o.d.t.x) + Math.abs(o.d.y - o.d.t.y)) < 50) {
+          if (o.d.f > 20 && (Math.abs(o.d.x - o.d.t.x) + Math.abs(o.d.y - o.d.t.y)) < 50) {
             explosion();
-            o.dead = true;
+            o.d.dead = true;
             o.d.t.dead = true;
-
-            o.d.to.remove();
+            d(o.d.to);
 
             enemies--;
-            missiles--;
-
-            o.remove()
+            missiles--
           };
 
           u(o)
@@ -494,12 +516,14 @@
       wave1();
       s = 0.1;
 
-      for (i = 0; i < 10; ++i) { 
+      r = Math.floor(Math.random()*10);
+
+      for (i = 0; i < 8; ++i) { 
         o = enemybox.cloneNode();
         o.removeAttribute("id");
         
         o.setAttribute("d", z());
-        o.setAttribute("fill",cols[i % cols.length]);
+        o.setAttribute("fill",cols[(i+r) % cols.length]);
 
         o.onpointerenter = _ => {
           if (mousedown) {
@@ -517,12 +541,18 @@
           }
         };
 
-        o.d = { r: 0, x: Math.random() * 640, ry: Math.random() * 640, s: s += 0.0005, z: 0.1 };
+        o.d = { r: 0, x: Math.random() * 640, ry: Math.random() * 640, s: s += 0.0005, z: 0.1, dx:0, dy:0 };
 
         o.d.u = (o, g) => {
-          //o.d.r += o.d.s * 1000;
+          o.d.dx = o.d.x;
+          o.d.dy = o.d.ry;
+          
           o.d.x = (o.d.x * (1 - o.d.s)) + (g.x * o.d.s);
           o.d.ry = (o.d.ry * (1 - o.d.s)) + (g.y * o.d.s);
+
+          o.d.dx = o.d.x - o.d.dx;
+          o.d.dy = o.d.ry - o.d.dy;
+
           o.d.z = (o.d.z * 0.95) + (5.0 + Math.sin(n - (o.d.s * 500))) * 0.05;
 
           if (!o.d.dead) {
@@ -676,8 +706,12 @@
       objects = [];
 
       objects2.forEach(o => {
-        if (o.d.u) o.d.u(o, g);
-        if (!o.d.dead) objects.push(o)
+        o.d.u(o, g);
+        if (o.d.dead) {
+          o.remove() 
+        } else {
+          objects.push(o)
+        }
       });
 
       //console.log(objects.length);
