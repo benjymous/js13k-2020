@@ -1,4 +1,14 @@
 <body style="background: #000;cursor: none">
+
+  <!--
+  ///#define _decompose_ d
+  ///#define _update_ u
+  ///#define _show_ s
+  ///#define _hide_ h
+  ///#define _textwidget_ t
+  ///#define _critter_ z
+  -->
+
   <svg id="c" viewBox="0 0 640 640" style="position:absolute;top:0;left:0;height:100%;width:100%">
     <style>
       .heavy {
@@ -103,12 +113,12 @@
     <path id="vsync" filter="url(#f10)" d="M-10 0 H650 V200 H-640 Z" fill="#303" fill-opacity="0.2"
     style="pointer-events:none"/>
 
-    <path id="cursor" filter="url(#g)" d="M0 0 m-10 0 h -30 m40 0 h 30 m-35 5 v 30 m0 -40 v -30" stroke-width="0.7" stroke="#fff"
+    <path id="cursor" filter="url(#g)" d="M0-10 0 h -30 m40 0 h 30 m-35 5 v 30 m0 -40 v -30" stroke-width="0.7" stroke="#fff"
     fill-opacity="0" style="pointer-events:none"/>
     <g style="visibility:hidden">
       <path id="star" d="M-2 -2h2v2h-2z"/>
       <path id="box" d="M-10 -10h20v20h-20z" fill-opacity="0"/>
-      <path id="enemybox" d="M0 0" />
+      <path id="enemybox" d="M0 0"/>
       <path id="mapcell" d="M0 0h15v15h-15z" fill-opacity="0"/>
       <path id="ground" d="M0 0" stroke-width="0.6" stroke="#fff" fill-opacity="0"/>
     </g>
@@ -121,18 +131,17 @@
     sn = new SN();
 
     // adapted from https://www.dwitter.net/d/3078
-    z = _ => {p="";f=m=>p+=`M${((i>>5&1)-X*m/7)} ${(j>>8)-4+Y}h1v1h-1v-1  `;for(j=30;j--;Math.random()>(X**2+(Y-4)**2)**.5/5&&f(7)+f(-7))X=j&3,Y=j>>2&7;return p};
+    _critter_ = _ => {p="";f=m=>p+=`M${((i>>5&1)-X*m/7)} ${(j>>8)-4+Y}h1v1h-1v-1  `;for(j=30;j--;Math.random()>(X**2+(Y-4)**2)**.5/5&&f(7)+f(-7))X=j&3,Y=j>>2&7;return p};
 
     // decompose a critter into individual 'pixels'
-    d = o => {
-      p = o.getAttribute("d");
-      s = p.split("  ");
+    _decompose_ = o => {
+      s = o.getAttribute("d").split("  ");
       for (i=0; i<s.length; ++i) {
-        newo=o.cloneNode();
-        newo.removeAttribute("id");
-        newo.setAttribute("d", s[i]);
-        newo.d = {x: o.d.x, ry: o.d.ry, r: o.d.r, s: o.d.s, z: o.d.z, dx: o.d.dx + Math.random()*6-3, dy: o.d.dy + Math.random()*6-3, a: 1};
-        newo.d.u = (o, g) => {
+        p=o.cloneNode();
+        p.removeAttribute("id");
+        p.setAttribute("d", s[i]);
+        p.d = {x: o.d.x, ry: o.d.ry, r: o.d.r, s: o.d.s, z: o.d.z, dx: o.d.dx + Math.random()*6-3, dy: o.d.dy + Math.random()*6-3, a: 1};
+        p.d._update_ = (o, g) => {
           o.d.x += o.d.dx;
           o.d.ry += o.d.dy;
           o.d.y = 250 - o.d.ry + gh * (o.d.z * 2);
@@ -141,36 +150,36 @@
             o.d.dead = true
           };
           o.setAttribute("fill-opacity", o.d.a);
-          u(o)
+          _update_(o)
         };
-        l12.appendChild(newo);
-        objects.push(newo)
+        l12.appendChild(p);
+        objects.push(p)
       }
     };
 
-    clamp = (i, n, x) => i < n ? n : i > x ? x : i;
+    _clamp_ = (i, n, x) => i < n ? n : i > x ? x : i;
 
-    u = o => o.setAttribute("transform", "translate(" + o.d.x + " " + o.d.y + ") rotate(" + o.d.r + ") scale(" + o.d.z + ")");
-    show = o => o.removeAttribute("style");
-    hide = o => o.setAttribute("style", "visibility:hidden");
+    _update_ = o => o.setAttribute("transform", "translate(" + o.d.x + " " + o.d.y + ") rotate(" + o.d.r + ") scale(" + o.d.z + ")");
+    _show_ = o => o.removeAttribute("style");
+    _hide_ = o => o.setAttribute("style", "visibility:hidden");
     text = o => bottomtext.textContent = o;
-    showtitle = _ => { gameloop = false; hide(game); hide(orbit); hide(map); show(title); text() };
-    showmap = _ => { gameloop = false; hide(game); hide(orbit); show(map); hide(title); text() };
-    showgame = _ => { gameloop = true; show(game); hide(orbit); hide(map); hide(title); text() };
+    showtitle = _ => { gameloop = false; _hide_(game); _hide_(orbit); _hide_(map); _show_(title); text() };
+    showmap = _ => { gameloop = false; _hide_(game); _hide_(orbit); _show_(map); _hide_(title); text() };
+    showgame = _ => { gameloop = true; _show_(game); _hide_(orbit); _hide_(map); _hide_(title); text() };
     showorbit = _ => { 
-      gameloop = false; hide(game); show(orbit); hide(map); hide(title); text(); orbitcoords.textContent = `[${shipx},${shipy}]`;
+      gameloop = false; _hide_(game); _show_(orbit); _hide_(map); _hide_(title); text(); orbitcoords.textContent = `[${shipx},${shipy}]`;
       f = factionmap[shipy][shipx];
       f.visited = true;
       if (f.scanned) {
         infofaction.textContent = factions[f.faction].name;
 
-        console.log(f);
+        //console.log(f);
 
         sci = Math.floor(f.sci * factions[f.faction].sci);
         trade = Math.floor(f.trade * factions[f.faction].trade);
         war = Math.floor(f.war * factions[f.faction].war);
 
-        console.log(sci,trade,war);
+        //console.log(sci,trade,war);
 
         economy = "???";
 
@@ -293,8 +302,8 @@
 
         v = seeds[Math.floor(Math.random() * seeds.length)];
 
-        x = clamp( v[0] - 5 + Math.floor(Math.random() * 10), 0, 31);
-        y = clamp( v[1] - 5 + Math.floor(Math.random() * 10), 0, 31);
+        x = _clamp_( v[0] - 5 + Math.floor(Math.random() * 10), 0, 31);
+        y = _clamp_( v[1] - 5 + Math.floor(Math.random() * 10), 0, 31);
 
         if (factionmap[y][x].faction == 0) {
           factionmap[y][x].faction = i;
@@ -306,20 +315,20 @@
       }
     };
 
-    textwidget = (el, t, f) => {
-      el.onmouseenter = _ => t.setAttribute("fill", "#990");
-      el.onmouseleave = _ => t.setAttribute("fill", "#fff");
-      el.onclick = _ => f()
+    _textwidget_ = (e, t, f) => {
+      e.onmouseenter = _ => t.setAttribute("fill", "#990");
+      e.onmouseleave = _ => t.setAttribute("fill", "#fff");
+      e.onclick = _ => f()
     };
 
-    textwidget(orbitmap, orbitmaptext, _ => showmap() );
-    textwidget(orbitscan, orbitscantext, _ => { 
+    _textwidget_(orbitmap, orbitmaptext, _ => showmap() );
+    _textwidget_(orbitscan, orbitscantext, _ => { 
       factionmap[shipy][shipx].scanned = true; 
       updatemap(shipx, shipy);
       showorbit() 
     });
-    textwidget(orbitenter, orbitentertext, _ => showgame() );
-    textwidget(mapexit, mapexittext, _ => showorbit() );
+    _textwidget_(orbitenter, orbitentertext, _ => showgame() );
+    _textwidget_(mapexit, mapexittext, _ => showorbit() );
 
     updatemap = (x,y) => {
       if (factionmap[y][x].scanned) {
@@ -329,8 +338,8 @@
     };
 
     lrs = (x,y,r) => {
-      for (y1=clamp(y-r,0,31); y1<clamp(y+r,0,31); ++y1) {
-        for (x1=clamp(x-r,0,31); x1<clamp(x+r,0,31); ++x1) {
+      for (y1=_clamp_(y-r,0,31); y1<_clamp_(y+r,0,31); ++y1) {
+        for (x1=_clamp_(x-r,0,31); x1<_clamp_(x+r,0,31); ++x1) {
           dist=Math.sqrt((x-x1)*(x-x1)+(y-y1)*(y-y1));
           if (dist <= r) { 
             factionmap[y1][x1].scanned=true; updatemap(x1,y1) 
@@ -402,7 +411,7 @@
     //   o.removeAttribute("id");
     //   o.d = { r: Math.random(), x: 300 + (Math.random() * 40), y: 300 + (Math.random() * 40), z: 0.1 };
 
-    //   o.d.u = (o,g)=> {
+    //   o.d._update_ = (o,g)=> {
     //     m = 1.1 + ((Math.abs(o.d.x - 320)) / 500);
     //     o.d.z += m / 10;
     //     o.d.r += 1;
@@ -413,7 +422,7 @@
     //       o.d.y = 305 + (Math.random() * 30);
     //       o.d.z = 0.5
     //     };
-    //     u(o)
+    //     _update_(o)
     //   };
 
     //   objects.push(o);
@@ -427,7 +436,7 @@
       o.setAttribute("stroke-width", "0.3");
       o.removeAttribute("id");
       o.d = { r: 90, x: -200, y: -200, z: 1, t: null };
-      o.d.u = (o, g) => {
+      o.d._update_ = (o, g) => {
         if (mousedown || missiletime > 0) {
           if (o.d.t) {
             o.d.x = o.d.t.x;
@@ -454,10 +463,10 @@
             }
           }
         };
-        u(o)
+        _update_(o)
       };
       targets.push(o);
-      u(o);
+      _update_(o);
       l11.appendChild(o)
     };
 
@@ -469,7 +478,7 @@
       o.setAttribute("stroke-width", "2");
       o.removeAttribute("id");
       o.d = { r: 0, x: -200, y: -200, z: 1, t: null, f:0 };
-      o.d.u = (o, g) => {
+      o.d._update_ = (o, g) => {
         if (o.d.t && !o.d.t.dead) {
           o.d.x = (o.d.x * 0.85) + (o.d.t.x * 0.15);
           o.d.y = (o.d.y * 0.85) + (o.d.t.y * 0.15);
@@ -484,17 +493,17 @@
             explosion();
             o.d.dead = true;
             o.d.t.dead = true;
-            d(o.d.to);
+            _decompose_(o.d.to);
 
             enemies--;
             missiles--
           };
 
-          u(o)
+          _update_(o)
         }
       };
 
-      u(o);
+      _update_(o);
       l11.appendChild(o);
 
       objects.push(o);
@@ -522,7 +531,7 @@
         o = enemybox.cloneNode();
         o.removeAttribute("id");
         
-        o.setAttribute("d", z());
+        o.setAttribute("d", _critter_());
         o.setAttribute("fill",cols[(i+r) % cols.length]);
 
         o.onpointerenter = _ => {
@@ -543,7 +552,7 @@
 
         o.d = { r: 0, x: Math.random() * 640, ry: Math.random() * 640, s: s += 0.0005, z: 0.1, dx:0, dy:0 };
 
-        o.d.u = (o, g) => {
+        o.d._update_ = (o, g) => {
           o.d.dx = o.d.x;
           o.d.dy = o.d.ry;
           
@@ -562,7 +571,7 @@
           } else {
             o.d.y = -100
           };
-          u(o)
+          _update_(o)
         };
 
         objects.push(o);
@@ -579,15 +588,15 @@
       o = ground.cloneNode();
       o.removeAttribute("id");
       o.d = { i: i + 2 };
-      o.d.u = (o, g) => {
+      o.d._update_ = (o, g) => {
         str = "";
         for (x = 0; x <= 64; ++x) {
           rx = ((32 - x) * ((slices + 1 - o.d.i) / 10)) / div;
 
-          h = g.sn.n(g.gx + rx, (o.d.i + g.gy) / div);
+          hz = g.sn.n(g.gx + rx, (o.d.i + g.gy) / div);
           sq = o.d.i * o.d.i;
           str += x == 0 ? "M" : "L";
-          str += `${x * 10} ${(100 - (gh * 3)) + ((gh / slices) * sq) + (h * sq / 2)}`
+          str += `${x * 10} ${(100 - (gh * 3)) + ((gh / slices) * sq) + (hz * sq / 2)}`
         };
         o.setAttribute("d", str);
         l10.appendChild(o)
@@ -605,7 +614,7 @@
     n = 0;
 
     ship.d = { r: 0, x: 320, y: 550, z: 10 };
-    ship.d.u = (o, g) => {
+    ship.d._update_ = (o, g) => {
       xp = 320 + (mx * 320);
       yp = 400 + (my * 100);
       o.d.x = (o.d.x * 0.8 + xp * 0.2);
@@ -615,25 +624,25 @@
       nosex = (320 - o.d.x) / 100;
       nosey = (o.d.y - 400) / 50;
       ship.setAttribute("d", `M${nosex} ${nosey} L-5 4 L0 8 L5 4 Z M-5 4 L0 1 L5 4`);
-      u(o)
+      _update_(o)
     };
     objects.push(ship);
-    u(ship);
+    _update_(ship);
 
     cursor.d = { r: 0, x: 320, y: 320, z: 1 };
-    cursor.d.u = (o, g) => {
+    cursor.d._update_ = (o, g) => {
       o.d.x = 320 + (mx * 320);
       o.d.y = 320 + (my * 320);
-      u(o)
+      _update_(o)
     };
     fxobjects.push(cursor);
-    u(cursor);
+    _update_(cursor);
 
     vsync.d = { r: 0, x: 0, y: 0, z: 1 };
-    vsync.d.u = (o, g) => {
+    vsync.d._update_ = (o, g) => {
       o.d.y += 16;
       if (o.d.y > 640) o.d.y = -200;
-      u(o)
+      _update_(o)
     };
     fxobjects.push(vsync);
 
@@ -667,8 +676,8 @@
 
     c.onmousemove = _ => {
       size = Math.min(rect.width, rect.height) / 2;
-      mx = clamp(((_.clientX - rect.left) - (rect.width / 2)) / size, -1, 1);
-      my = clamp(((_.clientY - rect.top) - (rect.height / 2)) / size, -1, 1)
+      mx = _clamp_(((_.clientX - rect.left) - (rect.width / 2)) / size, -1, 1);
+      my = _clamp_(((_.clientY - rect.top) - (rect.height / 2)) / size, -1, 1)
       //console.log(mx,my)
     };
 
@@ -681,7 +690,7 @@
       if (!focus) return;
 
       fxobjects.forEach(o => {
-        if (o.d.u) o.d.u(o, g)
+        o.d._update_(o, g)
       });
 
       if (!gameloop) return;
@@ -706,7 +715,7 @@
       objects = [];
 
       objects2.forEach(o => {
-        o.d.u(o, g);
+        o.d._update_(o, g);
         if (o.d.dead) {
           o.remove() 
         } else {
@@ -732,7 +741,7 @@
               o.d.z = 2.0 + Math.sin(n - (o.d.s * 100)) + (o.d.h ? 1 : 0);
               x = o.d.x;
               y = o.d.y;
-              u(o)
+              _update_(o)
             });
       
             stars.forEach(o => {
@@ -746,13 +755,13 @@
                 o.d.y = 305 + (Math.random() * 30);
                 o.d.z = 0.5
               };
-              u(o)
+              _update_(o)
             });
       
             targets.forEach(o => {
               o.d.x = -100;
               o.d.y = -100;
-              u(o)
+              _update_(o)
             });
       
             targetsa.forEach(o => {
@@ -760,7 +769,7 @@
               o.d.y = o.d.t.y;
               o.d.r = (0+o.d.r)/2;
               o.d.z = (3+o.d.z)/2;
-              u(o)
+              _update_(o)
             });
       
             ship.d.x = (Math.sin(n)*50)+320;
@@ -772,7 +781,7 @@
             g1.setAttribute("d", str)
       
       
-            u(ship)
+            _update_(ship)
             */
 
     }, 50);
