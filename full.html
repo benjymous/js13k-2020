@@ -6,7 +6,17 @@
   ///#define _show_ s
   ///#define _hide_ h
   ///#define _textwidget_ t
-  ///#define _critter_ z
+  ///#define _critter_ a
+
+  ///#define _lock_ fx1
+  ///#define _explosion_ fx2
+  ///#define _shoot_ fx3
+  ///#define _wave1_ fx4
+  ///#define zzfx fx
+
+  ///#define _sci_ x
+  ///#define _trade_ y
+  ///#define _war_ z
   -->
 
   <svg id="c" viewBox="0 0 640 640" style="position:absolute;top:0;left:0;height:100%;width:100%">
@@ -37,9 +47,6 @@
     <filter id="f1" filterUnits="userSpaceOnUse">
       <feGaussianBlur in="SourceGraphic" stdDeviation="1"/>
     </filter>
-    <filter id="f1.5" filterUnits="userSpaceOnUse">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="1.5"/>
-    </filter>
     <filter id="f3" filterUnits="userSpaceOnUse">
       <feGaussianBlur in="SourceGraphic" stdDeviation="3"/>
     </filter>
@@ -47,19 +54,17 @@
       <feGaussianBlur in="SourceGraphic" stdDeviation="10"/>
     </filter>
 
-    <!-- <path d="M0 0h640v640H0z" fill="#000"/> -->
-
     <g clip-path="url(#clip)">
 
-      <g id="title" filter="url(#f1)" style="visibility:hidden">
+      <g id="title" filter="url(#f1)">
         <path fill="#000" d="M0 0h640v640H0"/>
         <text x=15 y=100 fill="#fff" class="bigger">The Legend of Yeti-404</text>
         <text x=300 y=150 fill="#fff" class="big">#js13k 2020</text>
         <text x=15 y=550 fill="#fff" class="bigger">A game by Richard Munn</text>
       </g>
-      <g id="orbit" filter="url(#f1)" style="visibility:hidden">
+      <g id="orbit" filter="url(#f1)">
         <text x=20 y=40 fill="#fff" class="big">Currently in orbit at</text>
-        <text id="orbitcoords"  x=400 y=40 fill="#fff" class="big">[0:0]</text>
+        <text id="orbitcoords" x=400 y=40 fill="#fff" class="big">[0:0]</text>
         <g id="orbitmap" transform="translate(0 80)">
           <path d="M0 0 h640 v30 h-640 z" fill="#000"/>
           <text id="orbitmaptext" x=50 y=25 fill="#fff" class="big">&gt; Galaxy Map</text>
@@ -84,10 +89,7 @@
         <text id="infopoi" x=400 y=490 fill="#fff" class="big">Unknown</text>
         
       </g>
-      <g id="game" style="visibility:hidden">
-        <!--<g filter="url(#f3)" id="l0">
-        &nbsp;
-      </g>-->
+      <g id="game">
         <g filter="url(#g)" id="l1">
           <g id="l10">.</g> <!-- landscape -->
           <g id="l11">.</g> <!-- missiles and targets -->
@@ -98,36 +100,31 @@
         </g>
       </g>
 
-      <g filter="url(#f1)" id="map" style="visibility:hidden">
-        <path id="galaxy" filter="url(#f10)" fill="#fff2"
-          d="M-20 356c0-158 126-308 296-308 135 0 244 93 244 232 0 83-64 176-164 176-88 0-136-56-136-124-14 0-24 24-24 48 0 66 79 136 172 136 122 0 248-111 248-276 0-102-50-188-92-240 52 44 128 131 128 268 0 158-126 308-296 308-135 0-244-93-244-232 0-83 65-176 164-176 88 0 136 56 136 124 14 0 24-24 24-48 0-66-79-136-172-136-122 0-248 111-248 276 0 102 50 188 92 240C56 580-20 493-20 356z"/>
+      <g filter="url(#f1)" id="map">
+        <path id="galaxy" filter="url(#f10)" fill="#fff2" d="M-20 355c0-160 125-310 300-310 135 0 245 95 245 230 0 85-65 175-165 175-90 0-135-55-135-125-15 0-25 25-25 50 0 65 80 135 170 135 120 0 250-110 250-275 0-100-50-190-90-240 50 45 130 130 130 270 0 160-125 310-295 310-135 0-245-95-245-230 0-85 65-175 165-175 90 0 135 55 135 125 15 0 25-25 25-50 0-65-80-135-170-135-120 0-250 110-250 275 0 100 50 190 90 240C55 580-20 495-20 355z"/>
         <g id="mapexit" transform="translate(0 0)">
           <path d="M0 0 h640 v30 h-640 z" fill="#000"/>
           <text id="mapexittext"  x=10 y=25 fill="#fff" class="big">&lt; Cancel</text>
         </g>
       </g>
-      <g>
-        <text filter="url(#f1)" id="bottomtext" x=10 y=630 fill="#ff0" class="heavy"> </text>
-      </g>
-    </g>
-    <path id="vsync" filter="url(#f10)" d="M-10 0 H650 V200 H-640 Z" fill="#303" fill-opacity="0.2"
-    style="pointer-events:none"/>
+      <text filter="url(#f1)" id="bottomtext" x=10 y=630 fill="#ff0" class="heavy"/>
+   
+      <path id="vsync" filter="url(#f10)" d="M-10 0 H650 V200 H-640 Z" fill="#303" fill-opacity="0.2" style="pointer-events:none"/>
 
-    <path id="cursor" filter="url(#g)" d="M0-10 0 h -30 m40 0 h 30 m-35 5 v 30 m0 -40 v -30" stroke-width="0.7" stroke="#fff"
-    fill-opacity="0" style="pointer-events:none"/>
-    <g style="visibility:hidden">
-      <path id="star" d="M-2 -2h2v2h-2z"/>
-      <path id="box" d="M-10 -10h20v20h-20z" fill-opacity="0"/>
-      <path id="enemybox" d="M0 0"/>
-      <path id="mapcell" d="M0 0h15v15h-15z" fill-opacity="0"/>
-      <path id="ground" d="M0 0" stroke-width="0.6" stroke="#fff" fill-opacity="0"/>
+      <path id="cursor" filter="url(#g)" d="M-10 0 h-30 m40 0 h30 m-35 5 v30 m0 -40 v-30" stroke-width="0.7" stroke="#fff" fill-opacity="0" style="pointer-events:none"/>
+      <g style="visibility:hidden">
+        <path id="star" d="M-2 -2h2v2h-2z"/>
+        <path id="box" d="M-10 -10h20v20h-20z" fill-opacity="0"/>
+        <path id="enemybox" d="M0 0"/>
+        <path id="mapcell" d="M0 0h15v15h-15z" fill-opacity="0"/>
+        <path id="ground" d="M0 0" stroke-width="0.6" stroke="#fff" fill-opacity="0"/>
+      </g>
     </g>
   </svg>
 
   <script>
     // adapted from https://gist.github.com/banksean/304522
     SN = function (t) { null == t && (t = Math), this.g3 = [[1, 1, 0], [-1, 1, 0], [1, -1, 0], [-1, -1, 0], [1, 0, 1], [-1, 0, 1], [1, 0, -1], [-1, 0, -1], [0, 1, 1], [0, -1, 1], [0, 1, -1], [0, -1, -1]], this.p = []; for (var r = 0; r < 256; r++)this.p[r] = Math.floor(256 * t.random()); this.m = []; for (r = 0; r < 512; r++)this.m[r] = this.p[255 & r] }; SN.prototype.n = function (t, r) { var i, h, o = (t + r) * (.5 * (Math.sqrt(3) - 1)), s = Math.floor(t + o), e = Math.floor(r + o), p = (3 - Math.sqrt(3)) / 6, a = (s + e) * p, m = t - (s - a), n = r - (e - a); m > n ? (i = 1, h = 0) : (i = 0, h = 1); var d = m - i + p, f = n - h + p, l = m - 1 + 2 * p, u = n - 1 + 2 * p, M = 255 & s, g = 255 & e, v = this.m[M + this.m[g]] % 12, c = this.m[M + i + this.m[g + h]] % 12, x = this.m[M + 1 + this.m[g + 1]] % 12, N = .5 - m * m - n * n, S = .5 - d * d - f * f, q = .5 - l * l - u * u; return 70 * ((N < 0 ? 0 : (N *= N) * N * dot(this.g3[v], m, n)) + (S < 0 ? 0 : (S *= S) * S * dot(this.g3[c], d, f)) + (q < 0 ? 0 : (q *= q) * q * dot(this.g3[x], l, u))) };
-    dot = (t, r, i) => t[0] * r + t[1] * i;
     sn = new SN();
 
     // adapted from https://www.dwitter.net/d/3078
@@ -158,6 +155,8 @@
     };
 
     _clamp_ = (i, n, x) => i < n ? n : i > x ? x : i;
+    dot = (t, r, i) => t[0] * r + t[1] * i;
+    sqr = x => x * x;
 
     _update_ = o => o.setAttribute("transform", "translate(" + o.d.x + " " + o.d.y + ") rotate(" + o.d.r + ") scale(" + o.d.z + ")");
     _show_ = o => o.removeAttribute("style");
@@ -167,91 +166,90 @@
     showmap = _ => { gameloop = false; _hide_(game); _hide_(orbit); _show_(map); _hide_(title); text() };
     showgame = _ => { gameloop = true; _show_(game); _hide_(orbit); _hide_(map); _hide_(title); text() };
     showorbit = _ => { 
-      gameloop = false; _hide_(game); _show_(orbit); _hide_(map); _hide_(title); text(); orbitcoords.textContent = `[${shipx},${shipy}]`;
-      f = factionmap[shipy][shipx];
+      gameloop = false; _hide_(game); _show_(orbit); _hide_(map); _hide_(title); text(); orbitcoords.textContent = `[${ship.d.mx},${ship.d.my}]`;
+      f = factionmap[ship.d.my][ship.d.mx];
       f.visited = true;
       if (f.scanned) {
         infofaction.textContent = factions[f.faction].name;
 
         //console.log(f);
 
-        sci = Math.floor(f.sci * factions[f.faction].sci);
-        trade = Math.floor(f.trade * factions[f.faction].trade);
-        war = Math.floor(f.war * factions[f.faction].war);
+        _sci_ = Math.floor(f._sci_ * factions[f.faction]._sci_);
+        _trade_ = Math.floor(f._trade_ * factions[f.faction]._trade_);
+        _war_ = Math.floor(f._war_ * factions[f.faction]._war_);
 
-        //console.log(sci,trade,war);
+        //console.log(_sci_,_trade_,_war_);
 
-        economy = "???";
+        infotrade.textContent = "???";
 
         /*
         STW
         111 = balanced
         100 = science
         110 = technology
-        010 = trade
+        010 = _trade_
         011 = arms
         001 = warfare
         101 = espionage
         */
 
-        if (sci == trade && sci == war) {
-          economy = "balanced"
-        } else if (sci == trade && sci > war) {
-          economy = "technology"
-        } else if (sci > trade && sci > war) {
-          economy = "science"
-        } else if (trade > sci && trade > war) {
-          economy = "trade"
-        } else if (trade > sci && trade == war) {
-          economy = "arms"
-        } else if (war > trade && war > sci) {
-          economy = "warfare"
-        } else if (sci == war && war > trade) {
-          economy = "espionage"
+        if (_sci_ == _trade_ && _sci_ == _war_) {
+          infotrade.textContent = "balanced"
+        } else if (_sci_ == _trade_ && _sci_ > _war_) {
+          infotrade.textContent = "technology"
+        } else if (_sci_ > _trade_ && _sci_ > _war_) {
+          infotrade.textContent = "science"
+        } else if (_trade_ > _sci_ && _trade_ > _war_) {
+          infotrade.textContent = "trade"
+        } else if (_trade_ > _sci_ && _trade_ == _war_) {
+          infotrade.textContent = "arms"
+        } else if (_war_ > _trade_ && _war_ > _sci_) {
+          infotrade.textContent = "warfare"
+        } else if (_sci_ == _war_ && _war_ > _trade_) {
+          infotrade.textContent = "espionage"
         };
 
-        infotrade.textContent = economy;
         infopoi.textContent = "???"
       } else {
         infofaction.textContent = "Unknown";
         infotrade.textContent = "Unknown";
         infopoi.textContent =  "Unknown"
       };
-      updatemap(shipx, shipy)
+      updatemap(ship.d.mx, ship.d.my)
     };
     showwarp = _ => showorbit();
 
     cols = ["#f00", "#f70", "#ff0", "#7f0", "#0f0", "#0f7", "#0ff", "#07f", "#00f", "#70f", "#f0f", "#f07"];
     factionCol = ["#000", "#f0f", "#ff0", "#05f"];
     factions = [
-      {name:"Unclaimed",    sci:1, trade:1, war:1},
-      {name:"Federation",   sci:3, trade:6, war:1},
-      {name:"Union",        sci:5, trade:4, war:1},
-      {name:"Empire",       sci:1, trade:3, war:6}
+      {name:"Unclaimed",    _sci_:1, _trade_:1, _war_:1},
+      {name:"Federation",   _sci_:3, _trade_:6, _war_:1},
+      {name:"Union",        _sci_:5, _trade_:4, _war_:1},
+      {name:"Empire",       _sci_:1, _trade_:3, _war_:6}
     ];
 
     items = [
-      {name:"Salvage",               sci:2, trade:2, war:1},
-      {name:"Luxury goods",          sci:4, trade:8, war:5},
-      {name:"Advamced technology",   sci:7, trade:9, war:8},
-      {name:"Entertainment devices", sci:2, trade:6, war:2},
-      {name:"Mysterious boxes",      sci:6, trade:3, war:1},
-      {name:"Small furry creatures", sci:5, trade:7, war:1},
-      {name:"Lab grown meat",        sci:3, trade:2, war:4},
-      {name:"Exotic weapons",        sci:4, trade:6, war:9},
-      {name:"Service robots",        sci:5, trade:4, war:2},
-      {name:"", sci:0, trade:0, war:0},
-      {name:"", sci:0, trade:0, war:0},
-      {name:"", sci:0, trade:0, war:0},
-      {name:"", sci:0, trade:0, war:0},
-      {name:"", sci:0, trade:0, war:0},
-      {name:"", sci:0, trade:0, war:0},
-      {name:"", sci:0, trade:0, war:0},
-      {name:"", sci:0, trade:0, war:0},
-      {name:"", sci:0, trade:0, war:0},
-      {name:"", sci:0, trade:0, war:0},
-      {name:"", sci:0, trade:0, war:0},
-      {name:"", sci:0, trade:0, war:0}
+      {name:"Salvage",               _sci_:2, _trade_:2, _war_:1},
+      {name:"Luxury goods",          _sci_:4, _trade_:8, _war_:5},
+      {name:"Advamced technology",   _sci_:7, _trade_:9, _war_:8},
+      {name:"Entertainment devices", _sci_:2, _trade_:6, _war_:2},
+      {name:"Mysterious boxes",      _sci_:6, _trade_:3, _war_:1},
+      {name:"Small furry creatures", _sci_:5, _trade_:7, _war_:1},
+      {name:"Lab grown meat",        _sci_:3, _trade_:2, _war_:4},
+      {name:"Exotic weapons",        _sci_:4, _trade_:6, _war_:9},
+      {name:"Service robots",        _sci_:5, _trade_:4, _war_:2}//,
+      // {name:"", _sci_:0, _trade_:0, _war_:0},
+      // {name:"", _sci_:0, _trade_:0, _war_:0},
+      // {name:"", _sci_:0, _trade_:0, _war_:0},
+      // {name:"", _sci_:0, _trade_:0, _war_:0},
+      // {name:"", _sci_:0, _trade_:0, _war_:0},
+      // {name:"", _sci_:0, _trade_:0, _war_:0},
+      // {name:"", _sci_:0, _trade_:0, _war_:0},
+      // {name:"", _sci_:0, _trade_:0, _war_:0},
+      // {name:"", _sci_:0, _trade_:0, _war_:0},
+      // {name:"", _sci_:0, _trade_:0, _war_:0},
+      // {name:"", _sci_:0, _trade_:0, _war_:0},
+      // {name:"", _sci_:0, _trade_:0, _war_:0}
     ];
 
     targets = []; shipcell = null;
@@ -260,24 +258,32 @@
 
     mousedown = false;
 
-    shipx = 10 + Math.floor(Math.random() * 12);
-    shipy = 10 + Math.floor(Math.random() * 12);
-
     fuel = 100;
     warpdistance = 0;
 
-    sqr = x => x * x;
-    calcfuel = d => sqr(Math.abs(d.x - shipx)) + sqr(Math.abs(d.y - shipy));
+    calcfuel = d => sqr(Math.abs(d.x - ship.d.mx)) + sqr(Math.abs(d.y - ship.d.my));
 
     title.onclick = _ => showorbit();
+
+    ship.d = { r: 0, x: 320, y: 550, z: 10, mx: 10 + Math.floor(Math.random() * 12), my: 10 + Math.floor(Math.random() * 12) };
+    ship.d._update_ = (o, g) => {
+      o.d.x = (o.d.x * 0.8 + (320 + (mx * 320)) * 0.2);
+      o.d.y = (o.d.y * 0.8 + (400 + (my * 100)) * 0.2);
+      gh = 27.5 - (my * 12.5);
+      gx -= ((o.d.x - 320) / 3000);
+      ship.setAttribute("d", `M${(320 - o.d.x) / 100} ${(o.d.y - 400) / 50} L-5 4 L0 8 L5 4 Z M-5 4 L0 1 L5 4`);
+      _update_(o)
+    };
+    objects.push(ship);
+    _update_(ship);
 
     factionmap = [];
 
     for (y = 0; y < 32; ++y) {
       factionmap[y] = [];
       for (x = 0; x < 32; ++x) {
-        dist=Math.sqrt((x-shipx)*(x-shipx)+(y-shipy)*(y-shipy));
-        factionmap[y][x] = {faction:0, visited: false, scanned: dist<5, sci:Math.random()*3, trade:Math.random()*3, war:Math.random()*3}
+        dist=Math.sqrt((x-ship.d.mx)*(x-ship.d.mx)+(y-ship.d.my)*(y-ship.d.my));
+        factionmap[y][x] = {faction:0, visited: false, scanned: dist<5, _sci_:Math.random()*3, _trade_:Math.random()*3, _war_:Math.random()*3}
       }
     };
 
@@ -323,8 +329,8 @@
 
     _textwidget_(orbitmap, orbitmaptext, _ => showmap() );
     _textwidget_(orbitscan, orbitscantext, _ => { 
-      factionmap[shipy][shipx].scanned = true; 
-      updatemap(shipx, shipy);
+      factionmap[ship.d.my][ship.d.mx].scanned = true; 
+      updatemap(ship.d.mx, ship.d.my);
       showorbit() 
     });
     _textwidget_(orbitenter, orbitentertext, _ => showgame() );
@@ -340,67 +346,65 @@
     lrs = (x,y,r) => {
       for (y1=_clamp_(y-r,0,31); y1<_clamp_(y+r,0,31); ++y1) {
         for (x1=_clamp_(x-r,0,31); x1<_clamp_(x+r,0,31); ++x1) {
-          dist=Math.sqrt((x-x1)*(x-x1)+(y-y1)*(y-y1));
-          if (dist <= r) { 
-            factionmap[y1][x1].scanned=true; updatemap(x1,y1) 
+          if (dist <= Math.sqrt(sqr(x-x1)+sqr(y-y1))) { 
+            factionmap[y1][x1].scanned=true;
+            updatemap(x1,y1) 
           }
         }
       }
     };
 
-    if (map != undefined) {
-      // build map
-      for (y = 0; y < 32; ++y) {
-        for (x = 0; x < 32; ++x) {
-          o = mapcell.cloneNode();
-          o.d = { x: x, y: y };
+    // build map
+    for (y = 0; y < 32; ++y) {
+      for (x = 0; x < 32; ++x) {
+        o = mapcell.cloneNode();
+        o.d = { x: x, y: y };
 
-          if (x == shipx && y == shipy) {
-            o.setAttribute("stroke", "#ff0");
-            shipcell = o
+        if (x == ship.d.mx && y == ship.d.my) {
+          o.setAttribute("stroke", "#ff0");
+          shipcell = o
+        } else {
+          o.setAttribute("stroke", "#fff2")
+        };
+
+        factionmap[y][x].mapcell = o;
+        
+        updatemap(x,y);
+
+        o.removeAttribute("id");
+        o.setAttribute("transform", "translate(" + ((x * 18) +32) + " " + ((y * 18) + 34) + ")");
+        o.onmouseenter = _ => {
+          fuelneed = calcfuel(_.target.d);
+          text("Warp requires " + fuelneed + "mgb.  Fuel available: " + fuel + "mgb");
+          if (fuelneed <= fuel) {
+            _.target.setAttribute("stroke", "#fff")
           } else {
-            o.setAttribute("stroke", "#fff2")
-          };
+            _.target.setAttribute("stroke", "#f00")
+          }
 
-          factionmap[y][x].mapcell = o;
-          
-          updatemap(x,y);
+        };
+        o.onmouseleave = _ => {
+          if (_.target.d.x == ship.d.mx && _.target.d.y == ship.d.my) {
+            _.target.setAttribute("stroke", "#ff0")
+          } else {
+            _.target.setAttribute("stroke", "#fff2")
+          }
+        };
+        o.onclick = _ => {
+          fuelneed = calcfuel(_.target.d);
+          if (fuelneed <= fuel) {
+            fuel -= fuelneed;
+            warpdistance = fuelneed * 100;
+            ship.d.mx = _.target.d.x;
+            ship.d.my = _.target.d.y;
+            _.target.setAttribute("stroke", "#ff0");
+            shipcell.setAttribute("stroke", "#fff2");
+            shipcell = _.target;
+            showwarp()
+          }
+        };
 
-          o.removeAttribute("id");
-          o.setAttribute("transform", "translate(" + ((x * 18) +32) + " " + ((y * 18) + 34) + ")");
-          o.onmouseenter = _ => {
-            fuelneed = calcfuel(_.target.d);
-            text("Warp requires " + fuelneed + "mgb.  Fuel available: " + fuel + "mgb");
-            if (fuelneed <= fuel) {
-              _.target.setAttribute("stroke", "#fff")
-            } else {
-              _.target.setAttribute("stroke", "#f00")
-            }
-
-          };
-          o.onmouseleave = _ => {
-            if (_.target.d.x == shipx && _.target.d.y == shipy) {
-              _.target.setAttribute("stroke", "#ff0")
-            } else {
-              _.target.setAttribute("stroke", "#fff2")
-            }
-          };
-          o.onclick = _ => {
-            fuelneed = calcfuel(_.target.d);
-            if (fuelneed <= fuel) {
-              fuel -= fuelneed;
-              warpdistance = fuelneed * 100;
-              shipx = _.target.d.x;
-              shipy = _.target.d.y;
-              _.target.setAttribute("stroke", "#ff0");
-              shipcell.setAttribute("stroke", "#fff2");
-              shipcell = _.target;
-              showwarp()
-            }
-          };
-
-          map.appendChild(o)
-        }
+        map.appendChild(o)
       }
     };
 
@@ -490,7 +494,7 @@
           };
 
           if (o.d.f > 20 && (Math.abs(o.d.x - o.d.t.x) + Math.abs(o.d.y - o.d.t.y)) < 50) {
-            explosion();
+            _explosion_();
             o.d.dead = true;
             o.d.t.dead = true;
             _decompose_(o.d.to);
@@ -507,7 +511,7 @@
       l11.appendChild(o);
 
       objects.push(o);
-      shoot();
+      _shoot_();
 
       missiletime = 4;
 
@@ -522,7 +526,7 @@
 
     enemywave1 = _ => {
       // enemy box things
-      wave1();
+      _wave1_();
       s = 0.1;
 
       r = Math.floor(Math.random()*10);
@@ -534,7 +538,7 @@
         o.setAttribute("d", _critter_());
         o.setAttribute("fill",cols[(i+r) % cols.length]);
 
-        o.onpointerenter = _ => {
+        o.onmouseenter = _ => {
           if (mousedown) {
             if (targets.length > 0) {
               t = targets.pop();
@@ -543,8 +547,8 @@
               t.d.z = 1000;
               t.d.r = 90;
               objects.push(t);
-              lock(700 + (50 * targetc));
-              _.target.onpointerenter = null;
+              _lock_(700 + (50 * targetc));
+              _.target.onmouseenter = null;
               targetc++
             }
           }
@@ -589,16 +593,16 @@
       o.removeAttribute("id");
       o.d = { i: i + 2 };
       o.d._update_ = (o, g) => {
-        str = "";
+        s = "";
         for (x = 0; x <= 64; ++x) {
           rx = ((32 - x) * ((slices + 1 - o.d.i) / 10)) / div;
 
           hz = g.sn.n(g.gx + rx, (o.d.i + g.gy) / div);
           sq = o.d.i * o.d.i;
-          str += x == 0 ? "M" : "L";
-          str += `${x * 10} ${(100 - (gh * 3)) + ((gh / slices) * sq) + (hz * sq / 2)}`
+          s += x == 0 ? "M" : "L";
+          s += `${x * 10} ${(100 - (gh * 3)) + ((gh / slices) * sq) + (hz * sq / 2)}`
         };
-        o.setAttribute("d", str);
+        o.setAttribute("d", s);
         l10.appendChild(o)
       };
       objects.push(o)
@@ -612,22 +616,6 @@
     window.onfocus = _ => focus = true;
     window.onblur = _ => focus = false;
     n = 0;
-
-    ship.d = { r: 0, x: 320, y: 550, z: 10 };
-    ship.d._update_ = (o, g) => {
-      xp = 320 + (mx * 320);
-      yp = 400 + (my * 100);
-      o.d.x = (o.d.x * 0.8 + xp * 0.2);
-      o.d.y = (o.d.y * 0.8 + yp * 0.2);
-      gh = 27.5 - (my * 12.5);
-      gx -= ((o.d.x - 320) / 3000);
-      nosex = (320 - o.d.x) / 100;
-      nosey = (o.d.y - 400) / 50;
-      ship.setAttribute("d", `M${nosex} ${nosey} L-5 4 L0 8 L5 4 Z M-5 4 L0 1 L5 4`);
-      _update_(o)
-    };
-    objects.push(ship);
-    _update_(ship);
 
     cursor.d = { r: 0, x: 320, y: 320, z: 1 };
     cursor.d._update_ = (o, g) => {
@@ -651,14 +639,11 @@
     //showgame();
     //showorbit();
 
-    c.onpointerdown = _ => {
+    c.onmousedown = _ => {
       focus = true;
-      if (gameloop) {
-        mousedown = true
-      }
-
+      mousedown = gameloop
     };
-    c.onpointerup = _ => {
+    c.onmouseup = _ => {
       if (gameloop) {
         mousedown = false;
         missiletime = 0;
@@ -670,15 +655,12 @@
     my = 0;
     rect = c.getBoundingClientRect();
 
-    window.onresize = _ => {
-      rect = c.getBoundingClientRect()
-    };
+    window.onresize = _ => rect = c.getBoundingClientRect();
 
     c.onmousemove = _ => {
       size = Math.min(rect.width, rect.height) / 2;
       mx = _clamp_(((_.clientX - rect.left) - (rect.width / 2)) / size, -1, 1);
       my = _clamp_(((_.clientY - rect.top) - (rect.height / 2)) / size, -1, 1)
-      //console.log(mx,my)
     };
 
     gx = 100;
@@ -733,67 +715,16 @@
         }
       }
 
-      /*
-            boxes.forEach(o => {
-              o.d.r += o.d.s * 5;
-              o.d.x = (o.d.x * (1 - o.d.s)) + (x * o.d.s);
-              o.d.y = (o.d.y * (1 - o.d.s)) + (y * o.d.s);
-              o.d.z = 2.0 + Math.sin(n - (o.d.s * 100)) + (o.d.h ? 1 : 0);
-              x = o.d.x;
-              y = o.d.y;
-              _update_(o)
-            });
-      
-            stars.forEach(o => {
-              m = 1.1 + ((Math.abs(o.d.x - 320)) / 500);
-              o.d.z += m / 10;
-              o.d.r += 1;
-              o.d.x = ((o.d.x - 320) * m) + 320;
-              o.d.y = ((o.d.y - 320) * m) + 320;
-              if (o.d.x < 0 || o.d.x > 640 || o.d.y < 0 || o.d.y > 640) {
-                o.d.x = 305 + (Math.random() * 30);
-                o.d.y = 305 + (Math.random() * 30);
-                o.d.z = 0.5
-              };
-              _update_(o)
-            });
-      
-            targets.forEach(o => {
-              o.d.x = -100;
-              o.d.y = -100;
-              _update_(o)
-            });
-      
-            targetsa.forEach(o => {
-              o.d.x = o.d.t.x;
-              o.d.y = o.d.t.y;
-              o.d.r = (0+o.d.r)/2;
-              o.d.z = (3+o.d.z)/2;
-              _update_(o)
-            });
-      
-            ship.d.x = (Math.sin(n)*50)+320;
-      
-            str="M0 100";
-            for(x=10; x<640; x+=10){
-              str += `L ${x} ${100+(Math.random()*25)}`
-            }
-            g1.setAttribute("d", str)
-      
-      
-            _update_(ship)
-            */
-
     }, 50);
 
-    lock = f => zzfx(...[, , f, .02, , .08, 1, 1.19, 11, , -344, .02, , , , , , .04, .02]); // Blip 33
-    explosion = _ => zzfx(...[, , 585, .01, .23, .21, 4, 4.87, , , , , , .4, , .3, , .76, .13, .44]); // Explosion 43
-    shoot = _ => zzfx(...[, , 169, .02, , .24, 1, .77, .2, , , , , 2.1, , .1, , .93, .09, .02]); // Shoot 23
-    wave1 = _ => zzfx(...[, , 388, .38, .4, .66, , 1.46, .5, -3.8, 4, .02, .15, , , , , .61, .02]); // Powerup 99
+    _lock_ = f => zzfx(...[, , f, .02, , .08, 1, 1.19, 11, , -344, .02, , , , , , .04, .02]); 
+    _explosion_ = _ => zzfx(...[, , 585, .01, .23, .21, 4, 4.87, , , , , , .4, , .3, , .76, .13, .44]); 
+    _shoot_ = _ => zzfx(...[, , 169, .02, , .24, 1, .77, .2, , , , , 2.1, , .1, , .93, .09, .02]); 
+    _wave1_ = _ => zzfx(...[, , 388, .38, .4, .66, , 1.46, .5, -3.8, 4, .02, .15, , , , , .61, .02]); 
 
     zzfxV = .3;    // volume
     zzfx =       // play sound
-      (E = 1, k = .05, p = 220, d = 0, t = 0, u = .1, q = 0, F = 1, v = 0, G = 0, y = 0, H = 0, g = 0, z = 0, A = 0, I = 0, c = 0, w = 1, l = 0, B = 0) => { d = 99 + d * zzfxR; t *= zzfxR; u = 99 + u * zzfxR; l *= zzfxR; c *= zzfxR; g = g * zzfxR | 0; let b = 2 * Math.PI, h = d + l + t + u + c | 0, J = v *= 500 * b / zzfxR ** 2, Z = p *= (1 + 2 * k * Math.random() - k) * b / zzfxR, K = (0 < A ? 1 : -1) * b / 4, f = 0, C = 0, a = 0, L = 0, M = 0, e = 0, m = 1, x = [], n, r = zzfxX.createBufferSource(), D = zzfxX.createBuffer(1, h, zzfxR); for (r.connect(zzfxX.destination); a < h; x[a++] = e)++M % (100 * I | 0) || (e = q ? 1 < q ? 2 < q ? 3 < q ? Math.sin((f % b) ** 3) : Math.max(Math.min(Math.tan(f), 1), -1) : 1 - (2 * f / b % 2 + 2) % 2 : 1 - 4 * Math.abs(Math.round(f / b) - f / b) : Math.sin(f), e = (0 < e ? 1 : -1) * Math.abs(e) ** F * (g ? 1 - B + B * Math.sin(2 * Math.PI * a / g) : 1) * E * zzfxV * (a < d ? a / d : a < d + l ? 1 - (a - d) / l * (1 - w) : a < d + l + t ? w : a < h - c ? (h - a - c) / u * w : 0), e = c ? e / 2 + (c > a ? 0 : (a < h - c ? 1 : (a - h) / c) * x[a - c | 0] / 2) : e), n = (p += v += 500 * G * b / zzfxR ** 3) * Math.sin(C * A * b / zzfxR - K), f += n - n * z * (1 - 1E9 * (Math.sin(a) + 1) % 2), C += n - n * z * (1 - 1E9 * (Math.sin(a) ** 2 + 1) % 2), m && ++m > H * zzfxR && (p += y * b / zzfxR, Z += y * b / zzfxR, m = 0), !g || ++L % g || (p = Z, v = J, m = m || 1); D.getChannelData(0).set(x); r.buffer = D; r.start(); return r }; zzfxX = new (window.AudioContext || webkitAudioContext); zzfxR = 44100
+      (E = 1, k = .05, p = 220, d = 0, t = 0, u = .1, q = 0, F = 1, v = 0, G = 0, y = 0, H = 0, g = 0, z = 0, A = 0, I = 0, c = 0, w = 1, l = 0, B = 0) => { d = 99 + d * zzfxR; t *= zzfxR; u = 99 + u * zzfxR; l *= zzfxR; c *= zzfxR; g = g * zzfxR | 0; let b = 2 * Math.PI, h = d + l + t + u + c | 0, J = v *= 500 * b / zzfxR ** 2, Z = p *= (1 + 2 * k * Math.random() - k) * b / zzfxR, K = (0 < A ? 1 : -1) * b / 4, f = 0, C = 0, a = 0, L = 0, M = 0, e = 0, m = 1, x = [], n, r = zzfxX.createBufferSource(), D = zzfxX.createBuffer(1, h, zzfxR); for (r.connect(zzfxX.destination); a < h; x[a++] = e)++M % (100 * I | 0) || (e = q ? 1 < q ? 2 < q ? 3 < q ? Math.sin((f % b) ** 3) : Math.max(Math.min(Math.tan(f), 1), -1) : 1 - (2 * f / b % 2 + 2) % 2 : 1 - 4 * Math.abs(Math.round(f / b) - f / b) : Math.sin(f), e = (0 < e ? 1 : -1) * Math.abs(e) ** F * (g ? 1 - B + B * Math.sin(2 * Math.PI * a / g) : 1) * E * zzfxV * (a < d ? a / d : a < d + l ? 1 - (a - d) / l * (1 - w) : a < d + l + t ? w : a < h - c ? (h - a - c) / u * w : 0), e = c ? e / 2 + (c > a ? 0 : (a < h - c ? 1 : (a - h) / c) * x[a - c | 0] / 2) : e), n = (p += v += 500 * G * b / zzfxR ** 3) * Math.sin(C * A * b / zzfxR - K), f += n - n * z * (1 - 1E9 * (Math.sin(a) + 1) % 2), C += n - n * z * (1 - 1E9 * (Math.sin(a) ** 2 + 1) % 2), m && ++m > H * zzfxR && (p += y * b / zzfxR, Z += y * b / zzfxR, m = 0), !g || ++L % g || (p = Z, v = J, m = m || 1); D.getChannelData(0).set(x); r.buffer = D; r.start(); return r }; zzfxX = new window.AudioContext; zzfxR = 44100
 
   </script>
 </body>
