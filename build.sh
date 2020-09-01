@@ -31,6 +31,11 @@ then
   echo WARNING - bracket commas found - check your commas!
 fi
 
+if grep -q "console.log" index.html
+then
+  echo WARNING - console logs left in packaged code!
+fi
+
 SRCSIZE=`stat --printf="%s" full.html`
 OUTSIZE=`stat --printf="%s" index.html`
 
