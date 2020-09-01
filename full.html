@@ -12,6 +12,9 @@
   ///#define _explosion_ fx2
   ///#define _shoot_ fx3
   ///#define _wave1_ fx4
+  ///#define _zap_ fx5
+  ///#define _shields_ fx6
+  ///#define _dead_ fx7
   ///#define zzfx fx
 
   ///#define _sci_ x
@@ -63,20 +66,24 @@
         <text x=15 y=550 fill="#fff" class="bigger">A game by Richard Munn</text>
       </g>
       <g id="orbit" filter="url(#f1)">
+
+        <ellipse fill="#000" stroke-width="1.5" id="orbit_planet"/>
+        <ellipse fill="#000" stroke-width="1.5" id="orbit_moon"/>
+
         <text x=20 y=40 fill="#fff" class="big">Currently in orbit at</text>
         <text id="orbitcoords" x=400 y=40 fill="#fff" class="big">[0:0]</text>
         <g id="orbitmap" transform="translate(0 80)">
-          <path d="M0 0 h640 v30 h-640 z" fill="#000"/>
+          <path d="M0 0 h640 v30 h-640 z" fill="#000" fill-opacity="0.1"/>
           <text id="orbitmaptext" x=50 y=25 fill="#fff" class="big">&gt; Galaxy Map</text>
         </g>
 
         <g id="orbitscan" transform="translate(0 110)">
-          <path d="M0 0 h640 v30 h-640 z" fill="#000"/>
+          <path d="M0 0 h640 v30 h-640 z" fill="#000" fill-opacity="0.1"/>
           <text id="orbitscantext" x=50 y=25 fill="#fff" class="big">&gt; Scan System</text>
         </g>
 
         <g id="orbitenter" transform="translate(0 140)">
-          <path d="M0 0 h640 v30 h-640 z" fill="#000"/>
+          <path d="M0 0 h640 v30 h-640 z" fill="#000" fill-opacity="0.1"/>
           <text id="orbitentertext" x=50 y=25 fill="#fff" class="big">&gt; Enter Atmosphere</text>
         </g>
 
@@ -171,6 +178,17 @@
       f.visited = true;
       if (f.scanned) {
         infofaction.textContent = factions[f.faction].name;
+
+        orbit_planet.setAttribute("cx", Math.random()*640);
+        orbit_planet.setAttribute("cy", Math.random()*640);
+        orbit_planet.setAttribute("rx", f.pradius);
+        orbit_planet.setAttribute("ry", f.pradius);
+        orbit_planet.setAttribute("stroke", f.pcol);
+        orbit_moon.setAttribute("cx", Math.random()*640);
+        orbit_moon.setAttribute("cy", Math.random()*640);
+        orbit_moon.setAttribute("rx", f.mradius);
+        orbit_moon.setAttribute("ry", f.mradius);
+        orbit_moon.setAttribute("stroke", f.mcol);
 
         //console.log(f);
 
@@ -283,7 +301,14 @@
       factionmap[y] = [];
       for (x = 0; x < 32; ++x) {
         dist=Math.sqrt((x-ship.d.mx)*(x-ship.d.mx)+(y-ship.d.my)*(y-ship.d.my));
-        factionmap[y][x] = {faction:0, visited: false, scanned: dist<5, _sci_:Math.random()*3, _trade_:Math.random()*3, _war_:Math.random()*3}
+        factionmap[y][x] = {
+          faction:0, visited: false, scanned: dist<5, 
+          pradius: 100+Math.random()*300,
+          pcol: cols[Math.floor(Math.random()*cols.length)],    
+          mradius: 10+Math.random()*100,
+          mcol: cols[Math.floor(Math.random()*cols.length)],
+          _sci_:Math.random()*3, _trade_:Math.random()*3, _war_:Math.random()*3
+        }
       }
     };
 
@@ -518,20 +543,23 @@
       return o
     };
 
+    wavecount = 0;
     enemies = 0;
     missiles = 0;
     maxmissiles = 8;
     targetc = 0;
     wavetime = 100;
+    shields = 100;
 
     enemywave1 = _ => {
       // enemy box things
       _wave1_();
       s = 0.1;
+      wavecount++;
 
       r = Math.floor(Math.random()*10);
 
-      for (i = 0; i < 8; ++i) { 
+      for (i = 0; i < wavecount*2; ++i) { 
         o = enemybox.cloneNode();
         o.removeAttribute("id");
         
@@ -539,7 +567,7 @@
         o.setAttribute("fill",cols[(i+r) % cols.length]);
 
         o.onmouseenter = _ => {
-          if (mousedown) {
+          if (mousedown && shields>0) {
             if (targets.length > 0) {
               t = targets.pop();
               t.d.t = _.target.d;
@@ -567,6 +595,28 @@
           o.d.dy = o.d.ry - o.d.dy;
 
           o.d.z = (o.d.z * 0.95) + (5.0 + Math.sin(n - (o.d.s * 500))) * 0.05;
+
+          if (Math.random() * 1000 < wavecount*10) {
+            zap = ground.cloneNode();
+            zap.removeAttribute("id");
+            p="M0 0";
+            for (k=1; k<65; k++) {
+              p+= ` L${(Math.random()*k*2)-k} ${k*10}`
+            };
+            zap.setAttribute("d", p);
+            zap.d = {x: o.d.x, y: o.d.y, r:0, s:1, z:1, dead: true};
+            zap.d._update_ = _ => {};
+            objects.push(zap);
+            _update_(zap);
+            l12.appendChild(zap);
+            
+            if (Math.abs(o.d.x - ship.d.x) < 25) { 
+              shields--;
+              _shields_()
+            } else {
+              _zap_()
+            }
+          };
 
           if (!o.d.dead) {
             o.d.y = 250 - o.d.ry + gh * (o.d.z * 2);
@@ -603,6 +653,7 @@
           s += `${x * 10} ${(100 - (gh * 3)) + ((gh / slices) * sq) + (hz * sq / 2)}`
         };
         o.setAttribute("d", s);
+        o.setAttribute("stroke", factionmap[ship.d.my][ship.d.mx].pcol);
         l10.appendChild(o)
       };
       objects.push(o)
@@ -713,7 +764,18 @@
           wavetime = 25;
           enemywave1()
         }
+      };
+
+      if (shields > 0) {
+        text(`shields: ${shields}%`)
+      } else {
+        text("G A M E O V E R");
+        ship.d.dead=true;
+        _dead_();
+        shields = 0
+        //focus = false
       }
+
 
     }, 50);
 
@@ -721,6 +783,9 @@
     _explosion_ = _ => zzfx(...[, , 585, .01, .23, .21, 4, 4.87, , , , , , .4, , .3, , .76, .13, .44]); 
     _shoot_ = _ => zzfx(...[, , 169, .02, , .24, 1, .77, .2, , , , , 2.1, , .1, , .93, .09, .02]); 
     _wave1_ = _ => zzfx(...[, , 388, .38, .4, .66, , 1.46, .5, -3.8, 4, .02, .15, , , , , .61, .02]); 
+    _shields_ = _ => zzfx(...[,,603,.02,,.14,4,1.36,-0.6,.5,,,,,,,.05,.68,.08,.39]); 
+    _zap_ = _ => zzfx(...[,,409,.02,,.21,,.64,-0.4,.3,,,,,,,.2,.61,.05,.21]);
+    _dead_ = _ => zzfx(...[,,533,,3,3,3,3.49,.5,.4,,,,.6,.2,.2,,.6,1]); 
 
     zzfxV = .3;    // volume
     zzfx =       // play sound
