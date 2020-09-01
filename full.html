@@ -12,6 +12,9 @@
   ///#define _explosion_ fx2
   ///#define _shoot_ fx3
   ///#define _wave1_ fx4
+  ///#define _zap_ fx5
+  ///#define _shields_ fx6
+  ///#define _dead_ fx7
   ///#define zzfx fx
 
   ///#define _sci_ x
@@ -540,20 +543,23 @@
       return o
     };
 
+    wavecount = 0;
     enemies = 0;
     missiles = 0;
     maxmissiles = 8;
     targetc = 0;
     wavetime = 100;
+    shields = 100;
 
     enemywave1 = _ => {
       // enemy box things
       _wave1_();
       s = 0.1;
+      wavecount++;
 
       r = Math.floor(Math.random()*10);
 
-      for (i = 0; i < 8; ++i) { 
+      for (i = 0; i < wavecount*2; ++i) { 
         o = enemybox.cloneNode();
         o.removeAttribute("id");
         
@@ -561,7 +567,7 @@
         o.setAttribute("fill",cols[(i+r) % cols.length]);
 
         o.onmouseenter = _ => {
-          if (mousedown) {
+          if (mousedown && shields>0) {
             if (targets.length > 0) {
               t = targets.pop();
               t.d.t = _.target.d;
@@ -589,6 +595,28 @@
           o.d.dy = o.d.ry - o.d.dy;
 
           o.d.z = (o.d.z * 0.95) + (5.0 + Math.sin(n - (o.d.s * 500))) * 0.05;
+
+          if (Math.random() * 1000 < wavecount*10) {
+            zap = ground.cloneNode();
+            zap.removeAttribute("id");
+            p="M0 0";
+            for (k=1; k<65; k++) {
+              p+= ` L${(Math.random()*k*2)-k} ${k*10}`
+            };
+            zap.setAttribute("d", p);
+            zap.d = {x: o.d.x, y: o.d.y, r:0, s:1, z:1, dead: true};
+            zap.d._update_ = _ => {};
+            objects.push(zap);
+            _update_(zap);
+            l12.appendChild(zap);
+            
+            if (Math.abs(o.d.x - ship.d.x) < 25) { 
+              shields--;
+              _shields_()
+            } else {
+              _zap_()
+            }
+          };
 
           if (!o.d.dead) {
             o.d.y = 250 - o.d.ry + gh * (o.d.z * 2);
@@ -736,7 +764,18 @@
           wavetime = 25;
           enemywave1()
         }
+      };
+
+      if (shields > 0) {
+        text(`shields: ${shields}%`)
+      } else {
+        text("G A M E O V E R");
+        ship.d.dead=true;
+        _dead_();
+        shields = 0
+        //focus = false
       }
+
 
     }, 50);
 
@@ -744,6 +783,9 @@
     _explosion_ = _ => zzfx(...[, , 585, .01, .23, .21, 4, 4.87, , , , , , .4, , .3, , .76, .13, .44]); 
     _shoot_ = _ => zzfx(...[, , 169, .02, , .24, 1, .77, .2, , , , , 2.1, , .1, , .93, .09, .02]); 
     _wave1_ = _ => zzfx(...[, , 388, .38, .4, .66, , 1.46, .5, -3.8, 4, .02, .15, , , , , .61, .02]); 
+    _shields_ = _ => zzfx(...[,,603,.02,,.14,4,1.36,-0.6,.5,,,,,,,.05,.68,.08,.39]); 
+    _zap_ = _ => zzfx(...[,,409,.02,,.21,,.64,-0.4,.3,,,,,,,.2,.61,.05,.21]);
+    _dead_ = _ => zzfx(...[,,533,,3,3,3,3.49,.5,.4,,,,.6,.2,.2,,.6,1]); 
 
     zzfxV = .3;    // volume
     zzfx =       // play sound
