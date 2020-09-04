@@ -5,11 +5,14 @@
     TODO 
   
     * Backgrounds for abandonned bases, ruins and crashsites
-    * buy fuel
     * recharge shields
     * more enemy wave types
     * hyperspace sequence
     * something with science stats (research?)
+    * varying fuel prices
+    * usable items
+    * location clues
+    * actual endgame
     * handle long menus (pagninate?)
   
   -->
@@ -297,10 +300,14 @@
       itemtext = document.getElementById(`menuitem${i}text`);
       itemtext.textContent = text;
       item.d = d;
-      _textwidget_(item, itemtext, f)
+      _textwidget_(item, itemtext, _ => {
+        d = _.target.parentElement.d;
+        f(d)
+      })
     };
 
     hideMenu = i => {
+      if (i > 16) return;
       item = document.getElementById(`menuitem${i}`);
       _hide_(item)
     };
@@ -309,7 +316,7 @@
       while(i < 17) {
         hideMenu(i++)
       }
-    }
+    };
 
     _update_ = o => o.setAttribute("transform", "translate(" + o.d.x + " " + o.d.y + ") rotate(" + o.d.r + ") scale(" + o.d.z + ")");
     _show_ = o => o.removeAttribute("style");
@@ -369,11 +376,10 @@
         infotrade.textContent = "Unknown";
         infopoi.textContent =  "Unknown"
       };
-      updatemap(ship.d.mx, ship.d.my)
+      updatemap(ship.d.mx, ship.d.my);
 
       next = 0;
       
-
       addMenu("> Galaxy Map", next++, {}, _ => showmap());
       hideMenu(next++);
       if (!f._scanned_) {
@@ -383,7 +389,7 @@
           showorbit() 
         });
         hideMenu(next++)
-      }
+      };
       addMenu("> Enter Atmosphere", next++, {}, _ => showtrade());
       endMenu(next)
 
@@ -421,7 +427,7 @@
 
       inventory.sort((a, b) => itemvalue(_items_[b], f) - itemvalue(_items_[a], f));
 
-      text(`kredits: ${kr} ${kredits}`);
+      text(`kredits: ${kr} ${kredits}   fuel: ${fuel}/${maxfuel}`);
 
       addMenu("< Return to orbit", next++, {}, _ => showorbit());
       hideMenu(next++);
@@ -432,7 +438,7 @@
           next = 2;
 
           for (i=0; i<f._items_.length; ++i) {
-            addMenu(`Found ${_items_[f._items_[i]].name}!`, next++, {}, _=> {});
+            addMenu(`Found ${_items_[f._items_[i]].name}!`, next++);
             inventory.push(f._items_[i])
           };
 
@@ -443,10 +449,21 @@
         hideMenu(next++)
 
       } else {
+
+        if (fuel < maxfuel) {
+          fuelcost = 10;
+          addMenu(`> Buy fuel : ${kr} ${fuelcost}`, next++, {v: fuelcost}, d => {
+            if (kredits >= d.v) {
+              kredits -= d.v;
+              fuel++;
+              showtrade()
+            }
+          })
+        };
+
         for (i=0; i<f._items_.length; ++i) {
           v = itemvalue(_items_[f._items_[i]], f);
-          addMenu(`> Buy ${_items_[f._items_[i]].name} : ${kr} ${v}`, next++, {i: f._items_[i], v: v}, _ => {
-            d = _.target.parentElement.d;
+          addMenu(`> Buy ${_items_[f._items_[i]].name} : ${kr} ${v}`, next++, {i: f._items_[i], v: v}, d => {
             if (kredits >= d.v) {
               inventory.push(d.i);
               kredits -= d.v;
@@ -460,9 +477,7 @@
 
         for (i=0; i<inventory.length; ++i) {
           v = Math.round(itemvalue(_items_[inventory[i]], f) * 0.8);
-          addMenu(`> Sell ${_items_[inventory[i]].name} : ${kr} ${v}`, next++, {i: inventory[i], v: v}, _ => {
-            d = _.target.parentElement.d;
-            f._items_.push(d.i);
+          addMenu(`> Sell ${_items_[inventory[i]].name} : ${kr} ${v}`, next++, {i: inventory[i], v: v}, d => {
             kredits += d.v;
             inventory.splice(inventory.indexOf(d.i), 1);
             showtrade()
@@ -470,7 +485,7 @@
         }
       };
 
-      endMenu();
+      endMenu(next)
 
     };
 
@@ -538,7 +553,8 @@
 
     kredits = 25;
     shields = 100;
-    fuel = 100;
+    fuel = 25;
+    maxfuel = 50;
     warpdistance = 0;
 
     calcfuel = d => sqr(Math.abs(d.x - ship.d.mx)) + sqr(Math.abs(d.y - ship.d.my));
@@ -644,10 +660,18 @@
     };
 
     _textwidget_ = (e, t, f) => {
-      e.onmouseenter = _ => t.setAttribute("fill", "#990");
-      e.onmouseleave = _ => t.setAttribute("fill", "#fff");
-      e.onclick = _ => f(_)
+      if (f) {
+        e.onmouseenter = _ => t.setAttribute("fill", "#990");
+        e.onmouseleave = _ => t.setAttribute("fill", "#fff");
+        e.onclick = _ => f(_)
+      } else {
+        e.mouseenter = null;
+        e.mouseleave = null;
+        e.onclick = null
+      }
     };
+
+    _textwidget_(mapexit, mapexittext, _ => showorbit() );
 
     updatemap = (x,y) => {
       if (_factionmap_[y][x]._scanned_) {
