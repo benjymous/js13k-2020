@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo ""
+
 # 13k demo - change this if you're target package size is different
 let KBSIZE=13
 
@@ -74,6 +76,8 @@ else
     curl -s https://img.shields.io/badge/size-$PKGSIZE-critical --output badge.svg
   fi
 fi
+
+echo ""
 
 if [ ! -z "$CI" ]
 then

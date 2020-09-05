@@ -3,10 +3,8 @@
     
     TODO 
   
-    * Combo counter, and nax combo
-    * Lock count
+    * Max combo - actually do something, take locks into account
     * Backgrounds for abandoned bases, ruins and crashsites
-    * recharge shields
     * more enemy wave types
     * hyperspace sequence
     * something with science stats (research?)
@@ -14,6 +12,7 @@
     * usable items (ship upgrades)
     * location clues
     * actual endgame
+    * better gameover
     * handle long menus (pagninate?)
   
   -->
@@ -92,8 +91,8 @@
 
       <g id="orbit" filter="url(#f1)">
 
-        <ellipse fill="#000" stroke-width="1.5" id="orbit_planet"/>
-        <ellipse fill="#000" stroke-width="1.5" id="orbit_moon"/>
+        <circle fill="#000" stroke-width="1.5" id="orbit_planet"/>
+        <circle fill="#000" stroke-width="1.5" id="orbit_moon"/>
 
         <text x=20 y=40 fill="#fff" class="big">Currently in orbit at</text>
         <text id="orbitcoords" x=400 y=40 fill="#fff" class="big">[0:0]</text>
@@ -108,7 +107,7 @@
         
       </g>
       <g id="base" filter="url(#f1)">
-        <ellipse id="base_moon" stroke="#fff" ry="30" rx="30" cy="100" cx="250" stroke-width="1.5" fill="#000"/>
+        <circle id="base_moon" stroke="#fff" stroke-width="1.5" fill="#000"/>
         <ellipse id="base_planet" stroke="#fff" ry="200" rx="500" cy="478" cx="320" stroke-width="1.5" fill="#000"/>
         
         <path id="base_sc1" transform="translate(-320,300)" stroke-width="1.5" stroke="#555" d="m0 50 h470 l -10 -200  h-10 v-10 h100 v10 h-10 l-10 200 h470  v400 h-1000 z"/>
@@ -126,7 +125,15 @@
           <path d="M0 0 H640 V640 H-640 Z" fill="#000" fill-opacity="0.1"/>
 
           <g id="l12">.</g> <!-- enemies -->
-          <path id="ship" d="M0 0" stroke-width="0.2" stroke="#fff" fill-opacity="0"/>
+          <g id="ship">
+            <path id="shipd" d="M0 0" stroke-width="0.2" stroke="#fff" fill-opacity="0"/>
+            <circle id="ships" x="0" y="0" r="6" stroke="#00f" stroke-width="0.2" fill-opacity="0.3" fill="#00f" transform="translate(0,4)"/>
+          </g>
+          
+
+          <path id="combocount" stroke-width="1" stroke="#fff" fill-opacity="0"/>
+          <text id="combocounttext" x=550 y=90 fill="#fff" class="bigger" text-anchor="middle"/>
+
         </g>
       </g>
 
@@ -144,6 +151,7 @@
         <text x=320 y=100 fill="#fff" class="bigger" text-anchor="middle">The Legend of Yeti-404</text>
         <text x=300 y=150 fill="#fff" class="big">#js13k 2020</text>
         <text x=320 y=550 fill="#fff" class="bigger" text-anchor="middle">A game by Richard Munn</text>
+
       </g>
 
       <g id="menu" filter="url(#f1)">
@@ -260,10 +268,14 @@
       null == t && (t = Math), 
       this.g3 = [[1, 1, 0], [-1, 1, 0], [1, -1, 0], [-1, -1, 0], [1, 0, 1], [-1, 0, 1], [1, 0, -1], [-1, 0, -1], [0, 1, 1], [0, -1, 1], [0, 1, -1], [0, -1, -1]], this.p = []; for (var r = 0; r < 256; r++)this.p[r] = Math.floor(256 * t.random()); this.m = []; for (r = 0; r < 512; r++)this.m[r] = this.p[255 & r] 
     }; 
-    SN.prototype.n = (t, r) => { 
+    SN.prototype.n = function(t, r) { 
       var i, h, o = (t + r) * (.5 * (Math.sqrt(3) - 1)), s = Math.floor(t + o), e = Math.floor(r + o), p = (3 - Math.sqrt(3)) / 6, a = (s + e) * p, m = t - (s - a), n = r - (e - a); m > n ? (i = 1, h = 0) : (i = 0, h = 1); var d = m - i + p, f = n - h + p, l = m - 1 + 2 * p, u = n - 1 + 2 * p, M = 255 & s, g = 255 & e, v = this.m[M + this.m[g]] % 12, c = this.m[M + i + this.m[g + h]] % 12, x = this.m[M + 1 + this.m[g + 1]] % 12, N = .5 - m * m - n * n, S = .5 - d * d - f * f, q = .5 - l * l - u * u; return 70 * ((N < 0 ? 0 : (N *= N) * N * dot(this.g3[v], m, n)) + (S < 0 ? 0 : (S *= S) * S * dot(this.g3[c], d, f)) + (q < 0 ? 0 : (q *= q) * q * dot(this.g3[x], l, u))) 
     };
     sn = new SN();
+
+    // adapted from https://stackoverflow.com/a/18473154
+    function p2c(a,r,n,o){var t=(o-90)*Math.PI/180;return{x:a+n*Math.cos(t),y:r+n*Math.sin(t)}};
+    function arc(a,r,n,o,t){var i=p2c(a,r,n,t),e=p2c(a,r,n,o),s=t-o<=180?"0":"1";return["M",i.x,i.y,"A",n,n,0,s,0,e.x,e.y].join(" ")};
 
     kr = decodeURI("%E2%93%9A");
 
@@ -277,7 +289,7 @@
         p=o.cloneNode();
         p.removeAttribute("id");
         p.setAttribute("d", s[i]);
-        p.d = {x: o.d.x, ry: o.d.ry, r: o.d.r, s: o.d.s, z: o.d.z, dx: o.d.dx + Math.random()*6-3, dy: o.d.dy + Math.random()*6-3, a: 1};
+        p.d = {x: o.d.x, ry: o.d.ry, r: o.d.r, s: o.d.s, z: o.d.z, dx: o.d.dx + Math.random()*6-3, dy: o.d.dy + Math.random()*6-3, a: 1, temp: true};
         p.d._update_ = (o, g) => {
           o.d.x += o.d.dx;
           o.d.ry += o.d.dy;
@@ -340,6 +352,8 @@
     showgame = _ => { 
       gameloop = true; endMenu(0);_show_(game); _hide_(orbit); _hide_(map); _hide_(title); _hide_(base); text();
 
+      combocount.d.v = 0; combocount.d.c = 0;
+
       f = _factionmap_[ship.d.my][ship.d.mx];
       waves = f._explored_? 0 : 1+f._war_ * f._war_;
       wavecount = 0;
@@ -364,13 +378,11 @@
 
       orbit_planet.setAttribute("cx", Math.random()*640);
       orbit_planet.setAttribute("cy", Math.random()*640);
-      orbit_planet.setAttribute("rx", f.pradius);
-      orbit_planet.setAttribute("ry", f.pradius);
+      orbit_planet.setAttribute("r", f.pradius);
       orbit_planet.setAttribute("stroke", f.pcol);
       orbit_moon.setAttribute("cx", Math.random()*640);
       orbit_moon.setAttribute("cy", Math.random()*640);
-      orbit_moon.setAttribute("rx", f.mradius);
-      orbit_moon.setAttribute("ry", f.mradius);
+      orbit_moon.setAttribute("r", f.mradius);
       orbit_moon.setAttribute("stroke", f.mcol);
 
       if (f._scanned_) {
@@ -408,14 +420,14 @@
         });
         hideMenu(next++)
       };
-      addMenu("> Enter Atmosphere", next++, {}, _ => showtrade());
+      addMenu("> Enter Atmosphere", next++, {}, _ => showgame());
       endMenu(next)
 
     };
     showwarp = _ => entersystem();
 
     showtrade = _ => { 
-      gameloop = false; _hide_(game); _hide_(orbit); _hide_(map); _hide_(title); _show_(base); text();
+      gameloop = false; clearcursor(); _hide_(game); _hide_(orbit); _hide_(map); _hide_(title); _show_(base); text();
 
       f = _factionmap_[ship.d.my][ship.d.mx];
       f._explored_ = true;
@@ -425,8 +437,7 @@
       base_planet.setAttribute("stroke", f.pcol);
       base_moon.setAttribute("cx", Math.random()*640);
       base_moon.setAttribute("cy", Math.random()*340);
-      base_moon.setAttribute("rx", f.mradius*2);
-      base_moon.setAttribute("ry", f.mradius*2);
+      base_moon.setAttribute("r", f.mradius*2);
       base_moon.setAttribute("stroke", f.mcol);
 
       base_sc1.setAttribute("transform", `translate(${-5 -(Math.random()*315)} 300)`); // tower
@@ -571,6 +582,7 @@
 
     kredits = 25;
     shields = 100;
+    shieldhit = 0;
     fuel = 25;
     maxfuel = 50;
     scanrange = 0;
@@ -595,11 +607,38 @@
       o.d.y = (o.d.y * 0.8 + (400 + (my * 100)) * 0.2);
       gh = 27.5 - (my * 12.5);
       gx -= ((o.d.x - 320) / 3000);
-      ship.setAttribute("d", `M${(320 - o.d.x) / 100} ${(o.d.y - 400) / 50} L-5 4 L0 8 L5 4 Z M-5 4 L0 1 L5 4`);
+      shipd.setAttribute("d", `M${(320 - o.d.x) / 100} ${(o.d.y - 400) / 50} L-5 4 L0 8 L5 4 Z M-5 4 L0 1 L5 4`);
+      if (shieldhit>0 || shields <= 10) {
+        _show_(ships);
+        if (shields >= 10) {
+          ships.setAttribute("stroke", "#00f");
+          ships.setAttribute("fill", "#00f")
+        } else {
+          ships.setAttribute("stroke", "#f00");
+          ships.setAttribute("fill", "#f00")
+        };
+        shieldhit--
+      } else {
+        _hide_(ships)
+      };
       _update_(o)
     };
     objects.push(ship);
     _update_(ship);
+
+    combocount.d = { v:0, c:0 };
+    combocount.d._update_ = (o,g) => {
+      if (o.d.v <= 0) {
+        combocount.setAttribute("d", "");
+        combocounttext.textContent = "";
+        o.d.c = 0
+      } else {
+        combocount.setAttribute("d", arc(550, 80, 40, 360-o.d.v, 359.9));
+        combocounttext.textContent = `x${o.d.c}`
+      };
+      o.d.v-=1.5
+    };
+    objects.push(combocount);
 
     _factionmap_ = [];
 
@@ -647,7 +686,7 @@
         } else if (combo < 13) {
           f._economy_ += " (B)"
         } else {
-          f._economy_ = " (A)"
+          f._economy_ += " (A)"
         };
 
         ///#if 0
@@ -863,7 +902,7 @@
       o.setAttribute("stroke", "#fff");
       o.setAttribute("stroke-width", "2");
       o.removeAttribute("id");
-      o.d = { r: 0, x: -200, y: -200, z: 1, t: null, f:0 };
+      o.d = { r: 0, x: -200, y: -200, z: 1, t: null, f:0, temp:true };
       o.d._update_ = (o, g) => {
         if (o.d.t && !o.d.t._dead_) {
           o.d.x = (o.d.x * 0.85) + (o.d.t.x * 0.15);
@@ -880,6 +919,14 @@
             o.d._dead_ = true;
             o.d.t._dead_ = true;
             _decompose_(o.d.to);
+
+            if (combocount.d.v > 0) {
+              combocount.d.c ++
+            } else {
+              combocount.d.c = 1
+            };
+
+            combocount.d.v = 360;
 
             enemies--;
             missiles--
@@ -926,12 +973,13 @@
               objects.push(t);
               _lock_(700 + (50 * targetc));
               _.target.onmouseenter = null;
-              targetc++
+              targetc++;
+              cursorText1.textContent = `Lock: ${targetc}`
             }
           }
         };
 
-        o.d = { r: 0, x: Math.random() * 640, ry: Math.random() * 640, s: s += 0.0005, z: 0.1, dx:0, dy:0 };
+        o.d = { r: 0, x: Math.random() * 640, ry: Math.random() * 640, s: s += 0.0005, z: 0.1, dx:0, dy:0, temp:true };
 
         o.d._update_ = (o, g) => {
           o.d.dx = o.d.x;
@@ -954,7 +1002,7 @@
               p+= ` L${(Math.random()*k*2)-k} ${k*10}`
             };
             zap.setAttribute("d", p);
-            zap.d = {x: o.d.x, y: o.d.y, r:0, s:1, z:1, _dead_: true};
+            zap.d = {x: o.d.x, y: o.d.y, r:0, s:1, z:1, _dead_: true, temp: true};
             zap.d._update_ = _ => {};
             objects.push(zap);
             _update_(zap);
@@ -962,6 +1010,7 @@
             
             if (Math.abs(o.d.x - ship.d.x) < 25) { 
               shields--;
+              shieldhit += 5;
               _shields_()
             } else {
               _zap_()
@@ -1049,7 +1098,8 @@
       if (gameloop) {
         mousedown = false;
         missiletime = 0;
-        targetc = 0
+        targetc = 0;
+        clearcursor()
       }
     };
 
@@ -1069,6 +1119,23 @@
     gy = 0;
     gh = 10;
 
+    cleartemp = _ => {
+      x = objects.length;
+      objects2 = objects;
+      objects = [];
+
+      objects2.forEach(o => {
+        if (o.d.temp) {
+          o.remove() 
+        } else {
+          objects.push(o)
+        }
+      })
+      ///#if 0
+      console.log(`${x-objects.length} objects culled`)
+      ///#endif
+    };
+
     // Game loop
     setInterval(_ => {
       if (!focus) return;
@@ -1076,6 +1143,8 @@
       fxobjects.forEach(o => {
         o.d._update_(o, g)
       });
+
+      if (shields < 100) shields = _clamp_(shields+0.01, 0, 100);
 
       if (!gameloop) return;
 
@@ -1113,7 +1182,9 @@
         wavetime--;
         if (wavetime == 0) {
           if (waves==0) {
-            showtrade()
+            cleartemp();
+            showtrade();
+            return
           } else {
             waves--;
             wavetime = 25;
@@ -1123,7 +1194,7 @@
       };
 
       if (shields > 0) {
-        text(`shields: ${shields}%`)
+        text(`shields: ${shields.toFixed(0)}%`)
       } else {
         text("G A M E O V E R");
         ship.d._dead_=true;
