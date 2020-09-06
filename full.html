@@ -4,7 +4,6 @@
     TODO 
   
     * Tutorial stage explaining locks and combos
-    * Slower combo timer when locked
     * Max combo - actually do something, take locks into account
     * Backgrounds for abandoned bases, ruins and crashsites
     * randomize initial ship stats
@@ -365,6 +364,7 @@
       missiles = 0;
       maxmissiles = 8;
       targetc = 0;
+      maxlock = 4;
       wavetime = 100
 
       ///#if 0
@@ -640,7 +640,7 @@
         combocount.setAttribute("d", arc(550, 80, 40, 360-o.d.v, 359.9));
         combocounttext.textContent = `x${o.d.c}`
       };
-      o.d.v-=1.5
+      o.d.v-= ((targetc+missiles == 0) ? 5 : 0.5) // combo counter drops faster when no lock or missiles
     };
     objects.push(combocount);
 
@@ -968,7 +968,7 @@
 
         o.onmouseenter = _ => {
           if (mousedown && shields>0) {
-            if (targets.length > 0) {
+            if (targets.length > 0 && targetc < maxlock) {
               t = targets.pop();
               t.d.t = _.target.d;
               t.d.to = _.target;
@@ -978,7 +978,7 @@
               _lock_(700 + (50 * targetc));
               _.target.onmouseenter = null;
               targetc++;
-              cursorText1.textContent = `Lock: ${targetc}`
+              cursorText1.textContent = `Lock: ${targetc} / ${maxlock}`
             }
           }
         };
