@@ -22,6 +22,9 @@
   ///#define _show_ s
   ///#define _hide_ h
   ///#define _textwidget_ t
+  ///#define _addMenu_ am
+  ///#define _hideMenu_ hm
+  ///#define _endMenu_ em
   ///#define _critter_ a
   ///#define _dead_ d
   ///#define _items_ it
@@ -137,7 +140,7 @@
 
       <g filter="url(#f1)" id="map">
         <path d="M0 0 h640 v640 h-640 z" fill="#000"/>
-        <path id="galaxy" filter="url(#f10)" fill="#fff2" d="M-20 355c0-160 125-310 300-310 135 0 245 95 245 230 0 85-65 175-165 175-90 0-135-55-135-125-15 0-25 25-25 50 0 65 80 135 170 135 120 0 250-110 250-275 0-100-50-190-90-240 50 45 130 130 130 270 0 160-125 310-295 310-135 0-245-95-245-230 0-85 65-175 165-175 90 0 135 55 135 125 15 0 25-25 25-50 0-65-80-135-170-135-120 0-250 110-250 275 0 100 50 190 90 240C55 580-20 495-20 355z"/>
+        <path id="galaxy" filter="url(#f10)" fill="#fff1" d="M-20 355c0-160 125-310 300-310 135 0 245 95 245 230 0 85-65 175-165 175-90 0-135-55-135-125-15 0-25 25-25 50 0 65 80 135 170 135 120 0 250-110 250-275 0-100-50-190-90-240 50 45 130 130 130 270 0 160-125 310-295 310-135 0-245-95-245-230 0-85 65-175 165-175 90 0 135 55 135 125 15 0 25-25 25-50 0-65-80-135-170-135-120 0-250 110-250 275 0 100 50 190 90 240C55 580-20 495-20 355z"/>
         <g id="mapexit" transform="translate(0 0)">
           <path d="M0 0 h640 v30 h-640 z" fill="#000"/>
           <text id="mapexittext"  x=10 y=25 fill="#fff" class="big">&lt; Cancel</text>
@@ -310,7 +313,7 @@
 
     itemvalue = (item, f) => (item._war_*f._war_) + (item._trade_*f._trade_)+ (item._sci_*f._sci_);
 
-    addMenu = (text, i, d, f) => {
+    _addMenu_ = (text, i, d, f) => {
       if (i > 16) return;
       item = document.getElementById(`menuitem${i}`);
       _show_(item);
@@ -323,15 +326,15 @@
       })
     };
 
-    hideMenu = i => {
+    _hideMenu_ = i => {
       if (i > 16) return;
       item = document.getElementById(`menuitem${i}`);
       _hide_(item)
     };
 
-    endMenu = i => {
+    _endMenu_ = i => {
       while(i < 17) {
-        hideMenu(i++)
+        _hideMenu_(i++)
       }
     };
 
@@ -345,10 +348,10 @@
       cursorText3.textContent = "";
       cursorText4.textContent = ""
     };
-    showtitle = _ => { gameloop = false; endMenu(0); _hide_(game); _hide_(orbit); _hide_(map); _show_(title); _hide_(base); text() };
-    showmap = _ => { gameloop = false; endMenu(0); _hide_(game); _hide_(orbit); _show_(map); _hide_(title); _hide_(base); text() };
+    showtitle = _ => { gameloop = false; _endMenu_(0); _hide_(game); _hide_(orbit); _hide_(map); _show_(title); _hide_(base); text() };
+    showmap = _ => { gameloop = false; _endMenu_(0); _hide_(game); _hide_(orbit); _show_(map); _hide_(title); _hide_(base); text() };
     showgame = _ => { 
-      gameloop = true; endMenu(0);_show_(game); _hide_(orbit); _hide_(map); _hide_(title); _hide_(base); text();
+      gameloop = true; _endMenu_(0);_show_(game); _hide_(orbit); _hide_(map); _hide_(title); _hide_(base); text();
 
       combocount.d.v = 0; combocount.d.c = 0;
       maxlock = ship.d.weapons;
@@ -368,7 +371,7 @@
       ///#endif
     };
     entersystem = _ => {
-      if (scanrange > 0) lrs(ship.d.mx, ship.d.my, scanrange);
+      if (ship.d.scanner > 0) lrs(ship.d.mx, ship.d.my, ship.d.scanner+1);
       showorbit()
     };
     showorbit = _ => { 
@@ -410,36 +413,37 @@
 
       next = 0;
       
-      addMenu("> Galaxy Map", next++, {}, _ => showmap());
-      hideMenu(next++);
+      _addMenu_("> Galaxy Map", next++, {}, _ => showmap());
+      _hideMenu_(next++);
       if (!f._scanned_) {
-        addMenu("> Scan System", next++, {}, _ => { 
+        _addMenu_("> Scan System", next++, {}, _ => { 
           _factionmap_[ship.d.my][ship.d.mx]._scanned_ = true; 
           updatemap(ship.d.mx, ship.d.my);
           showorbit() 
         });
-        hideMenu(next++)
+        _hideMenu_(next++)
       };
-      addMenu("> Enter Atmosphere", next++, {}, _ => showtrade());//showgame());
-      hideMenu(next++);
-      addMenu("> Ship status", next++, {}, _ => {
+      _addMenu_("> Enter Atmosphere", next++, {}, _ => showtrade());//showgame());
+      _hideMenu_(next++);
+      _addMenu_("> Ship status", next++, {}, _ => {
         next = 0;
-        addMenu("< Exit", next++, {}, _ => showorbit());
-        hideMenu(next++);
-        addMenu(`Weapons: ${ship.d.weapons}`, next++);
-        addMenu(`Shields: ${ship.d.shields}`, next++);
-        addMenu(`Engines: ${ship.d.engines}`, next++);
-        addMenu(`Science: ${ship.d.science}`, next++);
-        endMenu(next)
+        _addMenu_("< Exit", next++, {}, _ => showorbit());
+        _hideMenu_(next++);
+        _addMenu_(`Weapons: ${ship.d.weapons}`, next++);
+        _addMenu_(`Shields: ${ship.d.shields}`, next++);
+        _addMenu_(`Engines: ${ship.d.engines}`, next++);
+        _addMenu_(`Scanner: ${ship.d.scanner}`, next++);
+        _addMenu_(`Science: ${ship.d.science}`, next++);
+        _endMenu_(next)
       });
 
-      hideMenu(next++);
+      _hideMenu_(next++);
 
       skip = 0;
       for (var i=0; i<inventory.length; ++i) {
         if (_items_[inventory[i]].action != null) {
           skip ++;
-          addMenu(`> Install ${_items_[inventory[i]].name}`, next++, {i: inventory[i]}, d => {
+          _addMenu_(`> Install ${_items_[inventory[i]].name}`, next++, {i: inventory[i]}, d => {
             _items_[d.i].action();
             inventory.splice(inventory.indexOf(d.i), 1);
             showorbit()
@@ -448,29 +452,30 @@
         }
       };
 
-      if (skip>0) hideMenu(next++);
+      if (skip>0) _hideMenu_(next++);
 
       if (research != null) {
         if (researchtime > 0) {
-          addMenu(`Researching ${_items_[research].name}`, next++)
+          j = _clamp_(Math.floor(researchtime/500), 1, 20);
+          _addMenu_(`Researching ${_items_[research].name} ${"#".repeat(j)}`, next++)
         } else {
-          addMenu("> Research complete!", next++, {}, _ => {
+          _addMenu_("> Research complete!", next++, {}, _ => {
             next = 0;
-            addMenu("< Exit", next++, {}, _ => showorbit());
-            hideMenu(next++);
+            _addMenu_("< Exit", next++, {}, _ => showorbit());
+            _hideMenu_(next++);
 
             w = _clamp_(25 - _items_[research]._research_ - ship.d.science, 4, 20);
 
             k = getWeighted(_items_, w);
 
             if (k == null) {
-              addMenu("Discovered nothing of value", next++)
+              _addMenu_("Discovered nothing of value", next++)
             } else {
-              addMenu(`Discovered ${_items_[k].name}`, next++);
+              _addMenu_(`Discovered ${_items_[k].name}`, next++);
               inventory.push(k)
             };
 
-            endMenu(next);
+            _endMenu_(next);
             research = null
           })
         }
@@ -479,10 +484,10 @@
         seen = [];
         for (j=0; j<inventory.length; ++j) {
           if (_items_[inventory[j]]._research_ <= ship.d.science && !seen.includes(inventory[j])) {
-            addMenu (`> Research ${_items_[inventory[j]].name}`, next++, {i: inventory[j]}, d => {
+            _addMenu_ (`> Research ${_items_[inventory[j]].name}`, next++, {i: inventory[j]}, d => {
               research = d.i;
               inventory.splice(inventory.indexOf(d.i), 1);
-              researchtime = _items_[d.i]._research_ * 2000;
+              researchtime = _items_[d.i]._research_ * 1000;
               showorbit()
             });
             i++;
@@ -492,7 +497,7 @@
         }
       };
 
-      endMenu(next)
+      _endMenu_(next)
 
     };
     showwarp = _ => entersystem();
@@ -529,16 +534,16 @@
 
       text(`kredits: ${kr} ${kredits}   fuel: ${fuel}/${maxfuel}`);
 
-      addMenu("< Return to orbit", next++, {}, _ => showorbit());
-      hideMenu(next++);
+      _addMenu_("< Return to orbit", next++, {}, _ => showorbit());
+      _hideMenu_(next++);
 
       if (f._trade_ == 0) {
-        addMenu("Search for scrap", next++, {}, _ => {
+        _addMenu_("Search for scrap", next++, {}, _ => {
 
           next = 2;
 
           for (i=0; i<f._items_.length; ++i) {
-            addMenu(`Found ${_items_[f._items_[i]].name}!`, next++);
+            _addMenu_(`Found ${_items_[f._items_[i]].name}!`, next++);
             inventory.push(f._items_[i])
           };
 
@@ -546,13 +551,13 @@
 
         });
 
-        hideMenu(next++)
+        _hideMenu_(next++)
 
       } else {
 
         if (fuel < maxfuel) {
           fuelcost = 10;
-          addMenu(`> Buy fuel : ${kr} ${fuelcost}`, next++, {v: fuelcost}, d => {
+          _addMenu_(`> Buy fuel : ${kr} ${fuelcost}`, next++, {v: fuelcost}, d => {
             if (kredits >= d.v) {
               kredits -= d.v;
               fuel++;
@@ -563,7 +568,7 @@
 
         for (i=0; i<f._items_.length; ++i) {
           v = itemvalue(_items_[f._items_[i]], f);
-          addMenu(`> Buy ${_items_[f._items_[i]].name} : ${kr} ${v}`, next++, {i: f._items_[i], v: v}, d => {
+          _addMenu_(`> Buy ${_items_[f._items_[i]].name} : ${kr} ${v}`, next++, {i: f._items_[i], v: v}, d => {
             if (kredits >= d.v) {
               inventory.push(d.i);
               kredits -= d.v;
@@ -573,11 +578,11 @@
           })
         };
 
-        if (f._items_.length > 0) hideMenu(next++);
+        if (f._items_.length > 0) _hideMenu_(next++);
 
         for (i=0; i<inventory.length; ++i) {
           v = Math.round(itemvalue(_items_[inventory[i]], f) * 0.8);
-          addMenu(`> Sell ${_items_[inventory[i]].name} : ${kr} ${v}`, next++, {i: inventory[i], v: v}, d => {
+          _addMenu_(`> Sell ${_items_[inventory[i]].name} : ${kr} ${v}`, next++, {i: inventory[i], v: v}, d => {
             kredits += d.v;
             inventory.splice(inventory.indexOf(d.i), 1);
             showtrade()
@@ -585,12 +590,12 @@
         }
       };
 
-      endMenu(next)
+      _endMenu_(next)
 
     };
 
     cols = ["#f00", "#f70", "#ff0", "#7f0", "#0f0", "#0f7", "#0ff", "#07f", "#00f", "#70f", "#f0f", "#f07"];
-    factionCol = ["#000", "#f0f", "#ff0", "#05f"];
+    factionCol = ["#333", "#f0f", "#ff0", "#05f"];
     factions = [
       {name:"Unclaimed sector",    _sci_:1, _trade_:1, _war_:1},
       {name:"Trade Federation",    _sci_:3, _trade_:6, _war_:1},
@@ -604,6 +609,7 @@
       {w:2,   name:"Shields upgrade",        _sci_:6, _trade_:4, _war_:6, action: _ => { ship.d.shields++ }},
       {w:3,   name:"Science upgrade",        _sci_:8, _trade_:4, _war_:4, action: _ => { ship.d.science++ }},
       {w:4,   name:"Engines upgrade",        _sci_:5, _trade_:6, _war_:5, action: _ => { ship.d.engines++ }},
+      {w:5,   name:"Scanner upgrade",        _sci_:8, _trade_:4, _war_:4, action: _ => { ship.d.engines++ }},
 
       {w:30,  name:"Assorted junk",          _sci_:1, _trade_:1, _war_:1, _research_:1},
       {w:40,  name:"Salvage",                _sci_:2, _trade_:2, _war_:1, _research_:2},
@@ -665,7 +671,6 @@
     researchtime = 0;
     fuel = 25;
     maxfuel = 50;
-    scanrange = 0;
     warprange = 5;
     warpdistance = 0;
 
@@ -679,13 +684,14 @@
       entersystem()
     };
 
-    endMenu(0);
+    _endMenu_(0);
 
     ship.d = { r: 0, x: 320, y: 550, z: 10, mx: 10 + Math.floor(Math.random() * 12), my: 10 + Math.floor(Math.random() * 12),
       weapons: 2 + Math.floor(Math.random()*3),
       shields: 1 + Math.floor(Math.random()*1),
       science: 1 + Math.floor(Math.random()*3),
-      engines: 1 + Math.floor(Math.random()*3)
+      engines: 1 + Math.floor(Math.random()*3),
+      scanner: 0 + Math.floor(Math.random()*3)
      };
     ship.d._update_ = (o, g) => {
       o.d.x = (o.d.x * 0.8 + (320 + (mx * 320)) * 0.2);
@@ -839,7 +845,7 @@
     updatemap = (x,y) => {
       if (_factionmap_[y][x]._scanned_) {
         _factionmap_[y][x].mapcell.setAttribute("fill", factionCol[_factionmap_[y][x].faction]);
-        _factionmap_[y][x].mapcell.setAttribute("fill-opacity", _factionmap_[y][x]._visited_ ? "0.6" : "0.25")
+        _factionmap_[y][x].mapcell.setAttribute("fill-opacity", _factionmap_[y][x]._visited_ ? "0.9" : "0.4")
       }
     };
 
@@ -864,7 +870,7 @@
           o.setAttribute("stroke", "#ff0");
           shipcell = o
         } else {
-          o.setAttribute("stroke", "#fff2")
+          o.setAttribute("stroke", _factionmap_[y][x]._scanned_ ? "#fff5" : "#000")
         };
 
         _factionmap_[y][x].mapcell = o;
@@ -894,7 +900,7 @@
           if (_.target.d.x == ship.d.mx && _.target.d.y == ship.d.my) {
             _.target.setAttribute("stroke", "#ff0")
           } else {
-            _.target.setAttribute("stroke", "#fff2")
+            _.target.setAttribute("stroke", _factionmap_[_.target.d.y][_.target.d.x]._scanned_ ? "#fff5" : "#000")
           }
         };
         o.onclick = _ => {
