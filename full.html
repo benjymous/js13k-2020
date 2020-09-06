@@ -8,9 +8,7 @@
     * Backgrounds for abandoned bases, ruins and crashsites
     * more enemy wave types
     * hyperspace sequence
-    * ship status screen
     * varying fuel prices
-    * usable items (ship upgrades - found and from research)
     * location clues
     * actual endgame
     * better gameover
@@ -98,14 +96,13 @@
         <text x=20 y=40 fill="#fff" class="big">Currently in orbit at</text>
         <text id="orbitcoords" x=400 y=40 fill="#fff" class="big">[0:0]</text>
 
-        <text x=20 y=400 fill="#fff" class="big">System Information</text>
-        <text x=60 y=430 fill="#fff" class="big">Faction:</text>
-        <text id="infofaction" x=300 y=430 fill="#fff" class="big">Unknown</text>
-        <text x=60 y=460 fill="#fff" class="big">Economy:</text>
-        <text id="infotrade" x=300 y=460 fill="#fff" class="big">Unknown</text>
-        <text x=60 y=490 fill="#fff" class="big">Discovery:</text>
-        <text id="infopoi" x=300 y=490 fill="#fff" class="big">Unknown</text>
-        
+        <text x=20 y=500 fill="#fff" class="big">System Information</text>
+        <text x=60 y=530 fill="#fff" class="big">Faction:</text>
+        <text id="infofaction" x=300 y=530 fill="#fff" class="big"/>
+        <text x=60 y=560 fill="#fff" class="big">Economy:</text>
+        <text id="infotrade" x=300 y=560 fill="#fff" class="big"/>
+        <text x=60 y=590 fill="#fff" class="big">Discovery:</text>
+        <text id="infopoi" x=300 y=590 fill="#fff" class="big"/>
       </g>
       <g id="base" filter="url(#f1)">
         <circle id="base_moon" stroke="#fff" stroke-width="1.5" fill="#000"/>
@@ -438,6 +435,21 @@
 
       hideMenu(next++);
 
+      skip = 0;
+      for (var i=0; i<inventory.length; ++i) {
+        if (_items_[inventory[i]].action != null) {
+          skip ++;
+          addMenu(`> Install ${_items_[inventory[i]].name}`, next++, {i: inventory[i]}, d => {
+            _items_[d.i].action();
+            inventory.splice(inventory.indexOf(d.i), 1);
+            showorbit()
+          });
+          if (skip==3) break
+        }
+      };
+
+      if (skip>0) hideMenu(next++);
+
       if (research != null) {
         if (researchtime > 0) {
           addMenu(`Researching ${_items_[research].name}`, next++)
@@ -446,7 +458,18 @@
             next = 0;
             addMenu("< Exit", next++, {}, _ => showorbit());
             hideMenu(next++);
-            addMenu("Discovered nothing of value", next++);
+
+            w = _clamp_(25 - _items_[research]._research_ - ship.d.science, 4, 20);
+
+            k = getWeighted(_items_, w);
+
+            if (k == null) {
+              addMenu("Discovered nothing of value", next++)
+            } else {
+              addMenu(`Discovered ${_items_[k].name}`, next++);
+              inventory.push(k)
+            };
+
             endMenu(next);
             research = null
           })
@@ -576,6 +599,12 @@
     ];
 
     _items_ = [
+
+      {w:1,   name:"Weapons upgrade",        _sci_:4, _trade_:4, _war_:8, action: _ => { ship.d.weapons++ }},
+      {w:2,   name:"Shields upgrade",        _sci_:6, _trade_:4, _war_:6, action: _ => { ship.d.shields++ }},
+      {w:3,   name:"Science upgrade",        _sci_:8, _trade_:4, _war_:4, action: _ => { ship.d.science++ }},
+      {w:4,   name:"Engines upgrade",        _sci_:5, _trade_:6, _war_:5, action: _ => { ship.d.engines++ }},
+
       {w:30,  name:"Assorted junk",          _sci_:1, _trade_:1, _war_:1, _research_:1},
       {w:40,  name:"Salvage",                _sci_:2, _trade_:2, _war_:1, _research_:2},
       {w:45,  name:"Strange foodstuffs",     _sci_:1, _trade_:2, _war_:1},
@@ -591,7 +620,7 @@
       {w:90,  name:"Luxury goods",           _sci_:4, _trade_:8, _war_:5},
       {w:100, name:"Advanced technology",    _sci_:7, _trade_:9, _war_:8, _research_:10}
 
-      // {name:"", _sci_:0, _trade_:0, _war_:0},
+      
       // {name:"", _sci_:0, _trade_:0, _war_:0},
       // {name:"", _sci_:0, _trade_:0, _war_:0},
       // {name:"", _sci_:0, _trade_:0, _war_:0},
@@ -615,11 +644,12 @@
       {w:100, name:"Large colony", _trade_:4, _salvage_: 0,_sci_:1}
     ];
 
-    getWeighted = _ => {
-      r = Math.random() * 100;
-      for (j=0; j<_.length; ++j) {
-        if (_[j].w>r) return j
-      }
+    getWeighted = (i,x) => {
+      r = Math.random() * (x==null ? 100 : x);
+      for (j=0; j<i.length; ++j) {
+        if (i[j].w>r) return j
+      };
+      return null
     };
 
     targets = []; shipcell = null;
