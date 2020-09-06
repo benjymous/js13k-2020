@@ -6,13 +6,11 @@
     * Tutorial stage explaining locks and combos
     * Max combo - actually do something, take locks into account
     * Backgrounds for abandoned bases, ruins and crashsites
-    * randomize initial ship stats
     * more enemy wave types
     * hyperspace sequence
     * ship status screen
-    * research junk into upgrades
     * varying fuel prices
-    * usable items (ship upgrades)
+    * usable items (ship upgrades - found and from research)
     * location clues
     * actual endgame
     * better gameover
@@ -322,7 +320,7 @@
       itemtext = document.getElementById(`menuitem${i}text`);
       itemtext.textContent = text;
       item.d = d;
-      _textwidget_(item, itemtext, _ => {
+      _textwidget_(item, itemtext, f == null ? null : _ => {
         d = _.target.parentElement.d;
         f(d)
       })
@@ -356,6 +354,7 @@
       gameloop = true; endMenu(0);_show_(game); _hide_(orbit); _hide_(map); _hide_(title); _hide_(base); text();
 
       combocount.d.v = 0; combocount.d.c = 0;
+      maxlock = ship.d.weapons;
 
       f = _factionmap_[ship.d.my][ship.d.mx];
       waves = f._explored_? 0 : 1+f._war_ * f._war_;
@@ -424,7 +423,52 @@
         });
         hideMenu(next++)
       };
-      addMenu("> Enter Atmosphere", next++, {}, _ => showgame());
+      addMenu("> Enter Atmosphere", next++, {}, _ => showtrade());//showgame());
+      hideMenu(next++);
+      addMenu("> Ship status", next++, {}, _ => {
+        next = 0;
+        addMenu("< Exit", next++, {}, _ => showorbit());
+        hideMenu(next++);
+        addMenu(`Weapons: ${ship.d.weapons}`, next++);
+        addMenu(`Shields: ${ship.d.shields}`, next++);
+        addMenu(`Engines: ${ship.d.engines}`, next++);
+        addMenu(`Science: ${ship.d.science}`, next++);
+        endMenu(next)
+      });
+
+      hideMenu(next++);
+
+      if (research != null) {
+        if (researchtime > 0) {
+          addMenu(`Researching ${_items_[research].name}`, next++)
+        } else {
+          addMenu("> Research complete!", next++, {}, _ => {
+            next = 0;
+            addMenu("< Exit", next++, {}, _ => showorbit());
+            hideMenu(next++);
+            addMenu("Discovered nothing of value", next++);
+            endMenu(next);
+            research = null
+          })
+        }
+      } else {
+        i=0;
+        seen = [];
+        for (j=0; j<inventory.length; ++j) {
+          if (_items_[inventory[j]]._research_ <= ship.d.science && !seen.includes(inventory[j])) {
+            addMenu (`> Research ${_items_[inventory[j]].name}`, next++, {i: inventory[j]}, d => {
+              research = d.i;
+              inventory.splice(inventory.indexOf(d.i), 1);
+              researchtime = _items_[d.i]._research_ * 2000;
+              showorbit()
+            });
+            i++;
+            seen.push(inventory[j]);
+            if (i==3) break
+          }
+        }
+      };
+
       endMenu(next)
 
     };
@@ -532,20 +576,20 @@
     ];
 
     _items_ = [
-      {w:30,  name:"Assorted junk",          _sci_:1, _trade_:1, _war_:1},
-      {w:40,  name:"Salvage",                _sci_:2, _trade_:2, _war_:1},
+      {w:30,  name:"Assorted junk",          _sci_:1, _trade_:1, _war_:1, _research_:1},
+      {w:40,  name:"Salvage",                _sci_:2, _trade_:2, _war_:1, _research_:2},
       {w:45,  name:"Strange foodstuffs",     _sci_:1, _trade_:2, _war_:1},
-      {w:60,  name:"Mysterious boxes",       _sci_:6, _trade_:3, _war_:1},
+      {w:60,  name:"Mysterious boxes",       _sci_:6, _trade_:3, _war_:1, _research_:3},
       {w:63,  name:"Odd trinkets",           _sci_:1, _trade_:4, _war_:1},
       {w:65,  name:"Small furry creatures",  _sci_:5, _trade_:7, _war_:1},
       {w:68,  name:"Lab grown meat",         _sci_:3, _trade_:2, _war_:4},
       {w:72,  name:"Service robots",         _sci_:5, _trade_:4, _war_:2},
       {w:75,  name:"Entertainment devices",  _sci_:2, _trade_:6, _war_:2},
       {w:78,  name:"Medical supplies",       _sci_:4, _trade_:6, _war_:6},
-      {w:80,  name:"Exotic weapons",         _sci_:4, _trade_:6, _war_:9},
+      {w:80,  name:"Exotic weapons",         _sci_:4, _trade_:6, _war_:9, _research_:6},
 
       {w:90,  name:"Luxury goods",           _sci_:4, _trade_:8, _war_:5},
-      {w:100, name:"Advanced technology",    _sci_:7, _trade_:9, _war_:8}
+      {w:100, name:"Advanced technology",    _sci_:7, _trade_:9, _war_:8, _research_:10}
 
       // {name:"", _sci_:0, _trade_:0, _war_:0},
       // {name:"", _sci_:0, _trade_:0, _war_:0},
@@ -587,6 +631,8 @@
     kredits = 25;
     shields = 100;
     shieldhit = 0;
+    research = null;
+    researchtime = 0;
     fuel = 25;
     maxfuel = 50;
     scanrange = 0;
@@ -605,7 +651,12 @@
 
     endMenu(0);
 
-    ship.d = { r: 0, x: 320, y: 550, z: 10, mx: 10 + Math.floor(Math.random() * 12), my: 10 + Math.floor(Math.random() * 12) };
+    ship.d = { r: 0, x: 320, y: 550, z: 10, mx: 10 + Math.floor(Math.random() * 12), my: 10 + Math.floor(Math.random() * 12),
+      weapons: 2 + Math.floor(Math.random()*3),
+      shields: 1 + Math.floor(Math.random()*1),
+      science: 1 + Math.floor(Math.random()*3),
+      engines: 1 + Math.floor(Math.random()*3)
+     };
     ship.d._update_ = (o, g) => {
       o.d.x = (o.d.x * 0.8 + (320 + (mx * 320)) * 0.2);
       o.d.y = (o.d.y * 0.8 + (400 + (my * 100)) * 0.2);
@@ -746,8 +797,9 @@
         e.onmouseleave = _ => t.setAttribute("fill", "#fff");
         e.onclick = _ => f(_)
       } else {
-        e.mouseenter = null;
-        e.mouseleave = null;
+        t.setAttribute("fill", "#fff");
+        e.onmouseenter = null;
+        e.onmouseleave = null;
         e.onclick = null
       }
     };
@@ -1148,7 +1200,9 @@
         o.d._update_(o, g)
       });
 
-      if (shields < 100) shields = _clamp_(shields+0.01, 0, 100);
+      if (shields < 100) shields = _clamp_(shields+(ship.d.shields/100), 0, 100);
+
+      if (researchtime > 0) researchtime--;
 
       if (!gameloop) return;
 
