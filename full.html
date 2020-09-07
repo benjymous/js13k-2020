@@ -28,6 +28,24 @@
   ///#define _critter_ a
   ///#define _dead_ d
   ///#define _items_ it
+  ///#define _temp_ p
+
+  ///#define _getWeighted_ az
+  ///#define _showmap_ bz
+  ///#define _showorbit_ cz
+  ///#define _showgame_ dz
+  ///#define _updatemap_ ez
+  ///#define _showtitle_ fz
+  ///#define _showwarp_ gz
+  ///#define _calcfuel_ hz
+  ///#define _clamp_ iz
+  ///#define _showtrade_ lz
+  ///#define _entersystem_ mz
+  ///#define _calcdistance_ nz
+  
+  ///#define _inventory_ pz
+
+  ///#define _sqr_ qz
 
   ///#define _place_ p
   ///#define _visited_ v
@@ -52,6 +70,7 @@
   ///#define _trade_ y
   ///#define _war_ z
   ///#define _salvage_ s
+  ///#define _research_ r
   -->
 
   <svg id="c" viewBox="0 0 640 640" style="position:absolute;top:0;left:0;height:100%;width:100%">
@@ -290,7 +309,7 @@
         p=o.cloneNode();
         p.removeAttribute("id");
         p.setAttribute("d", s[i]);
-        p.d = {x: o.d.x, ry: o.d.ry, r: o.d.r, s: o.d.s, z: o.d.z, dx: o.d.dx + Math.random()*6-3, dy: o.d.dy + Math.random()*6-3, a: 1, temp: true};
+        p.d = {x: o.d.x, ry: o.d.ry, r: o.d.r, s: o.d.s, z: o.d.z, dx: o.d.dx + Math.random()*6-3, dy: o.d.dy + Math.random()*6-3, a: 1, _temp_: true};
         p.d._update_ = (o, g) => {
           o.d.x += o.d.dx;
           o.d.ry += o.d.dy;
@@ -309,7 +328,7 @@
 
     _clamp_ = (i, n, x) => i < n ? n : i > x ? x : i;
     dot = (t, r, i) => t[0] * r + t[1] * i;
-    sqr = x => x * x;
+    _sqr_ = x => x * x;
 
     itemvalue = (item, f) => (item._war_*f._war_) + (item._trade_*f._trade_)+ (item._sci_*f._sci_);
 
@@ -348,9 +367,9 @@
       cursorText3.textContent = "";
       cursorText4.textContent = ""
     };
-    showtitle = _ => { gameloop = false; _endMenu_(0); _hide_(game); _hide_(orbit); _hide_(map); _show_(title); _hide_(base); text() };
-    showmap = _ => { gameloop = false; _endMenu_(0); _hide_(game); _hide_(orbit); _show_(map); _hide_(title); _hide_(base); text() };
-    showgame = _ => { 
+    _showtitle_ = _ => { gameloop = false; _endMenu_(0); _hide_(game); _hide_(orbit); _hide_(map); _show_(title); _hide_(base); text() };
+    _showmap_ = _ => { gameloop = false; _endMenu_(0); _hide_(game); _hide_(orbit); _show_(map); _hide_(title); _hide_(base); text() };
+    _showgame_ = _ => { 
       gameloop = true; _endMenu_(0);_show_(game); _hide_(orbit); _hide_(map); _hide_(title); _hide_(base); text();
 
       combocount.d.v = 0; combocount.d.c = 0;
@@ -370,11 +389,11 @@
       console.log("waves: "+waves);
       ///#endif
     };
-    entersystem = _ => {
+    _entersystem_ = _ => {
       if (ship.d.scanner > 0) lrs(ship.d.mx, ship.d.my, ship.d.scanner+1);
-      showorbit()
+      _showorbit_()
     };
-    showorbit = _ => { 
+    _showorbit_ = _ => { 
       gameloop = false; clearcursor(); _hide_(game); _show_(orbit); _hide_(map); _hide_(title); _hide_(base); text(); orbitcoords.textContent = `[${ship.d.mx},${ship.d.my}]`;
       f = _factionmap_[ship.d.my][ship.d.mx];
       f._visited_ = true;
@@ -409,25 +428,25 @@
         infotrade.textContent = "Unknown";
         infopoi.textContent =  "Unknown"
       };
-      updatemap(ship.d.mx, ship.d.my);
+      _updatemap_(ship.d.mx, ship.d.my);
 
       next = 0;
       
-      _addMenu_("> Galaxy Map", next++, {}, _ => showmap());
+      _addMenu_("> Galaxy Map", next++, {}, _ => _showmap_());
       _hideMenu_(next++);
       if (!f._scanned_) {
         _addMenu_("> Scan System", next++, {}, _ => { 
           _factionmap_[ship.d.my][ship.d.mx]._scanned_ = true; 
-          updatemap(ship.d.mx, ship.d.my);
-          showorbit() 
+          _updatemap_(ship.d.mx, ship.d.my);
+          _showorbit_() 
         });
         _hideMenu_(next++)
       };
-      _addMenu_("> Enter Atmosphere", next++, {}, _ => showtrade());//showgame());
+      _addMenu_("> Enter Atmosphere", next++, {}, _ => /*_showtrade_());*/ _showgame_());
       _hideMenu_(next++);
       _addMenu_("> Ship status", next++, {}, _ => {
         next = 0;
-        _addMenu_("< Exit", next++, {}, _ => showorbit());
+        _addMenu_("< Exit", next++, {}, _ => _showorbit_());
         _hideMenu_(next++);
         _addMenu_(`Weapons: ${ship.d.weapons}`, next++);
         _addMenu_(`Shields: ${ship.d.shields}`, next++);
@@ -440,13 +459,13 @@
       _hideMenu_(next++);
 
       skip = 0;
-      for (var i=0; i<inventory.length; ++i) {
-        if (_items_[inventory[i]].action != null) {
+      for (var i=0; i<_inventory_.length; ++i) {
+        if (_items_[_inventory_[i]].action != null) {
           skip ++;
-          _addMenu_(`> Install ${_items_[inventory[i]].name}`, next++, {i: inventory[i]}, d => {
+          _addMenu_(`> Install ${_items_[_inventory_[i]].name}`, next++, {i: _inventory_[i]}, d => {
             _items_[d.i].action();
-            inventory.splice(inventory.indexOf(d.i), 1);
-            showorbit()
+            _inventory_.splice(_inventory_.indexOf(d.i), 1);
+            _showorbit_()
           });
           if (skip==3) break
         }
@@ -461,18 +480,18 @@
         } else {
           _addMenu_("> Research complete!", next++, {}, _ => {
             next = 0;
-            _addMenu_("< Exit", next++, {}, _ => showorbit());
+            _addMenu_("< Exit", next++, {}, _ => _showorbit_());
             _hideMenu_(next++);
 
             w = _clamp_(25 - _items_[research]._research_ - ship.d.science, 4, 20);
 
-            k = getWeighted(_items_, w);
+            k = _getWeighted_(_items_, w);
 
             if (k == null) {
               _addMenu_("Discovered nothing of value", next++)
             } else {
               _addMenu_(`Discovered ${_items_[k].name}`, next++);
-              inventory.push(k)
+              _inventory_.push(k)
             };
 
             _endMenu_(next);
@@ -482,16 +501,16 @@
       } else {
         i=0;
         seen = [];
-        for (j=0; j<inventory.length; ++j) {
-          if (_items_[inventory[j]]._research_ <= ship.d.science && !seen.includes(inventory[j])) {
-            _addMenu_ (`> Research ${_items_[inventory[j]].name}`, next++, {i: inventory[j]}, d => {
+        for (j=0; j<_inventory_.length; ++j) {
+          if (_items_[_inventory_[j]]._research_ <= ship.d.science && !seen.includes(_inventory_[j])) {
+            _addMenu_ (`> Research ${_items_[_inventory_[j]].name}`, next++, {i: _inventory_[j]}, d => {
               research = d.i;
-              inventory.splice(inventory.indexOf(d.i), 1);
+              _inventory_.splice(_inventory_.indexOf(d.i), 1);
               researchtime = _items_[d.i]._research_ * 1000;
-              showorbit()
+              _showorbit_()
             });
             i++;
-            seen.push(inventory[j]);
+            seen.push(_inventory_[j]);
             if (i==3) break
           }
         }
@@ -500,9 +519,9 @@
       _endMenu_(next)
 
     };
-    showwarp = _ => entersystem();
+    _showwarp_ = _ => _entersystem_();
 
-    showtrade = _ => { 
+    _showtrade_ = _ => { 
       gameloop = false; clearcursor(); _hide_(game); _hide_(orbit); _hide_(map); _hide_(title); _show_(base); text();
 
       f = _factionmap_[ship.d.my][ship.d.mx];
@@ -530,11 +549,11 @@
 
       tradename.textContent = places[f._place_].name;
 
-      inventory.sort((a, b) => itemvalue(_items_[b], f) - itemvalue(_items_[a], f));
+      _inventory_.sort((a, b) => itemvalue(_items_[b], f) - itemvalue(_items_[a], f));
 
       text(`kredits: ${kr} ${kredits}   fuel: ${fuel}/${maxfuel}`);
 
-      _addMenu_("< Return to orbit", next++, {}, _ => showorbit());
+      _addMenu_("< Return to orbit", next++, {}, _ => _showorbit_());
       _hideMenu_(next++);
 
       if (f._trade_ == 0) {
@@ -544,7 +563,7 @@
 
           for (i=0; i<f._items_.length; ++i) {
             _addMenu_(`Found ${_items_[f._items_[i]].name}!`, next++);
-            inventory.push(f._items_[i])
+            _inventory_.push(f._items_[i])
           };
 
           f._items_ = []
@@ -561,7 +580,7 @@
             if (kredits >= d.v) {
               kredits -= d.v;
               fuel++;
-              showtrade()
+              _showtrade_()
             }
           })
         };
@@ -570,22 +589,22 @@
           v = itemvalue(_items_[f._items_[i]], f);
           _addMenu_(`> Buy ${_items_[f._items_[i]].name} : ${kr} ${v}`, next++, {i: f._items_[i], v: v}, d => {
             if (kredits >= d.v) {
-              inventory.push(d.i);
+              _inventory_.push(d.i);
               kredits -= d.v;
               f._items_.splice(f._items_.indexOf(d.i), 1);
-              showtrade()
+              _showtrade_()
             }
           })
         };
 
         if (f._items_.length > 0) _hideMenu_(next++);
 
-        for (i=0; i<inventory.length; ++i) {
-          v = Math.round(itemvalue(_items_[inventory[i]], f) * 0.8);
-          _addMenu_(`> Sell ${_items_[inventory[i]].name} : ${kr} ${v}`, next++, {i: inventory[i], v: v}, d => {
+        for (i=0; i<_inventory_.length; ++i) {
+          v = Math.round(itemvalue(_items_[_inventory_[i]], f) * 0.8);
+          _addMenu_(`> Sell ${_items_[_inventory_[i]].name} : ${kr} ${v}`, next++, {i: _inventory_[i], v: v}, d => {
             kredits += d.v;
-            inventory.splice(inventory.indexOf(d.i), 1);
-            showtrade()
+            _inventory_.splice(_inventory_.indexOf(d.i), 1);
+            _showtrade_()
           })
         }
       };
@@ -650,7 +669,7 @@
       {w:100, name:"Large colony", _trade_:4, _salvage_: 0,_sci_:1}
     ];
 
-    getWeighted = (i,x) => {
+    _getWeighted_ = (i,x) => {
       r = Math.random() * (x==null ? 100 : x);
       for (j=0; j<i.length; ++j) {
         if (i[j].w>r) return j
@@ -660,7 +679,7 @@
 
     targets = []; shipcell = null;
 
-    objects = []; fxobjects = []; inventory = [];
+    objects = []; fxobjects = []; _inventory_ = [];
 
     mousedown = false;
 
@@ -674,14 +693,14 @@
     warprange = 5;
     warpdistance = 0;
 
-    calcfuel = d => sqr(Math.abs(d.x - ship.d.mx)) + sqr(Math.abs(d.y - ship.d.my));
-    calcdistance = (x,y) => Math.sqrt((x-ship.d.mx)*(x-ship.d.mx)+(y-ship.d.my)*(y-ship.d.my));
+    _calcfuel_ = d => _sqr_(Math.abs(d.x - ship.d.mx)) + _sqr_(Math.abs(d.y - ship.d.my));
+    _calcdistance_ = (x,y) => Math.sqrt((x-ship.d.mx)*(x-ship.d.mx)+(y-ship.d.my)*(y-ship.d.my));
 
     music = null;    
 
     title.onclick = _ => {
       // music = zzfxP(..._songdata_);        // Play the song
-      entersystem()
+      _entersystem_()
     };
 
     _endMenu_(0);
@@ -736,15 +755,17 @@
     for (y = 0; y < 32; ++y) {
       _factionmap_[y] = [];
       for (x = 0; x < 32; ++x) {
-        dist=calcdistance(x,y);
+        dist=_calcdistance_(x,y);
         f = {
           faction:0, _visited_: false, _explored_: false, _scanned_: dist<5, 
-          _place_: getWeighted(places),
+          _place_: _getWeighted_(places),
           _items_: [],
           pradius: 100+Math.random()*300,
           pcol: cols[Math.floor(Math.random()*cols.length)],    
           mradius: 10+Math.random()*100,
-          mcol: cols[Math.floor(Math.random()*cols.length)]
+          mcol: cols[Math.floor(Math.random()*cols.length)],
+          lsx: 0.5 + Math.random(),
+          lsy: 0.5 + Math.random()
         };
 
         f._sci_ = Math.floor(Math.random()*3 * factions[f.faction]._sci_ * places[f._place_]._sci_);
@@ -786,7 +807,7 @@
         ///#endif
 
         for (i=0; i< Math.min(1+(f._trade_+f._salvage_),8); ++i) {
-          f._items_.push(getWeighted(_items_))
+          f._items_.push(_getWeighted_(_items_))
         };
 
         _factionmap_[y][x] = f
@@ -840,9 +861,9 @@
       }
     };
 
-    _textwidget_(mapexit, mapexittext, _ => showorbit() );
+    _textwidget_(mapexit, mapexittext, _ => _showorbit_() );
 
-    updatemap = (x,y) => {
+    _updatemap_ = (x,y) => {
       if (_factionmap_[y][x]._scanned_) {
         _factionmap_[y][x].mapcell.setAttribute("fill", factionCol[_factionmap_[y][x].faction]);
         _factionmap_[y][x].mapcell.setAttribute("fill-opacity", _factionmap_[y][x]._visited_ ? "0.9" : "0.4")
@@ -852,9 +873,9 @@
     lrs = (x,y,r) => {
       for (y1=_clamp_(y-r,0,32); y1<_clamp_(y+r,0,32); ++y1) {
         for (x1=_clamp_(x-r,0,32); x1<_clamp_(x+r,0,32); ++x1) {
-          if (Math.sqrt(sqr(x-x1)+sqr(y-y1))<=r) { 
+          if (Math.sqrt(_sqr_(x-x1)+_sqr_(y-y1))<=r) { 
             _factionmap_[y1][x1]._scanned_=true;
-            updatemap(x1,y1) 
+            _updatemap_(x1,y1) 
           }
         }
       }
@@ -875,14 +896,14 @@
 
         _factionmap_[y][x].mapcell = o;
         
-        updatemap(x,y);
+        _updatemap_(x,y);
 
         o.removeAttribute("id");
         o.setAttribute("transform", "translate(" + ((x * 16) +40) + " " + ((y * 16) + 34) + ")");
         o.onmouseenter = _ => {
           d = _.target.d;
           f = _factionmap_[d.y][d.x];
-          fuelneed = calcfuel(d);
+          fuelneed = _calcfuel_(d);
           text("Warp requires " + fuelneed + "mgb.  Fuel available: " + fuel + "mgb");
           if (fuelneed <= fuel) {
             _.target.setAttribute("stroke", "#fff")
@@ -904,7 +925,7 @@
           }
         };
         o.onclick = _ => {
-          fuelneed = calcfuel(_.target.d);
+          fuelneed = _calcfuel_(_.target.d);
           if (fuelneed <= fuel) {
             fuel -= fuelneed;
             warpdistance = fuelneed * 100;
@@ -913,7 +934,7 @@
             _.target.setAttribute("stroke", "#ff0");
             shipcell.setAttribute("stroke", "#fff2");
             shipcell = _.target;
-            showwarp()
+            _showwarp_()
           }
         };
 
@@ -994,7 +1015,7 @@
       o.setAttribute("stroke", "#fff");
       o.setAttribute("stroke-width", "2");
       o.removeAttribute("id");
-      o.d = { r: 0, x: -200, y: -200, z: 1, t: null, f:0, temp:true };
+      o.d = { r: 0, x: -200, y: -200, z: 1, t: null, f:0, _temp_:true };
       o.d._update_ = (o, g) => {
         if (o.d.t && !o.d.t._dead_) {
           o.d.x = (o.d.x * 0.85) + (o.d.t.x * 0.15);
@@ -1039,8 +1060,25 @@
       return o
     };
 
+    _doTarget_ = _ => {
+      if (mousedown) {
+        if (targets.length > 0 && targetc < maxlock) {
+          t = targets.pop();
+          t.d.t = _.target.d;
+          t.d.to = _.target;
+          t.d.z = 1000;
+          t.d.r = 90;
+          objects.push(t);
+          _lock_(700 + (50 * targetc));
+          _.target.onmouseenter = null;
+          targetc++;
+          cursorText1.textContent = `Lock: ${targetc} / ${maxlock}`
+        }
+      }
+    };
+
     enemywave1 = _ => {
-      // enemy box things
+      // circling critters
       _wave1_();
       s = 0.1;
       wavecount++;
@@ -1054,24 +1092,9 @@
         o.setAttribute("d", _critter_());
         o.setAttribute("fill",cols[(i+r) % cols.length]);
 
-        o.onmouseenter = _ => {
-          if (mousedown && shields>0) {
-            if (targets.length > 0 && targetc < maxlock) {
-              t = targets.pop();
-              t.d.t = _.target.d;
-              t.d.to = _.target;
-              t.d.z = 1000;
-              t.d.r = 90;
-              objects.push(t);
-              _lock_(700 + (50 * targetc));
-              _.target.onmouseenter = null;
-              targetc++;
-              cursorText1.textContent = `Lock: ${targetc} / ${maxlock}`
-            }
-          }
-        };
+        o.onmouseenter = _doTarget_;
 
-        o.d = { r: 0, x: Math.random() * 640, ry: Math.random() * 640, s: s += 0.0005, z: 0.1, dx:0, dy:0, temp:true };
+        o.d = { r: 0, x: Math.random() * 640, ry: Math.random() * 640, s: s += 0.0005, z: 0.1, dx:0, dy:0, _temp_:true };
 
         o.d._update_ = (o, g) => {
           o.d.dx = o.d.x;
@@ -1094,7 +1117,7 @@
               p+= ` L${(Math.random()*k*2)-k} ${k*10}`
             };
             zap.setAttribute("d", p);
-            zap.d = {x: o.d.x, y: o.d.y, r:0, s:1, z:1, _dead_: true, temp: true};
+            zap.d = {x: o.d.x, y: o.d.y, r:0, s:1, z:1, _dead_: true, _temp_: true};
             zap.d._update_ = _ => {};
             objects.push(zap);
             _update_(zap);
@@ -1138,7 +1161,7 @@
         for (x = 0; x <= 64; ++x) {
           rx = ((32 - x) * ((slices + 1 - o.d.i) / 10)) / div;
 
-          hz = g.sn.n(g.gx + rx, (o.d.i + g.gy) / div);
+          hz = sn.n((g.gx + rx)*g.f.lsx, ((o.d.i + g.gy) / div)*g.f.lsy);
           sq = o.d.i * o.d.i;
           s += x == 0 ? "M" : "L";
           s += `${x * 10} ${(100 - (gh * 3)) + ((gh / slices) * sq) + (hz * sq / 2)}`
@@ -1176,11 +1199,11 @@
     };
     fxobjects.push(vsync);
 
-    showtitle();
-    //showmap();
-    //showgame();
-    //showorbit();
-    //showtrade();
+    _showtitle_();
+    //_showmap_();
+    //_showgame_();
+    //_showorbit_();
+    //_showtrade_();
 
     c.onmousedown = _ => {
       focus = true;
@@ -1217,7 +1240,7 @@
       objects = [];
 
       objects2.forEach(o => {
-        if (o.d.temp) {
+        if (o.d._temp_) {
           o.remove() 
         } else {
           objects.push(o)
@@ -1242,7 +1265,7 @@
 
       if (!gameloop) return;
 
-      //if (warpdistance <= 0) showmap();
+      //if (warpdistance <= 0) _showmap_();
 
       n += 0.025;
       //warpdistance -= 1;
@@ -1252,10 +1275,10 @@
       g = {
         x: 320 + (Math.sin(n) * 150),
         y: 200 + (Math.cos(n) * 150),
+        f: _factionmap_[ship.d.my][ship.d.mx],
         gy: gy,
         gx: gx,
-        gh: gh,
-        sn: sn
+        gh: gh
       };
 
       objects2 = objects;
@@ -1277,7 +1300,7 @@
         if (wavetime == 0) {
           if (waves==0) {
             cleartemp();
-            showtrade();
+            _showtrade_();
             return
           } else {
             waves--;
