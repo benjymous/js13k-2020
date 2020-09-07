@@ -15,17 +15,17 @@
   -->
 
   <!--
-  ///#define _decompose_ d
-  ///#define _update_ u
-  ///#define _show_ s
-  ///#define _hide_ h
-  ///#define _textwidget_ t
+  ///#define _decompose_ d_
+  ///#define _update_ u_
+  ///#define _show_ s_
+  ///#define _hide_ h_
+  ///#define _textwidget_ t_
   ///#define _addMenu_ am
   ///#define _hideMenu_ hm
   ///#define _endMenu_ em
-  ///#define _critter_ a
-  ///#define _dead_ d
-  ///#define _items_ it
+  ///#define _critter_ a_
+  ///#define _dead_ d_
+  ///#define _items_ it_
   ///#define _temp_ p
 
   ///#define _getWeighted_ az
@@ -40,10 +40,14 @@
   ///#define _showtrade_ lz
   ///#define _entersystem_ mz
   ///#define _calcdistance_ nz
-  
+  ///#define _enemywave_ oz
   ///#define _inventory_ pz
-
-  ///#define _sqr_ qz
+  ///#define _cleartemp_ qz
+  ///#define _doTarget_ rz
+  ///#define _sqr_ sz
+  ///#define _doZap_ tz
+  ///#define _makeCritter_ uz
+  ///#define _firemissile_ vz
 
   ///#define _place_ p
   ///#define _visited_ v
@@ -60,6 +64,10 @@
   ///#define _zap_ fx5
   ///#define _shields_ fx6
   ///#define _gameover_ fx7
+  ///#define _gowarp_ fx8
+  ///#define _inwarp_ fx9
+  ///#define _blip_ fxA
+  ///#define _running_ fxB
   ///#define zzfx fx
 
   ///#define _songdata_ fx0
@@ -440,7 +448,7 @@
         });
         _hideMenu_(next++)
       };
-      _addMenu_("> Enter Atmosphere", next++, {}, _ => /*_showtrade_());*/ _showgame_());
+      _addMenu_("> Enter Atmosphere", next++, {}, _ => {inwarp = false; _showgame_()});
       _hideMenu_(next++);
       _addMenu_("> Ship status", next++, {}, _ => {
         next = 0;
@@ -519,8 +527,10 @@
     };
     //_showwarp_ = _ => _entersystem_();
     _showwarp_ = _ => {
+      _gowarp_();
       _entersystem_();
       _showgame_();
+      inwarp = true;
 
       // build stars
       for(i=0; i<200; ++i) {
@@ -725,7 +735,7 @@
     maxfuel = 50;
     warprange = 5;
     warpdistance = 0;
-    inwarp = true;
+    inwarp = false;
 
     _calcfuel_ = d => _sqr_(Math.abs(d.x - ship.d.mx)) + _sqr_(Math.abs(d.y - ship.d.my));
     _calcdistance_ = (x,y) => Math.sqrt((x-ship.d.mx)*(x-ship.d.mx)+(y-ship.d.my)*(y-ship.d.my));
@@ -886,7 +896,7 @@
       if (f) {
         e.onmouseenter = _ => t.setAttribute("fill", "#990");
         e.onmouseleave = _ => t.setAttribute("fill", "#fff");
-        e.onclick = _ => f(_)
+        e.onclick = _ => {_blip_(); f(_)}
       } else {
         t.setAttribute("fill", "#fff");
         e.onmouseenter = null;
@@ -995,7 +1005,7 @@
           if (o.d.t != null) {
             if (maxmissiles - missiles > 0) {
               if (missiletime == 0) {
-                m = firemissile();
+                m = _firemissile_();
 
                 m.d.x = ship.d.x;
                 m.d.y = ship.d.y;
@@ -1017,7 +1027,7 @@
       l11.appendChild(o)
     };
 
-    firemissile = _ => {
+    _firemissile_ = _ => {
       missiles++;
 
       o = box.cloneNode();
@@ -1210,11 +1220,11 @@
           for (x = 0; x <= 64; ++x) {
             rx = ((32 - x) * ((slices + 1 - o.d.i) / 10)) / div;
 
-            hz = sn.n((g.gx + rx)*g.f.lsx, ((o.d.i + g.gy) / div)*g.f.lsy);
+            hrz = sn.n((g.gx + rx)*g.f.lsx, ((o.d.i + g.gy) / div)*g.f.lsy);
             sq = o.d.i * o.d.i;
             s += x == 0 ? "M" : "L";
-            s += `${x * 10} ${(100 - (gh * 3)) + ((gh / slices) * sq) + (hz * sq / 2)}`
-          };
+            s += `${x * 10} ${(100 - (gh * 3)) + ((gh / slices) * sq) + (hrz * sq / 2)}`
+          }
 
         } else {
           // warp tunnel
@@ -1244,7 +1254,6 @@
 
     missiletime = 0;
     gameloop = false;
-    warpdistance = 10000;
 
     focus = true;
     window.onfocus = _ => focus = true;
@@ -1303,7 +1312,7 @@
     gy = 0;
     gh = 10;
 
-    cleartemp = _ => {
+    _cleartemp_ = _ => {
       x = objects.length;
       objects2 = objects;
       objects = [];
@@ -1339,10 +1348,13 @@
 
       if (!gameloop) return;
 
-      //if (warpdistance <= 0) _showmap_();
-
       n += 0.025;
       warpdistance -= 1;
+
+      if (Math.random() < 0.1) {
+        if (inwarp) {_inwarp_()} else{_running_()}
+      };
+
       gy -= 1;
       if (missiletime > 0) missiletime--;
 
@@ -1385,6 +1397,7 @@
 
           if (inwarp) {
             if (warpdistance<=0) {
+              _cleartemp_();
               _showorbit_()
             } else {
               wavetime = 25;
@@ -1392,7 +1405,7 @@
             }            
           } else {
             if (waves==0) {
-              cleartemp();
+              _cleartemp_();
               _showtrade_();
               return
             } else {
@@ -1436,6 +1449,10 @@
     _wave1_ = _ => zzfx(...[, , 388, .38, .4, .66, , 1.46, .5, -3.8, 4, .02, .15, , , , , .61, .02]); 
     _shields_ = _ => zzfx(...[,,603,.02,,.14,4,1.36,-0.6,.5,,,,,,,.05,.68,.08,.39]); 
     _zap_ = _ => zzfx(...[,,409,.02,,.21,,.64,-0.4,.3,,,,,,,.2,.61,.05,.21]);
+    _gowarp_ = _ => zzfx(...[,.3,1016,.38,.5,.5,1,.7,4.8,-6.7,-6,.01,.04,1.2,.1,,.05,1.9,1]);
+    _inwarp_ = _ => zzfx(...[.25,25,51,.33,.03,.52,1,0,,-2.6,-318,.04,.01,,,.1,.13,1.1,.1,.43]);
+    _blip_ = _ => zzfx(...[,,1469,.01,,.06,1,2.63,,,-266,.01,,,,.2,.23,,.01]);
+    _running_ = _ => zzfx(...[,,43,,.19,1.72,1,1.53,,,,,,.3,,.9,.23,.92,.01,.01]);
     _gameover_ = _ => zzfx(...[,,533,,3,3,3,3.49,.5,.4,,,,.6,.2,.2,,.6,1])   
 
   </script>
