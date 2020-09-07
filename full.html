@@ -6,7 +6,6 @@
     * Tutorial stage explaining locks and combos
     * Max combo - actually do something, take locks into account
     * Backgrounds for abandoned bases, ruins and crashsites
-    * hyperspace sequence
     * varying fuel prices
     * location clues
     * actual endgame
@@ -518,7 +517,42 @@
       _endMenu_(next)
 
     };
-    _showwarp_ = _ => _entersystem_();
+    //_showwarp_ = _ => _entersystem_();
+    _showwarp_ = _ => {
+      _entersystem_();
+      _showgame_();
+
+      // build stars
+      for(i=0; i<200; ++i) {
+        o=star.cloneNode();
+        o.setAttribute("fill", cols[i%cols.length]);
+        o.setAttribute("fill-opacity", 0.1+(Math.random()*0.7));
+        o.removeAttribute("id");
+        o.d = { r: Math.random(), rx: 300 + (Math.random() * 40), ry: 300 + (Math.random() * 40), z: 0.1, _temp_:true };
+
+        o.d._update_ = (o,g)=> {
+          m = 1.1 + ((Math.abs(o.d.rx - 320)) / 500);
+          o.d.z += m / 10;
+          o.d.r += 1;
+          o.d.rx = ((o.d.rx - 320) * m) + 320;
+          o.d.ry = ((o.d.ry - 320) * m) + 320;
+          if (o.d.rx < 0 || o.d.rx > 640 || o.d.ry < 0 || o.d.ry > 640) {
+            o.d.rx = 305 + (Math.random() * 30);
+            o.d.ry = 305 + (Math.random() * 30);
+            o.d.z = 0.5
+          }; 
+
+          o.d.x = ((320-ship.d.x) * 0.1) + o.d.rx;
+          o.d.y = ((320-ship.d.y) * 0.1) + o.d.ry;
+
+          _update_(o)
+        };
+
+        objects.push(o);
+        l10.appendChild(o)
+      }
+
+    };
 
     _showtrade_ = _ => { 
       gameloop = false; clearcursor(); _hide_(game); _hide_(orbit); _hide_(map); _hide_(title); _show_(base); text();
@@ -691,6 +725,7 @@
     maxfuel = 50;
     warprange = 5;
     warpdistance = 0;
+    inwarp = true;
 
     _calcfuel_ = d => _sqr_(Math.abs(d.x - ship.d.mx)) + _sqr_(Math.abs(d.y - ship.d.my));
     _calcdistance_ = (x,y) => Math.sqrt((x-ship.d.mx)*(x-ship.d.mx)+(y-ship.d.my)*(y-ship.d.my));
@@ -927,7 +962,7 @@
           fuelneed = _calcfuel_(_.target.d);
           if (fuelneed <= fuel) {
             fuel -= fuelneed;
-            warpdistance = fuelneed * 100;
+            warpdistance = Math.max(100, fuelneed * 100);
             ship.d.mx = _.target.d.x;
             ship.d.my = _.target.d.y;
             _.target.setAttribute("stroke", "#ff0");
@@ -940,31 +975,6 @@
         map.appendChild(o)
       }
     };
-
-    // // build stars
-    // for(i=0; i<200; ++i) {
-    //   o=star.cloneNode();
-    //   o.setAttribute("fill", cols[i%cols.length]);
-    //   o.removeAttribute("id");
-    //   o.d = { r: Math.random(), x: 300 + (Math.random() * 40), y: 300 + (Math.random() * 40), z: 0.1 };
-
-    //   o.d._update_ = (o,g)=> {
-    //     m = 1.1 + ((Math.abs(o.d.x - 320)) / 500);
-    //     o.d.z += m / 10;
-    //     o.d.r += 1;
-    //     o.d.x = ((o.d.x - 320) * m) + 320;
-    //     o.d.y = ((o.d.y - 320) * m) + 320;
-    //     if (o.d.x < 0 || o.d.x > 640 || o.d.y < 0 || o.d.y > 640) {
-    //       o.d.x = 305 + (Math.random() * 30);
-    //       o.d.y = 305 + (Math.random() * 30);
-    //       o.d.z = 0.5
-    //     };
-    //     _update_(o)
-    //   };
-
-    //   objects.push(o);
-    //   l0.insertBefore(o, l0.firstChild)
-    // };
 
     // target boxes
     for (i = 0; i < 8; ++i) {
@@ -1187,19 +1197,43 @@
     // landscape
     slices = 20;
     div = 10;
+    blahx = 0;
     for (i = 0; i < slices; ++i) {
       o = ground.cloneNode();
       o.removeAttribute("id");
       o.d = { i: i + 2 };
       o.d._update_ = (o, g) => {
         s = "";
-        for (x = 0; x <= 64; ++x) {
-          rx = ((32 - x) * ((slices + 1 - o.d.i) / 10)) / div;
 
-          hz = sn.n((g.gx + rx)*g.f.lsx, ((o.d.i + g.gy) / div)*g.f.lsy);
-          sq = o.d.i * o.d.i;
-          s += x == 0 ? "M" : "L";
-          s += `${x * 10} ${(100 - (gh * 3)) + ((gh / slices) * sq) + (hz * sq / 2)}`
+        if (!inwarp) {
+          // landscape
+          for (x = 0; x <= 64; ++x) {
+            rx = ((32 - x) * ((slices + 1 - o.d.i) / 10)) / div;
+
+            hz = sn.n((g.gx + rx)*g.f.lsx, ((o.d.i + g.gy) / div)*g.f.lsy);
+            sq = o.d.i * o.d.i;
+            s += x == 0 ? "M" : "L";
+            s += `${x * 10} ${(100 - (gh * 3)) + ((gh / slices) * sq) + (hz * sq / 2)}`
+          };
+
+        } else {
+          // warp tunnel
+
+          for (i=0; i<64; ++i) {
+            x = Math.sin(i/63*(Math.PI*2));
+            y = Math.cos(i/63*(Math.PI*2));
+
+            rx = ((32 - (i%63)) * ((slices + 1 - o.d.i) / 10)) / div;
+            r = 1+(sn.n((g.gx + rx)*g.f.lsx, ((o.d.i + g.gy) / div)*g.f.lsy)*15);
+
+            s += i == 0 ? "M" : "L";
+
+            //console.log(r);
+
+            s += `${320+((320-ship.d.x)*(o.d.i/15))+(x*(r+(o.d.i*30)))} ${320+((320-ship.d.y)*(o.d.i/15))+(y*(r+(o.d.i*30)))}`
+
+          }
+
         };
         o.setAttribute("d", s);
         o.setAttribute("stroke", _factionmap_[ship.d.my][ship.d.mx].pcol);
@@ -1308,7 +1342,7 @@
       //if (warpdistance <= 0) _showmap_();
 
       n += 0.025;
-      //warpdistance -= 1;
+      warpdistance -= 1;
       gy -= 1;
       if (missiletime > 0) missiletime--;
 
@@ -1331,9 +1365,6 @@
       g.gx= gx;
       g.gh= gh;
 
-
-
-
       objects2 = objects;
       objects = [];
 
@@ -1351,14 +1382,24 @@
       if (enemies == 0) {
         wavetime--;
         if (wavetime == 0) {
-          if (waves==0) {
-            cleartemp();
-            _showtrade_();
-            return
+
+          if (inwarp) {
+            if (warpdistance<=0) {
+              _showorbit_()
+            } else {
+              wavetime = 25;
+              _enemywave_(Math.round(Math.random()*3)) 
+            }            
           } else {
-            waves--;
-            wavetime = 25;
-            _enemywave_(Math.round(Math.random()*3))
+            if (waves==0) {
+              cleartemp();
+              _showtrade_();
+              return
+            } else {
+              waves--;
+              wavetime = 25;
+              _enemywave_(Math.round(Math.random()*3))
+            }
           }
         }
       };
