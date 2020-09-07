@@ -6,7 +6,6 @@
     * Tutorial stage explaining locks and combos
     * Max combo - actually do something, take locks into account
     * Backgrounds for abandoned bases, ruins and crashsites
-    * more enemy wave types
     * hyperspace sequence
     * varying fuel prices
     * location clues
@@ -1077,7 +1076,51 @@
       }
     };
 
-    enemywave1 = _ => {
+    _doZap_ = o => {
+      zap = ground.cloneNode();
+      zap.removeAttribute("id");
+      zap.setAttribute("filter","url(#g)");
+      p="M0 0";
+      for (k=1; k<65; k++) {
+        p+= ` L${(Math.random()*k*2)-k} ${k*10}`
+      };
+      zap.setAttribute("d", p);
+      zap.d = {x: o.d.x, y: o.d.y, r:0, s:1, z:1, _dead_: true, _temp_: true};
+      zap.d._update_ = _ => {};
+      objects.push(zap);
+      _update_(zap);
+      l12.appendChild(zap);
+      
+      if (Math.abs(o.d.x - ship.d.x) < 25) { 
+        shields--;
+        shieldhit += 5;
+        _shields_()
+      } else {
+        _zap_()
+      }
+    };
+
+    _makeCritter_ = (i, r, s, wave, u) => {
+      o = enemybox.cloneNode();
+      o.removeAttribute("id");
+      
+      o.setAttribute("d", _critter_());
+      o.setAttribute("fill",cols[(i+r) % cols.length]);
+
+      o.onmouseenter = _doTarget_;
+
+      o.d = { wave: wave, r: 0, x: Math.random() * 640, ry: Math.random() * 640, s: s, z: 0.1, dx:0, dy:0, _temp_:true };
+
+      o.d._update_ = u;
+
+      objects.push(o);
+      enemies++;
+      l12.appendChild(o);
+
+      return o
+    };
+
+    _enemywave_ = wave => {
       // circling critters
       _wave1_();
       s = 0.1;
@@ -1086,66 +1129,58 @@
       r = Math.floor(Math.random()*10);
 
       for (i = 0; i < wavecount*2; ++i) { 
-        o = enemybox.cloneNode();
-        o.removeAttribute("id");
-        
-        o.setAttribute("d", _critter_());
-        o.setAttribute("fill",cols[(i+r) % cols.length]);
 
-        o.onmouseenter = _doTarget_;
-
-        o.d = { r: 0, x: Math.random() * 640, ry: Math.random() * 640, s: s += 0.0005, z: 0.1, dx:0, dy:0, _temp_:true };
-
-        o.d._update_ = (o, g) => {
+        o = _makeCritter_(i,r,s,wave, (o, g) => {
           o.d.dx = o.d.x;
           o.d.dy = o.d.ry;
+
+          tx = 0;
+          ty = 0;
+
+          if (o.d.wave == 0) {
+            tx = g.x;
+            ty = g.y
+          } else if (o.d.wave == 1) {
+            tx = (ship.d.x+g.x) / 2;
+            ty = g.y
+          } else if (o.d.wave == 2) {
+            tx = g.x1;
+            ty = g.y1
+          } else if (o.d.wave == 3) {
+            tx = g.x2;
+            ty = g.y2
+          };
           
-          o.d.x = (o.d.x * (1 - o.d.s)) + (g.x * o.d.s);
-          o.d.ry = (o.d.ry * (1 - o.d.s)) + (g.y * o.d.s);
+          o.d.x = (o.d.x * (1 - o.d.s)) + (tx * o.d.s);
+          o.d.ry = (o.d.ry * (1 - o.d.s)) + (ty * o.d.s);
 
           o.d.dx = o.d.x - o.d.dx;
           o.d.dy = o.d.ry - o.d.dy;
 
           o.d.z = (o.d.z * 0.95) + (5.0 + Math.sin(n - (o.d.s * 500))) * 0.05;
 
-          if (Math.random() * 1000 < wavecount*10) {
-            zap = ground.cloneNode();
-            zap.removeAttribute("id");
-            zap.setAttribute("filter","url(#g)");
-            p="M0 0";
-            for (k=1; k<65; k++) {
-              p+= ` L${(Math.random()*k*2)-k} ${k*10}`
-            };
-            zap.setAttribute("d", p);
-            zap.d = {x: o.d.x, y: o.d.y, r:0, s:1, z:1, _dead_: true, _temp_: true};
-            zap.d._update_ = _ => {};
-            objects.push(zap);
-            _update_(zap);
-            l12.appendChild(zap);
-            
-            if (Math.abs(o.d.x - ship.d.x) < 25) { 
-              shields--;
-              shieldhit += 5;
-              _shields_()
-            } else {
-              _zap_()
-            }
-          };
+          if (Math.random() * 1000 < wavecount*10) _doZap_(o);
 
           if (!o.d._dead_) {
             o.d.y = 250 - o.d.ry + gh * (o.d.z * 2);
-            g.x = o.d.x;
-            g.y = o.d.ry
+            if (o.d.wave <= 1) {
+              g.x = o.d.x;
+              g.y = o.d.ry
+            } else if (o.d.wave == 2) {
+              g.x1 = o.d.x;
+              g.y1 = o.d.y
+            } else if (o.d.wave == 3) {
+              g.x2 = o.d.x;
+              g.y2 = o.d.y
+            }
           } else {
             o.d.y = -100
           };
           _update_(o)
-        };
-
-        objects.push(o);
-        enemies++;
-        l12.appendChild(o)
+        });
+        s+= 0.0005
       }
+
     };
 
 
@@ -1251,6 +1286,11 @@
       ///#endif
     };
 
+    g = {
+      x2c: 320,
+      y2c: 200
+    };
+
     // Game loop
     setInterval(_ => {
       if (!focus) return;
@@ -1272,14 +1312,27 @@
       gy -= 1;
       if (missiletime > 0) missiletime--;
 
-      g = {
-        x: 320 + (Math.sin(n) * 150),
-        y: 200 + (Math.cos(n) * 150),
-        f: _factionmap_[ship.d.my][ship.d.mx],
-        gy: gy,
-        gx: gx,
-        gh: gh
+
+      g.x= 320 + (Math.sin(n) * 150);
+      g.y= 200 + (Math.cos(n) * 150);
+      g.x1= 320 + (Math.sin(n*2) * 315);
+      g.y1= 100 + n;
+
+      if (Math.random() < 0.01) {
+        g.x2c = 110+ (Math.random() * 420);
+        g.y2c = 110+ (Math.random() * 300)
       };
+
+      g.x2= g.x2c + (Math.sin(n*3) * 100);
+      g.y2= g.y2c + (Math.cos(n*3) * 100);
+
+      g.f= _factionmap_[ship.d.my][ship.d.mx];
+      g.gy= gy;
+      g.gx= gx;
+      g.gh= gh;
+
+
+
 
       objects2 = objects;
       objects = [];
@@ -1305,7 +1358,7 @@
           } else {
             waves--;
             wavetime = 25;
-            enemywave1()
+            _enemywave_(Math.round(Math.random()*3))
           }
         }
       };
