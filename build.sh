@@ -52,7 +52,13 @@ echo "Minified code from $SRCSIZE to $OUTSIZE bytes"
 #cp d.png d
 
 rm min.zip 2> /dev/null
-./bin/ect -9 -zip min.zip index.html
+
+if hash ect 2>/dev/null; then
+    ect -9 -zip min.zip index.html
+else
+    advzip -q -a -4 min.zip index.html
+fi
+
 advzip -l min.zip
 
 let MAXSIZE=(1024*$KBSIZE)
