@@ -52,7 +52,7 @@ echo "Minified code from $SRCSIZE to $OUTSIZE bytes"
 #cp d.png d
 
 rm min.zip 2> /dev/null
-advzip -q -a -4 min.zip index.html #t n d #m.json i.png w.js
+./bin/ect -9 -zip min.zip index.html
 advzip -l min.zip
 
 let MAXSIZE=(1024*$KBSIZE)
@@ -62,7 +62,7 @@ let OVER=$PKGSIZE-$MAXSIZE
 
 echo package is $PKGSIZE bytes
 
-if test $REMAINING -gt 0
+if test $REMAINING -ge 0
 then
   echo $REMAINING bytes are available for more goodness
   if [ ! -z "$CI" ]

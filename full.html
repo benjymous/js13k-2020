@@ -3,9 +3,7 @@
     
     TODO 
   
-    * Tutorial stage explaining locks and combos
     * Max combo - actually do something, take locks into account
-    * Backgrounds for abandoned bases, ruins and crashsites
     * varying fuel prices
     * location clues
     * actual endgame
@@ -27,6 +25,13 @@
   ///#define _dead_ d_
   ///#define _items_ it_
   ///#define _temp_ p
+  ///#define _objects_ $
+  ///#define _fxobjects_ $_
+
+  ///#define _tutorialtext_ e_
+  ///#define _crawltext_ v_
+  ///#define _places_ w_
+  ///#define _factions_ x_
 
   ///#define _getWeighted_ az
   ///#define _showmap_ bz
@@ -48,6 +53,7 @@
   ///#define _doZap_ tz
   ///#define _makeCritter_ uz
   ///#define _firemissile_ vz
+  ///#define _itemvalue_ wz
 
   ///#define _place_ p
   ///#define _visited_ v
@@ -80,16 +86,17 @@
   -->
 
   <svg id="c" viewBox="0 0 640 640" style="position:absolute;top:0;left:0;height:100%;width:100%">
-    <style>
-      .heavy {
-        font: bold 20px monospace;
+    <style>      
+      .t0 {
+        font: 20px monospace;
       }
-      .big {
+      .t1 {
         font: 25px monospace;
       }
-      .bigger {
+      .t2 {
         font: 40px monospace;
       }
+      .a{fill:#000;stroke:#ffa;}.b{fill:#0ff;}.c{fill:#ffa;}.d{fill:#fe9;}.e{fill:#fff;}
     </style>
     <clipPath id="clip">
       <path d="M0 0h640v640H0z"/>
@@ -121,28 +128,29 @@
         <circle fill="#000" stroke-width="1.5" id="orbit_planet"/>
         <circle fill="#000" stroke-width="1.5" id="orbit_moon"/>
 
-        <text x=20 y=40 fill="#fff" class="big">Currently in orbit at</text>
-        <text id="orbitcoords" x=400 y=40 fill="#fff" class="big">[0:0]</text>
+        <text x=20 y=40 fill="#fff" class="t1">Currently in orbit at</text>
+        <text id="orbitcoords" x=400 y=40 fill="#fff" class="t1">[0:0]</text>
 
-        <text x=20 y=500 fill="#fff" class="big">System Information</text>
-        <text x=60 y=530 fill="#fff" class="big">Faction:</text>
-        <text id="infofaction" x=300 y=530 fill="#fff" class="big"/>
-        <text x=60 y=560 fill="#fff" class="big">Economy:</text>
-        <text id="infotrade" x=300 y=560 fill="#fff" class="big"/>
-        <text x=60 y=590 fill="#fff" class="big">Discovery:</text>
-        <text id="infopoi" x=300 y=590 fill="#fff" class="big"/>
+        <text x=20 y=500 fill="#fff" class="t1">System Information</text>
+        <text x=60 y=530 fill="#fff" class="t1">Faction:</text>
+        <text id="infofaction" x=300 y=530 fill="#fff" class="t1"/>
+        <text x=60 y=560 fill="#fff" class="t1">Economy:</text>
+        <text id="infotrade" x=300 y=560 fill="#fff" class="t1"/>
+        <text x=60 y=590 fill="#fff" class="t1">Discovery:</text>
+        <text id="infopoi" x=300 y=590 fill="#fff" class="t1"/>
       </g>
       <g id="base" filter="url(#f1)">
         <circle id="base_moon" stroke="#fff" stroke-width="1.5" fill="#000"/>
         <ellipse id="base_planet" stroke="#fff" ry="200" rx="500" cy="478" cx="320" stroke-width="1.5" fill="#000"/>
-        
-        <path id="base_sc1" transform="translate(-320,300)" stroke-width="1.5" stroke="#555" d="m0 50 h470 l -10 -200  h-10 v-10 h100 v10 h-10 l-10 200 h470  v400 h-1000 z"/>
-        <path id="base_sc2" transform="translate(50,300)" stroke-width="1.5" stroke="#888" d="m0 0 h225 v60 h10 v-50 h30 v70 h10 v-90 l100 10 v40 h150 v100 h10 v-200 h50 v130 h20 v-50 l100 -10 v30 h10 v-40 h60 v60 h5 v-100 h220    v400 h-1000 z"/> 
-        <path id="base_sc3" transform="translate(-150,300)" stroke-width="1.5" stroke="#bbb" d="m0 10 h190 v100 h90 v-36 h70 v50 h185 v-90 l60 -20 v40 h25 v60 h40 v-100 h50 v130 h20 v-50 l10 5 v30 h10 v-40 h20 v60 h45 v-100 h180    v400 h-1000 z"/> 
-        <path id="base_sc4" transform="translate(-150, 300)" stroke-width="1.5" stroke="#eee" d="m0 180 h440    l 10 -80   l 50 -20 l50 20   l10 80 h440    v400 h-1000 z"/>
 
-        <text x=20 y=40 fill="#fff" class="big">Discovered</text>
-        <text id="tradename" x=200 y=40 fill="#fff" class="big">???</text> 
+        <path id="base_sc1" stroke-width="1.5" stroke="#555" d="M0 350L150 350C144.93 248.66 141.77 185.32 140.5 159.99C140.22 154.39 135.6 150 130 150C130 150 130 150 130 150C130 150 130 150 130 150C130 144.48 134.48 140 140 140C158 140 202 140 220 140C225.52 140 230 144.48 230 150C230 150 230 150 230 150C230 150 230 150 230 150C224.4 150 219.78 154.39 219.5 159.99C218.23 185.32 215.07 248.66 210 350L680 350L680 750L-320 750L-320 350Z"></path>
+        <path id="base_sc2" stroke-width="1.5" stroke="#888" d="M0 300L275 300L275 360L285 360L285 310L315 310L315 380L325 380L325 290L425 300L425 340L575 340L575 440L585 440L585 240L635 240L635 370L655 370L655 320L755 310L755 340L765 340L765 300L825 300L825 360L830 360L830 260L1050 260L1050 660L50 660L50 300Z"></path>
+        <path id="base_sc3" stroke-width="1.5" stroke="#bbb" d="M0 310L40 310L40 410L130 410L130 374L200 374L200 424L385 424L385 334L445 314L445 354L470 354L470 414L510 414L510 314L560 314L560 444L580 444L580 394L590 399L590 429L600 429L600 389L620 389L620 449L665 449L665 349L845 349L845 749L-155 749L-150 310Z"></path>
+        <path id="base_sc4" stroke-width="1.5" stroke="#eee" d="M0 480L290 480C294.28 445.8 296.95 424.42 298.02 415.87C299.24 406.08 305.69 397.73 314.85 394.06C321.88 391.25 329.96 388.02 337.45 385.02C345.51 381.8 354.49 381.8 362.55 385.02C370.04 388.02 379.28 391.71 386.6 394.64C394.87 397.95 400.69 405.48 401.79 414.32C402.88 423.08 405.62 444.97 410 480L850 480L850 880L-150 880L-150 480Z"></path>
+        <path id="base_sc5" stroke-width="1.5" stroke="#888" d="M0 654.02C-44.16 652.39 293.28 653.77 857.32 658.16L857.32 421.78L750.98 411.7L730.87 401.46L726.02 386.82L704.03 389.26L695.05 361.89L683.79 351.39L646.22 409.79L609.65 411.7L583.69 401.46L510.16 416.9L487.4 398.2L466.26 386.82L448.37 411.7L414.23 424.22L378.46 398.2L354.64 386.82L329.64 368.12L314.23 401.46L311.79 410.4L266.26 404.71L245.93 389.26L183.33 410.4L153.25 398.2L140.24 389.26L115.04 410.4L51.63 377.11L33.74 413.65L2.85 401.46L-28.05 416.9L-150 407.96"></path>
+
+        <text x=20 y=40 fill="#fff" class="t1">Discovered</text>
+        <text id="tradename" x=200 y=40 fill="#fff" class="t1">???</text> 
       </g>
       <g id="game">
         <g filter="url(#g)" id="l1">
@@ -158,125 +166,163 @@
           
 
           <path id="combocount" stroke-width="1" stroke="#fff" fill-opacity="0"/>
-          <text id="combocounttext" x=550 y=90 fill="#fff" class="bigger" text-anchor="middle"/>
+          <text id="combocounttext" x=550 y=90 fill="#fff" class="t2" text-anchor="middle"/>
+          <text id="tutorial" x=320 y=250 fill="#fff" class="t2" text-anchor="middle" style="pointer-events:none"/>
+
 
         </g>
       </g>
 
       <g filter="url(#f1)" id="map">
-        <path d="M0 0 h640 v640 h-640 z" fill="#000"/>
         <path id="galaxy" filter="url(#f10)" fill="#fff1" d="M-20 355c0-160 125-310 300-310 135 0 245 95 245 230 0 85-65 175-165 175-90 0-135-55-135-125-15 0-25 25-25 50 0 65 80 135 170 135 120 0 250-110 250-275 0-100-50-190-90-240 50 45 130 130 130 270 0 160-125 310-295 310-135 0-245-95-245-230 0-85 65-175 165-175 90 0 135 55 135 125 15 0 25-25 25-50 0-65-80-135-170-135-120 0-250 110-250 275 0 100 50 190 90 240C55 580-20 495-20 355z"/>
         <g id="mapexit" transform="translate(0 0)">
           <path d="M0 0 h640 v30 h-640 z" fill="#000"/>
-          <text id="mapexittext"  x=10 y=25 fill="#fff" class="big">&lt; Cancel</text>
+          <text id="mapexittext"  x=10 y=25 fill="#fff" class="t1">&lt; Cancel</text>
         </g>
       </g>
 
       <g id="title" filter="url(#f1)">
-        <path fill="#000" d="M0 0h640v640H0"/>
-        <text x=320 y=100 fill="#fff" class="bigger" text-anchor="middle">The Legend of Yeti-404</text>
-        <text x=300 y=150 fill="#fff" class="big">#js13k 2020</text>
-        <text x=320 y=550 fill="#fff" class="bigger" text-anchor="middle">A game by Richard Munn</text>
-
+       <path d="M0 0 h640 v640 h-640 z" fill="#000"/>
+       <path class="a" d="m0 404l306 -161c34 -18 67 -39 98 -62c15 -11 -9 7 0 0c49 -38 89 -85 118 -139l21 -41"/>
+       <path class="a" d="m-2 181l235 -133c26 -14 55 -23 85 -24l132 -5c14 0 23 16 15 27l-47 68c-19 29 -45 52 -74 70l-340 200"/>
+       <path class="b" d="m572 422a95 95 0 1 1 0 -190a95 95 0 0 1 0 190z"/>
+       <path d="m328 704c-215 0 -390 -67 -390 -150s175 -150 390 -150s390 67 390 150s-175 150 -390 150z"/>
+       <path fill="#f00" d="m328 704c-215 0 -390 -67 -390 -150s175 -150 390 -150s390 67 390 150s-175 150 -390 150z"/>
+      
+       <path class="c" d="m360 142.5c32 -20 59 -46 79 -77l19 -29l0 -14c0 -4 -5 -5 -7 -2a2962 2962 0 0 1 -4 9c-27 45 -65 83 -110 110l-198 120l-58 56l279 -173z"/>
+       <path stroke="#ffa"  d="m-2 370l139 -85c16 -12 51 -88 51 -88c-2 -2 -10 -3 -26 -3c-20 0 -40 5 -57 16l-107 64"/>
+       <path class="c" d="m138 272l-29 0l-130 60l10 40l149 -100z"/>
+       <path class="a" d="m146.5 274l1 -2l26 -46l11 -23l-34 -1c-10 -1 -19 2 -28 7l-36 19c-3 1 -3 4 -2 6l22 36c3 4 7 7 12 7l18 1c4 1 7 -1 10 -4z"/>
+       <path d="m283 213c-44 -32 -83 -71 -115 -115l-2 -2l-17 9l12 17a397 397 0 0 0 107 99l15 -8z"/>
+       <path class="a" d="m283 213c-44 -32 -83 -71 -115 -115l-2 -2l-17 9l12 17a397 397 0 0 0 107 99l15 -8z"/>
+       <path  d="m158 307c-4 15 3 31 18 37l6 3l-164 83c-6 3 -14 3 -20 0l-3 -2c-4 -2 -5 -7 -3 -12c2 -2 -1 2 0 0c6 -8 13 -15 21 -20l145 -89z"/>
+       <path class="a" d="m158 307c-4 15 3 31 18 37l6 3l-164 83c-6 3 -14 3 -20 0l-3 -2c-4 -2 -5 -7 -3 -12c2 -2 -1 2 0 0c6 -8 13 -15 21 -20l145 -89z"/>
+       <path stroke="#FFFA8D" d="m82 44c-22 -4 -37 -22 -37 -44l1 -9l-205 148c-8 6 -13 15 -12 25l1 4c0 7 6 12 13 11l2 0c13 -1 26 -6 38 -13l201 -121l-2 -1z"/>
+       <path d="m187 347c-6 4 -18 -1 -27 -13c-8 -11 -10 -25 -3 -29c6 -5 19 0 27 12s10 25 3 30z"/>
+       <path class="c" d="m187 347c-6 4 -18 -1 -27 -13c-8 -11 -10 -25 -3 -29c6 -5 19 0 27 12s10 25 3 30z"/>
+       <path class="d" d="m93 42c-10 8 -28 0 -40 -16s-13 -36 -3 -44c11 -7 29 0 41 17c12 16 13 36 2 43z"/>
+       <path class="a"  d="m322 187c-44 -32 -83 -71 -115 -114l-2 -3l-17 9l12 17c27 37 60 68 98 94c2 0 4 2 9 6l15 -9z"/>
+       <path class="a" d="m365 162a534 534 0 0 1 -118 -117l-17 10l13 16a397 397 0 0 0 107 100l15 -9z"/>
+       <path d="m578 432c-54 0 -97 -43 -97 -97a97 97 0 0 1 195 0c0 54 -44 97 -98 97z"/>
+       <path class="e" d="m380 247l-4 2l1 5l-3 -5l-6 1l5 -3l-1 -6l3 6l5 0z"/>
+       <path d="m350 734c-215 0 -390 -73 -390 -163c0 -89 175 -162 390 -162s390 73 390 162c0 90 -175 163 -390 163z"/>
+       <path class="e" d="m388 265l-5 -3l-3 4l2 -5l-4 -4l5 2l4 -5l-3 7l4 4z"/>
+       <path class="e" d="m349 289l-5 -2l-2 4l1 -5l-4 -4l5 2l3 -5l-1 7l3 3z"/>
+       <path class="e" d="m389 335l-5 -1l-1 5l-1 -5l-5 -3l5 0l2 -5l1 7l4 2z"/>
+       <path class="e" d="m565 124l-5 0l-1 5l0 -6l-5 -2l5 0l2 -6l0 7l4 2z"/>
+       <path class="e" d="m269 368l-5 1l1 5l-2 -5l-6 0l5 -2l0 -6l2 6l5 1z"/>
+       <path class="e" d="m555 58l-5 2l1 5l-2 -5l-6 -1l5 -2l0 -6l2 7l5 0z"/>
+       <path class="e" d="m453 392l-4 -3l-3 3l2 -4l-3 -5l5 3l4 -4l-3 6l2 4z"/>
+       <path class="c" d="m248 185l-18 9l-12 -9l18 -11l12 11z"/>
+       <path class="c" d="m287.5 160.5l-17 9l-12 -9l18 -12l11 12z"/>
+       <path class="c" d="m330.5 136l-17 9l-12 -9l17 -12l12 12z"/>
+       <path class="c" d="m164.4 232.1l1 -8c1 -4 -3 -6 -6 -4l-9 6l-28 32l-14 15c-2 2 -1 5 2 5l16 2l38 -48z"/>
+       <path class="c" d="m172 343l-9 -13l-179 109l188 -96z"/>
+       <path class="d" d="m68 31.9l-11.9 -24.9l-214.1 167l226 -142.1z"/>
+       <path class="e" d="m72 480l3 0l0 16l6 -6l7 0l5 5l0 20l-3 0l0 -19l-3 -3l-5 0l-7 7l0 15l-3 0l0 -35zm142 10l0 32l-4 4l-12 0l-4 -3l0 -3l3 0l0 2l2 2l10 0l2 -3l0 -10l-5 4l-9 0l-4 -4l0 -16l4 -5l10 0l4 5l0 -5l3 0zm36 0l3 0l0 6l5 -6l8 0l4 5l0 20l-3 0l0 -19l-2 -3l-6 0l-6 7l0 15l-3 0l0 -25zm135 11l-11 -21l3 0l10 18l10 -18l3 0l-12 21l0 14l-3 0l0 -14zm-285 10l0 -16l4 -5l13 0l4 5l0 9l-18 0l0 6l3 3l9 0l3 -3l0 -2l3 0l0 3l-4 4l-13 0l-4 -4zm65 0l0 -16l5 -5l12 0l4 5l0 9l-18 0l0 6l3 3l10 0l3 -3l0 -2l2 0l0 3l-4 4l-12 0l-5 -4zm57 0l0 -16l4 -5l12 0l5 5l0 9l-18 0l0 6l2 3l10 0l3 -3l0 -2l3 0l0 3l-5 4l-12 0l-4 -4zm178 0l0 -16l5 -5l12 0l4 5l0 9l-18 0l0 6l3 3l9 0l3 -3l0 -2l3 0l0 3l-4 4l-12 0l-5 -4zm-123 0l0 -16l5 -5l9 0l5 4l0 -14l2 0l0 35l-2 0l0 -5l-5 5l-9 0l-5 -4zm-224 -28l-10 0l0 -3l24 0l0 3l-11 0l0 32l-3 0l0 -32zm296 10l-5 0l0 -3l5 0l0 -5l4 -4l6 0l0 2l-5 0l-3 3l0 4l8 0l0 3l-8 0l0 22l-2 0l0 -22zm-209 -13l3 0l0 33l18 0l0 2l-21 0l0 -35zm354 28l-18 0l0 -5l16 -23l5 0l0 25l4 0l0 3l-4 0l0 7l-3 0l0 -7zm58 0l-17 0l0 -5l15 -23l5 0l0 25l4 0l0 3l-4 0l0 7l-3 0l0 -7zm-121 3l0 -18l-5 0l0 -3l5 0l0 -8l2 0l0 8l8 0l0 3l-8 0l0 17l3 3l5 0l0 2l-6 0l-4 -4zm75 0l0 -26l5 -5l14 0l5 5l0 26l-5 4l-14 0l-5 -4zm18 2l3 -3l0 -24l-3 -3l-12 0l-3 3l0 24l3 3l12 0zm-206 -2l0 -16l4 -5l13 0l4 5l0 16l-4 4l-13 0l-4 -4zm15 2l3 -3l0 -14l-3 -3l-10 0l-2 3l0 14l2 3l10 0zm161 -8l0 -22l-1 0l-14 20l0 2l15 0zm58 0l0 -22l-14 20l0 2l14 0zm-262 8l6 -6l0 -9l-6 -5l-7 0l-3 3l0 14l3 3l7 0zm-79 -14l-5 -6l-7 0l-3 3l0 14l3 3l7 0l5 -5l0 -9zm237 -9l3 0l0 25l-3 0l0 -25zm-330 11l0 -5l-3 -3l-9 0l-3 3l0 5l15 0zm66 0l0 -5l-3 -3l-10 0l-3 3l0 5l16 0zm56 0l0 -5l-3 -3l-10 0l-2 3l0 5l15 0zm178 0l0 -5l-2 -3l-10 0l-3 3l0 5l15 0zm40 1l14 0l0 2l-14 0l0 -2zm-11 -17l0 -2l1 -2l2 0l1 2l0 2l-1 1l-2 0l-1 -1z"/>
+       <path class="e" d="m458 523l0 4l2 0l0 1l-3 0l0 4l-1 0l0 -4l-3 0l-1 4l-1 0l1 -4l-3 0l0 -1l3 0l0 -4l-2 0l0 -1l3 0l0 -4l1 0l0 4l3 0l1 -4l1 0l-1 4l3 0l0 1l-3 0zm27 7l0 -1l1 0l0 1l1 1l5 0l1 -1l0 -3l-1 -2l-4 0l0 -1l4 0l1 -1l0 -3l-1 -1l-5 0l-1 1l0 1l-1 0l0 -1l2 -2l5 0l2 2l0 4l-1 1l1 1l0 4l-2 2l-5 0l-2 -2zm26 0l8 -8l0 -2l-1 -1l-4 0l-2 1l0 1l-1 0l0 -1l2 -2l5 0l2 2l0 2l-7 8l0 1l7 0l0 1l-9 0l0 -2zm24 0l7 -8l0 -2l-1 -1l-4 0l-1 1l0 1l-1 0l0 -1l1 -2l5 0l2 2l0 2l-7 8l0 1l7 0l0 1l-8 0l0 -2zm-67 0l0 -1l1 0l0 1l1 1l4 0l1 -1l0 -2l-1 -1l-5 0l-1 -1l0 -2l2 -2l4 0l2 2l0 1l-2 0l0 -2l-4 0l-1 1l0 2l1 1l4 0l2 1l0 2l-2 2l-5 0l-1 -2zm29 -12l1 0l0 8l3 0l3 -4l1 0l-4 5l4 5l-1 0l-3 -5l-3 0l0 5l-1 0l0 -14zm26 12l0 -10l1 -2l6 0l2 2l0 10l-2 2l-6 0l-1 -2zm23 0l0 -10l2 -2l5 0l2 2l0 10l-2 2l-5 0l-2 -2zm-65 -11l-3 2l0 -1l3 -2l1 0l0 14l-1 0l0 -13zm-20 16l2 0l1 -1l0 -12l1 0l0 13l-2 1l-2 0l0 -1zm69 -4l1 -1l0 -10l-1 -1l-5 0l-1 1l0 10l1 1l5 0zm23 0l1 -1l0 -10l-1 -1l-5 0l-1 1l0 10l1 1l5 0zm-96 -8l-3 0l-1 4l3 0l1 -4zm7 -3l0 -2l1 0l0 2l-1 0z"/>
+       <path class="e" d="m538 597l3 0l9 23l9 -23l3 0l0 28l-2 0l0 -24l-9 21l-2 0l-9 -21l0 24l-2 0l0 -28zm-266 8l2 0l0 4l4 -4l5 0l3 3l3 -3l6 0l4 3l0 17l-3 0l0 -16l-2 -2l-4 0l-3 3l0 15l-3 0l0 -16l-2 -2l-3 0l-5 5l0 13l-2 0l0 -20zm103 0l0 25l-3 4l-10 0l-2 -3l0 -3l2 0l0 2l1 2l8 0l2 -3l0 -9l-5 5l-5 0l-4 -4l0 -16l2 0l0 16l2 2l5 0l5 -6l0 -12l2 0zm72 -9l3 0l0 14l4 -5l6 0l4 3l0 17l-3 0l0 -16l-2 -2l-4 0l-5 5l0 13l-3 0l0 -29zm-203 9l0 25l-4 4l-9 0l-3 -3l0 -3l2 0l0 2l2 2l7 0l2 -3l0 -8l-4 4l-7 0l-3 -4l0 -13l3 -3l8 0l3 4l0 -4l3 0zm166 11l0 9l-2 0l0 -8l-3 -4l-11 0l0 12l-3 0l0 -28l16 0l3 3l0 9l-3 3l3 4zm181 -11l2 0l0 5l5 -5l6 0l3 3l0 17l-2 0l0 -16l-2 -2l-4 0l-6 5l0 13l-2 0l0 -20zm22 0l3 0l0 5l4 -5l6 0l4 3l0 17l-3 0l0 -16l-2 -2l-4 0l-5 5l0 13l-3 0l0 -20zm-45 16l0 -16l3 0l0 16l2 2l4 0l5 -5l0 -13l3 0l0 20l-3 0l0 -5l-4 5l-6 0l-4 -4zm-319 1l0 -5l3 -3l11 0l0 -5l-2 -2l-7 0l-2 2l0 2l-2 0l0 -3l3 -3l9 0l4 3l0 17l-3 0l0 -4l-4 4l-7 0l-3 -3zm220 0l0 -5l3 -3l11 0l0 -5l-2 -2l-7 0l-2 2l0 2l-3 0l0 -3l4 -3l9 0l3 3l0 17l-2 0l0 -4l-4 4l-7 0l-3 -3zm-43 -1l0 -13l3 -3l10 0l3 3l0 2l-2 0l0 -1l-2 -2l-8 0l-2 2l0 12l2 2l8 0l2 -2l0 -2l2 0l0 2l-3 4l-10 0l-3 -4zm-122 0l0 -13l4 -3l10 0l3 3l0 8l-14 0l0 5l2 2l8 0l2 -2l0 -2l2 0l0 2l-3 4l-10 0l-4 -4zm201 0l0 -13l4 -3l7 0l4 3l0 -12l2 0l0 29l-2 0l0 -4l-4 4l-7 0l-4 -4zm-304 -24l3 0l9 28l-2 0l-3 -8l-12 0l-2 8l-3 0l10 -28zm135 24l0 -25l3 0l0 13l4 -4l7 0l3 3l0 13l-3 4l-10 0l-4 -4zm156 -16l2 0l0 4l3 -4l5 0l0 2l-4 0l-4 4l0 14l-2 0l0 -20zm-98 6l12 0l2 -2l0 -8l-2 -2l-12 0l0 12zm-45 12l2 -2l0 -12l-2 -2l-5 0l-5 5l0 9l2 2l8 0zm166 0l5 -5l0 -7l-4 -4l-6 0l-3 2l0 12l3 2l5 0zm-274 -11l-4 -5l-6 0l-2 2l0 12l2 2l6 0l4 -4l0 -7zm176 -7l2 0l0 20l-2 0l0 -20zm-209 10l-6 -16l-5 16l11 0zm111 -1l0 -5l-2 -2l-8 0l-2 2l0 5l12 0zm-60 9l4 -5l0 -2l-10 0l-1 1l0 4l1 2l6 0zm220 0l4 -5l0 -2l-10 0l-2 1l0 4l2 2l6 0zm-62 -23l0 -1l1 -1l1 0l1 1l0 1l-1 1l-1 0l-1 -1z"/>   
       </g>
+
+      <path id="titlef" d="M0 0 h640 v640 h-640 z" fill="#000c"/>
 
       <g id="menu" filter="url(#f1)">
         <g id="menuitem0" transform="translate(0 80)">
           <path d="M0 0 h640 v30 h-640 z" fill="#000" fill-opacity="0.1"/>
-          <text id="menuitem0text" x=50 y=25 fill="#fff" class="big"/>
+          <text id="menuitem0text" x=50 y=25 fill="#fff" class="t1"/>
         </g>
 
         <g id="menuitem1" transform="translate(0 110)">
           <path d="M0 0 h640 v30 h-640 z" fill="#000" fill-opacity="0.1"/>
-          <text id="menuitem1text" x=50 y=25 fill="#fff" class="big"/>
+          <text id="menuitem1text" x=50 y=25 fill="#fff" class="t1"/>
         </g>
 
         <g id="menuitem2" transform="translate(0 140)">
           <path d="M0 0 h640 v30 h-640 z" fill="#000" fill-opacity="0.1"/>
-          <text id="menuitem2text" x=50 y=25 fill="#fff" class="big"/>
+          <text id="menuitem2text" x=50 y=25 fill="#fff" class="t1"/>
         </g>
 
         <g id="menuitem3" transform="translate(0 170)">
           <path d="M0 0 h640 v30 h-640 z" fill="#000" fill-opacity="0.1"/>
-          <text id="menuitem3text" x=50 y=25 fill="#fff" class="big"/>
+          <text id="menuitem3text" x=50 y=25 fill="#fff" class="t1"/>
         </g>
 
         <g id="menuitem4" transform="translate(0 200)">
           <path d="M0 0 h640 v30 h-640 z" fill="#000" fill-opacity="0.1"/>
-          <text id="menuitem4text" x=50 y=25 fill="#fff" class="big"/>
+          <text id="menuitem4text" x=50 y=25 fill="#fff" class="t1"/>
         </g>
 
         <g id="menuitem5" transform="translate(0 230)">
           <path d="M0 0 h640 v30 h-640 z" fill="#000" fill-opacity="0.1"/>
-          <text id="menuitem5text" x=50 y=25 fill="#fff" class="big"/>
+          <text id="menuitem5text" x=50 y=25 fill="#fff" class="t1"/>
         </g>
 
         <g id="menuitem6" transform="translate(0 260)">
           <path d="M0 0 h640 v30 h-640 z" fill="#000" fill-opacity="0.1"/>
-          <text id="menuitem6text" x=50 y=25 fill="#fff" class="big"/>
+          <text id="menuitem6text" x=50 y=25 fill="#fff" class="t1"/>
         </g>
 
         <g id="menuitem7" transform="translate(0 290)">
           <path d="M0 0 h640 v30 h-640 z" fill="#000" fill-opacity="0.1"/>
-          <text id="menuitem7text" x=50 y=25 fill="#fff" class="big"/>
+          <text id="menuitem7text" x=50 y=25 fill="#fff" class="t1"/>
         </g>
 
         <g id="menuitem8" transform="translate(0 320)">
           <path d="M0 0 h640 v30 h-640 z" fill="#000" fill-opacity="0.1"/>
-          <text id="menuitem8text" x=50 y=25 fill="#fff" class="big"/>
+          <text id="menuitem8text" x=50 y=25 fill="#fff" class="t1"/>
         </g>
 
         <g id="menuitem9" transform="translate(0 350)">
           <path d="M0 0 h640 v30 h-640 z" fill="#000" fill-opacity="0.1"/>
-          <text id="menuitem9text" x=50 y=25 fill="#fff" class="big"/>
+          <text id="menuitem9text" x=50 y=25 fill="#fff" class="t1"/>
         </g>
 
         <g id="menuitem10" transform="translate(0 380)">
           <path d="M0 0 h640 v30 h-640 z" fill="#000" fill-opacity="0.1"/>
-          <text id="menuitem10text" x=50 y=25 fill="#fff" class="big"/>
+          <text id="menuitem10text" x=50 y=25 fill="#fff" class="t1"/>
         </g>
 
         <g id="menuitem11" transform="translate(0 410)">
           <path d="M0 0 h640 v30 h-640 z" fill="#000" fill-opacity="0.1"/>
-          <text id="menuitem11text" x=50 y=25 fill="#fff" class="big"/>
+          <text id="menuitem11text" x=50 y=25 fill="#fff" class="t1"/>
         </g>
 
         <g id="menuitem12" transform="translate(0 440)">
           <path d="M0 0 h640 v30 h-640 z" fill="#000" fill-opacity="0.1"/>
-          <text id="menuitem12text" x=50 y=25 fill="#fff" class="big"/>
+          <text id="menuitem12text" x=50 y=25 fill="#fff" class="t1"/>
         </g>
 
         <g id="menuitem13" transform="translate(0 470)">
           <path d="M0 0 h640 v30 h-640 z" fill="#000" fill-opacity="0.1"/>
-          <text id="menuitem13text" x=50 y=25 fill="#fff" class="big"/>
+          <text id="menuitem13text" x=50 y=25 fill="#fff" class="t1"/>
         </g>
 
         <g id="menuitem14" transform="translate(0 500)">
           <path d="M0 0 h640 v30 h-640 z" fill="#000" fill-opacity="0.1"/>
-          <text id="menuitem14text" x=50 y=25 fill="#fff" class="big"/>
+          <text id="menuitem14text" x=50 y=25 fill="#fff" class="t1"/>
         </g>
 
         <g id="menuitem15" transform="translate(0 530)">
           <path d="M0 0 h640 v30 h-640 z" fill="#000" fill-opacity="0.1"/>
-          <text id="menuitem15text" x=50 y=25 fill="#fff" class="big"/>
+          <text id="menuitem15text" x=50 y=25 fill="#fff" class="t1"/>
         </g>
 
         <g id="menuitem16" transform="translate(0 560)">
           <path d="M0 0 h640 v30 h-640 z" fill="#000" fill-opacity="0.1"/>
-          <text id="menuitem16text" x=50 y=25 fill="#fff" class="big"/>
+          <text id="menuitem16text" x=50 y=25 fill="#fff" class="t1"/>
         </g>
       </g>
 
-      <text filter="url(#f1)" id="bottomtext" x=10 y=630 fill="#ff0" class="heavy"/>
+      <text filter="url(#f1)" id="bottomtext" x=10 y=630 fill="#ff0" class="t1"/>
    
       <path id="vsync" filter="url(#f10)" d="M-10 0 H650 V200 H-640 Z" fill="#303" fill-opacity="0.2" style="pointer-events:none"/>
 
       <g id="cursor" style="pointer-events:none">
         <path filter="url(#g)" d="M-5 0 h-30 m40 0 h30 m-35 5 v30 m0 -40 v-30" stroke-width="0.7" stroke="#fff" fill-opacity="0"/>
-        <text filter="url(#f1)" id="cursorText1" x=8 y=20 fill="#ff0" class="heavy"/>
-        <text filter="url(#f1)" id="cursorText2" x=8 y=40 fill="#ff0" class="heavy"/>
-        <text filter="url(#f1)" id="cursorText3" x=8 y=60 fill="#ff0" class="heavy"/>
-        <text filter="url(#f1)" id="cursorText4" x=8 y=80 fill="#ff0" class="heavy"/>
+        <text filter="url(#f1)" id="cursorText1" x=8 y=20 fill="#ff0" class="t0"/>
+        <text filter="url(#f1)" id="cursorText2" x=8 y=40 fill="#ff0" class="t0"/>
+        <text filter="url(#f1)" id="cursorText3" x=8 y=60 fill="#ff0" class="t0"/>
+        <text filter="url(#f1)" id="cursorText4" x=8 y=80 fill="#ff0" class="t0"/>
       </g>
       <g style="visibility:hidden">
         <path id="star" d="M-2 -2h2v2h-2z"/>
@@ -290,18 +336,12 @@
 
   <script>
     // adapted from https://gist.github.com/banksean/304522
-    SN = function (t) { 
-      null == t && (t = Math), 
-      this.g3 = [[1, 1, 0], [-1, 1, 0], [1, -1, 0], [-1, -1, 0], [1, 0, 1], [-1, 0, 1], [1, 0, -1], [-1, 0, -1], [0, 1, 1], [0, -1, 1], [0, 1, -1], [0, -1, -1]], this.p = []; for (var r = 0; r < 256; r++)this.p[r] = Math.floor(256 * t.random()); this.m = []; for (r = 0; r < 512; r++)this.m[r] = this.p[255 & r] 
-    }; 
-    SN.prototype.n = function(t, r) { 
-      var i, h, o = (t + r) * (.5 * (Math.sqrt(3) - 1)), s = Math.floor(t + o), e = Math.floor(r + o), p = (3 - Math.sqrt(3)) / 6, a = (s + e) * p, m = t - (s - a), n = r - (e - a); m > n ? (i = 1, h = 0) : (i = 0, h = 1); var d = m - i + p, f = n - h + p, l = m - 1 + 2 * p, u = n - 1 + 2 * p, M = 255 & s, g = 255 & e, v = this.m[M + this.m[g]] % 12, c = this.m[M + i + this.m[g + h]] % 12, x = this.m[M + 1 + this.m[g + 1]] % 12, N = .5 - m * m - n * n, S = .5 - d * d - f * f, q = .5 - l * l - u * u; return 70 * ((N < 0 ? 0 : (N *= N) * N * dot(this.g3[v], m, n)) + (S < 0 ? 0 : (S *= S) * S * dot(this.g3[c], d, f)) + (q < 0 ? 0 : (q *= q) * q * dot(this.g3[x], l, u))) 
-    };
+    SN = function () {this.g3 = [[1, 1, 0], [-1, 1, 0], [1, -1, 0], [-1, -1, 0], [1, 0, 1], [-1, 0, 1], [1, 0, -1], [-1, 0, -1], [0, 1, 1], [0, -1, 1], [0, 1, -1], [0, -1, -1]], this.p = []; for (var r = 0; r < 256; r++)this.p[r] = Math.floor(256 * Math.random()); this.m = []; for (r = 0; r < 512; r++)this.m[r] = this.p[255 & r]}; SN.prototype.n = function(t, r) {var i, h, o = (t + r) * (.5 * (Math.sqrt(3) - 1)), s = Math.floor(t + o), e = Math.floor(r + o), p = (3 - Math.sqrt(3)) / 6, a = (s + e) * p, m = t - (s - a), n = r - (e - a); m > n ? (i = 1, h = 0) : (i = 0, h = 1); var d = m - i + p, f = n - h + p, l = m - 1 + 2 * p, u = n - 1 + 2 * p, M = 255 & s, g = 255 & e, v = this.m[M + this.m[g]] % 12, c = this.m[M + i + this.m[g + h]] % 12, x = this.m[M + 1 + this.m[g + 1]] % 12, N = .5 - m * m - n * n, S = .5 - d * d - f * f, q = .5 - l * l - u * u; return 70 * ((N < 0 ? 0 : (N *= N) * N * dot(this.g3[v], m, n)) + (S < 0 ? 0 : (S *= S) * S * dot(this.g3[c], d, f)) + (q < 0 ? 0 : (q *= q) * q * dot(this.g3[x], l, u)))};
     sn = new SN();
 
     // adapted from https://stackoverflow.com/a/18473154
-    function p2c(a,r,n,o){var t=(o-90)*Math.PI/180;return{x:a+n*Math.cos(t),y:r+n*Math.sin(t)}};
-    function arc(a,r,n,o,t){var i=p2c(a,r,n,t),e=p2c(a,r,n,o),s=t-o<=180?"0":"1";return["M",i.x,i.y,"A",n,n,0,s,0,e.x,e.y].join(" ")};
+    arcp = (a,r,n,o) => {return {x:a+n*Math.cos((o-90)*Math.PI/180),y:r+n*Math.sin((o-90)*Math.PI/180)}};
+    arc = (a,r,n,o,t) => {i=arcp(a,r,n,t),e=arcp(a,r,n,o),s=t-o<=180?"0":"1";return `M${i.x} ${i.y}A${n} ${n} ${0} ${s} ${0} ${e.x} ${e.y}`};
 
     kr = decodeURI("%E2%93%9A");
 
@@ -328,7 +368,7 @@
           _update_(o)
         };
         l12.appendChild(p);
-        objects.push(p)
+        _objects_.push(p)
       }
     };
 
@@ -336,7 +376,7 @@
     dot = (t, r, i) => t[0] * r + t[1] * i;
     _sqr_ = x => x * x;
 
-    itemvalue = (item, f) => (item._war_*f._war_) + (item._trade_*f._trade_)+ (item._sci_*f._sci_);
+    _itemvalue_ = (item, f) => (item._war_*f._war_) + (item._trade_*f._trade_)+ (item._sci_*f._sci_);
 
     _addMenu_ = (text, i, d, f) => {
       if (i > 16) return;
@@ -374,21 +414,34 @@
       cursorText4.textContent = ""
     };
     _showtitle_ = _ => { gameloop = false; _endMenu_(0); _hide_(game); _hide_(orbit); _hide_(map); _show_(title); _hide_(base); text() };
+    _showintro_ = _ => {
+      _show_(titlef);
+      for (i=0; i< _crawltext_.length; ++i) {
+        _addMenu_( _crawltext_[i], i, {}, _ => _showgame_())
+      }
+    };
     _showmap_ = _ => { gameloop = false; _endMenu_(0); _hide_(game); _hide_(orbit); _show_(map); _hide_(title); _hide_(base); text() };
     _showgame_ = _ => { 
-      gameloop = true; _endMenu_(0);_show_(game); _hide_(orbit); _hide_(map); _hide_(title); _hide_(base); text();
+      gameloop = true; _endMenu_(0);_show_(game); _hide_(orbit); _hide_(map); _hide_(title); _hide_(base); _hide_(titlef); text();
 
       combocount.d.v = 0; combocount.d.c = 0;
       maxlock = ship.d.weapons;
 
       f = _factionmap_[ship.d.my][ship.d.mx];
+      
       waves = f._explored_? 0 : 1+f._war_ * f._war_;
+
+      if( _tutorialtext_.length > 0) waves = 3;
+///#if 0
+//waves = 0
+///#endif
       wavecount = 0;
       enemies = 0;
       missiles = 0;
       maxmissiles = 8;
       targetc = 0;
-      maxlock = 4;
+      bestlock = 0;
+      hasfired=false;
       wavetime = 100
 
       ///#if 0
@@ -404,28 +457,28 @@
       f = _factionmap_[ship.d.my][ship.d.mx];
       f._visited_ = true;
 
-      orbit_planet.setAttribute("cx", Math.random()*640);
-      orbit_planet.setAttribute("cy", Math.random()*640);
+      orbit_planet.setAttribute("cx", f.random[0]*640);
+      orbit_planet.setAttribute("cy", f.random[1]*640);
       orbit_planet.setAttribute("r", f.pradius);
       orbit_planet.setAttribute("stroke", f.pcol);
-      orbit_moon.setAttribute("cx", Math.random()*640);
-      orbit_moon.setAttribute("cy", Math.random()*640);
+      orbit_moon.setAttribute("cx", f.random[2]*640);
+      orbit_moon.setAttribute("cy", f.random[3]*640);
       orbit_moon.setAttribute("r", f.mradius);
       orbit_moon.setAttribute("stroke", f.mcol);
 
       if (f._scanned_) {
-        infofaction.textContent = factions[f.faction].name;
+        infofaction.textContent =  _factions_[f.faction].name;
 
         infotrade.textContent = f._economy_;
-        infopoi.textContent = f._explored_ ? places[f._place_].name : "???"
+        infopoi.textContent = f._explored_ ?  _places_[f._place_].name : "???"
 
         ///#if 0
         console.log(`sci:${f._sci_} trade:${f._trade_} war:${f._war_} salvage:${f._salvage_}`);
-        console.log(`Place: ${places[f._place_].name}`);
+        console.log(`Place: ${ _places_[f._place_].name}`);
         console.log("Items:");
         for (i=0; i<f._items_.length; ++i) {
           item = _items_[f._items_[i]]
-          console.log("+ "+item.name+ " value:"+itemvalue(item, f))
+          console.log("+ "+item.name+ " value:"+_itemvalue_(item, f))
         }
         ///#endif
 
@@ -525,7 +578,6 @@
       _endMenu_(next)
 
     };
-    //_showwarp_ = _ => _entersystem_();
     _showwarp_ = _ => {
       _gowarp_();
       _entersystem_();
@@ -558,7 +610,7 @@
           _update_(o)
         };
 
-        objects.push(o);
+        _objects_.push(o);
         l10.appendChild(o)
       }
 
@@ -573,26 +625,29 @@
 
       base_planet.setAttribute("rx", f.pradius * 5);
       base_planet.setAttribute("stroke", f.pcol);
-      base_moon.setAttribute("cx", Math.random()*640);
-      base_moon.setAttribute("cy", Math.random()*340);
+      base_moon.setAttribute("cx",f.random[2]*640);
+      base_moon.setAttribute("cy", f.random[3]*340);
       base_moon.setAttribute("r", f.mradius*2);
       base_moon.setAttribute("stroke", f.mcol);
 
-      base_sc1.setAttribute("transform", `translate(${-5 -(Math.random()*315)} 300)`); // tower
-      base_sc2.setAttribute("transform", `translate(${-5 -(Math.random()*315)} 300)`); // skyline1
-      base_sc3.setAttribute("transform", `translate(${-5 -(Math.random()*315)} 300)`); // skyline2
-      base_sc4.setAttribute("transform", `translate(${-5 -(Math.random()*315)} 300)`); // hut
+      base_sc1.setAttribute("transform", `translate(${-20 +(f.random[0]*340)} 0)`); // tower
+      base_sc2.setAttribute("transform", `translate(${-200 +(f.random[1]*340)} 0)`); // skyline1
+      base_sc3.setAttribute("transform", `translate(${-200 +(f.random[2]*340)} 0)`); // skyline2
+      base_sc4.setAttribute("transform", `translate(${-200 +(f.random[3]*340)} 0)`); // hut
+      base_sc5.setAttribute("transform", `translate(${-210 +(f.random[4]*340)} 0)`); // wreckage
 
-      _hide_(base_sc1);_hide_(base_sc2);_hide_(base_sc3);_hide_(base_sc4);
+      _hide_(base_sc1);_hide_(base_sc2);_hide_(base_sc3);_hide_(base_sc4);_hide_(base_sc5);
+
+      if (f._trade_ == 0) _show_(base_sc5);
 
       if (f._trade_ >=1 ) _show_(base_sc4);
       if (f._trade_ >=3 ) _show_(base_sc2);
       if (f._trade_ >=5 ) _show_(base_sc3);
       if (f._trade_ >=8 ) _show_(base_sc1);
 
-      tradename.textContent = places[f._place_].name;
+      tradename.textContent =  _places_[f._place_].name;
 
-      _inventory_.sort((a, b) => itemvalue(_items_[b], f) - itemvalue(_items_[a], f));
+      _inventory_.sort((a, b) => _itemvalue_(_items_[b], f) - _itemvalue_(_items_[a], f));
 
       text(`kredits: ${kr} ${kredits}   fuel: ${fuel}/${maxfuel}`);
 
@@ -629,7 +684,7 @@
         };
 
         for (i=0; i<f._items_.length; ++i) {
-          v = itemvalue(_items_[f._items_[i]], f);
+          v = _itemvalue_(_items_[f._items_[i]], f);
           _addMenu_(`> Buy ${_items_[f._items_[i]].name} : ${kr} ${v}`, next++, {i: f._items_[i], v: v}, d => {
             if (kredits >= d.v) {
               _inventory_.push(d.i);
@@ -643,7 +698,7 @@
         if (f._items_.length > 0) _hideMenu_(next++);
 
         for (i=0; i<_inventory_.length; ++i) {
-          v = Math.round(itemvalue(_items_[_inventory_[i]], f) * 0.8);
+          v = Math.round(_itemvalue_(_items_[_inventory_[i]], f) * 0.8);
           _addMenu_(`> Sell ${_items_[_inventory_[i]].name} : ${kr} ${v}`, next++, {i: _inventory_[i], v: v}, d => {
             kredits += d.v;
             _inventory_.splice(_inventory_.indexOf(d.i), 1);
@@ -658,7 +713,7 @@
 
     cols = ["#f00", "#f70", "#ff0", "#7f0", "#0f0", "#0f7", "#0ff", "#07f", "#00f", "#70f", "#f0f", "#f07"];
     factionCol = ["#333", "#f0f", "#ff0", "#05f"];
-    factions = [
+     _factions_ = [
       {name:"Unclaimed sector",    _sci_:1, _trade_:1, _war_:1},
       {name:"Trade Federation",    _sci_:3, _trade_:6, _war_:1},
       {name:"Union of Science",    _sci_:5, _trade_:4, _war_:1},
@@ -666,7 +721,6 @@
     ];
 
     _items_ = [
-
       {w:1,   name:"Weapons upgrade",        _sci_:4, _trade_:4, _war_:8, action: _ => { ship.d.weapons++ }},
       {w:2,   name:"Shields upgrade",        _sci_:6, _trade_:4, _war_:6, action: _ => { ship.d.shields++ }},
       {w:3,   name:"Science upgrade",        _sci_:8, _trade_:4, _war_:4, action: _ => { ship.d.science++ }},
@@ -687,22 +741,9 @@
 
       {w:90,  name:"Luxury goods",           _sci_:4, _trade_:8, _war_:5},
       {w:100, name:"Advanced technology",    _sci_:7, _trade_:9, _war_:8, _research_:10}
-
-      
-      // {name:"", _sci_:0, _trade_:0, _war_:0},
-      // {name:"", _sci_:0, _trade_:0, _war_:0},
-      // {name:"", _sci_:0, _trade_:0, _war_:0},
-      // {name:"", _sci_:0, _trade_:0, _war_:0},
-      // {name:"", _sci_:0, _trade_:0, _war_:0},
-      // {name:"", _sci_:0, _trade_:0, _war_:0},
-      // {name:"", _sci_:0, _trade_:0, _war_:0},
-      // {name:"", _sci_:0, _trade_:0, _war_:0},
-      // {name:"", _sci_:0, _trade_:0, _war_:0},
-      // {name:"", _sci_:0, _trade_:0, _war_:0},
-      // {name:"", _sci_:0, _trade_:0, _war_:0}
     ];
 
-    places = [      
+    _places_ = [      
       {w:50,  name:"Trading Post", _trade_:1, _salvage_: 0, _sci_:1},
       {w:70,  name:"Abandoned colony", _trade_:0, _salvage_: 2, _sci_:1},
       {w:80,  name:"Small colony", _trade_:2, _salvage_: 0,_sci_:1},
@@ -712,6 +753,37 @@
       {w:100, name:"Large colony", _trade_:4, _salvage_: 0,_sci_:1}
     ];
 
+    _crawltext_ = [
+      /****************************************/
+      "A millennia ago, the great Ark Fleet set",
+      "out across the galaxy to escape the",
+      "certain doom of the ancient homeworld.",
+      ,
+      "Many colonies prospered, many failed,",
+      "and some vanished without trace,",
+      "disappearing into fokelaw and legend.",
+      ,
+      "Whilst an alien curse sweeps across",
+      "the galaxy, threatening humanity's",
+      "existence, you form a crew to seek out",
+      "Ark Ship YTI-404, long thought lost,",
+      "but now might carry the answer to",
+      "defeating the alien threat.",
+      ,
+      "Good luck Commander, the whole galaxy",
+      "depends on what you may find.",
+    ];
+   
+    tutorialt = 0;
+    _tutorialtext_ = [
+      {t: "Welcome...", e: _ => (wavecount > 0)},
+      {t: "Watch out for the critters", e: _ => (tutorialt>100)},
+      {t: "Hold LMB to lock on", e: _ => (bestlock>0)},
+      {t: "Release LMB to fire", e: _ => hasfired},
+      {t: "Lock mutiple for multiplier", e: _ => (bestlock>1)},
+      {t: "Good luck!", e: _ => (tutorialt>100)}
+    ];
+      
     _getWeighted_ = (i,x) => {
       r = Math.random() * (x==null ? 100 : x);
       for (j=0; j<i.length; ++j) {
@@ -722,12 +794,13 @@
 
     targets = []; shipcell = null;
 
-    objects = []; fxobjects = []; _inventory_ = [];
+    _objects_ = []; _fxobjects_ = []; _inventory_ = [];
 
     mousedown = false;
 
     kredits = 25;
     shields = 100;
+    wavec = 0;
     shieldhit = 0;
     research = null;
     researchtime = 0;
@@ -738,13 +811,19 @@
     inwarp = false;
 
     _calcfuel_ = d => _sqr_(Math.abs(d.x - ship.d.mx)) + _sqr_(Math.abs(d.y - ship.d.my));
-    _calcdistance_ = (x,y) => Math.sqrt((x-ship.d.mx)*(x-ship.d.mx)+(y-ship.d.my)*(y-ship.d.my));
+    _calcdistance_ = (x,y) => Math.sqrt((x-ship.d.mx)*(x-ship.d.mx)+(y-ship.d.my)*(y-ship.d.my)); 
 
-    music = null;    
+    titleclick = 0;
+
+    _hide_(titlef);
 
     title.onclick = _ => {
-       music = zzfxP(..._songdata_);        // Play the song
-      _entersystem_()
+      zzfxP(..._songdata_);        // Play the song
+      _showintro_()
+    };
+
+    titlef.onclick = _ => {      
+      _showgame_()
     };
 
     _endMenu_(0);
@@ -777,7 +856,7 @@
       };
       _update_(o)
     };
-    objects.push(ship);
+    _objects_.push(ship);
     _update_(ship);
 
     combocount.d = { v:0, c:0 };
@@ -792,7 +871,7 @@
       };
       o.d.v-= ((targetc+missiles == 0) ? 5 : 0.5) // combo counter drops faster when no lock or missiles
     };
-    objects.push(combocount);
+    _objects_.push(combocount);
 
     _factionmap_ = [];
 
@@ -802,20 +881,19 @@
         dist=_calcdistance_(x,y);
         f = {
           faction:0, _visited_: false, _explored_: false, _scanned_: dist<5, 
-          _place_: _getWeighted_(places),
+          _place_: _getWeighted_( _places_),
           _items_: [],
           pradius: 100+Math.random()*300,
           pcol: cols[Math.floor(Math.random()*cols.length)],    
           mradius: 10+Math.random()*100,
           mcol: cols[Math.floor(Math.random()*cols.length)],
-          lsx: 0.5 + Math.random(),
-          lsy: 0.5 + Math.random()
+          random: [Math.random(),Math.random(),Math.random(),Math.random(),Math.random()]
         };
 
-        f._sci_ = Math.floor(Math.random()*3 * factions[f.faction]._sci_ * places[f._place_]._sci_);
-        f._trade_ = Math.round((1+Math.random()*2) * factions[f.faction]._trade_ * places[f._place_]._trade_);
-        f._war_ = Math.floor(Math.random()*3* factions[f.faction]._war_);
-        f._salvage_ = Math.round(Math.random()*3 * factions[f.faction]._trade_ * places[f._place_]._salvage_);
+        f._sci_ = Math.floor(Math.random()*3 *  _factions_[f.faction]._sci_ *  _places_[f._place_]._sci_);
+        f._trade_ = Math.round((1+Math.random()*2) *  _factions_[f.faction]._trade_ *  _places_[f._place_]._trade_);
+        f._war_ = Math.floor(Math.random()*3*  _factions_[f.faction]._war_);
+        f._salvage_ = Math.round(Math.random()*3 *  _factions_[f.faction]._trade_ *  _places_[f._place_]._salvage_);
 
         if (f._sci_ == f._trade_ && f._sci_ == f._war_) {
           f._economy_ = "Balanced"
@@ -956,9 +1034,9 @@
           };
 
           cursorText1.textContent = `[${d.x},${d.y}]`;
-          cursorText2.textContent = f._scanned_ ? factions[f.faction].name : "";
+          cursorText2.textContent = f._scanned_ ?  _factions_[f.faction].name : "";
           cursorText3.textContent = f._scanned_ ? f._economy_ : "";
-          cursorText4.textContent = f._explored_ ? places[f._place_].name : ""
+          cursorText4.textContent = f._explored_ ?  _places_[f._place_].name : ""
 
         };
         o.onmouseleave = _ => {
@@ -970,7 +1048,9 @@
         };
         o.onclick = _ => {
           fuelneed = _calcfuel_(_.target.d);
-          if (fuelneed <= fuel) {
+          if (fuelneed == 0) {
+            _showorbit_()
+          } else if (fuelneed <= fuel) {
             fuel -= fuelneed;
             warpdistance = Math.max(100, fuelneed * 100);
             ship.d.mx = _.target.d.x;
@@ -1029,6 +1109,7 @@
 
     _firemissile_ = _ => {
       missiles++;
+      hasfired=true;
 
       o = box.cloneNode();
       o.setAttribute("stroke", "#fff");
@@ -1071,7 +1152,7 @@
       _update_(o);
       l11.appendChild(o);
 
-      objects.push(o);
+      _objects_.push(o);
       _shoot_();
 
       missiletime = 4;
@@ -1087,10 +1168,11 @@
           t.d.to = _.target;
           t.d.z = 1000;
           t.d.r = 90;
-          objects.push(t);
+          _objects_.push(t);
           _lock_(700 + (50 * targetc));
           _.target.onmouseenter = null;
           targetc++;
+          bestlock = Math.max(bestlock, targetc);
           cursorText1.textContent = `Lock: ${targetc} / ${maxlock}`
         }
       }
@@ -1101,18 +1183,16 @@
       zap.removeAttribute("id");
       zap.setAttribute("filter","url(#g)");
       p="M0 0";
-      for (k=1; k<65; k++) {
-        p+= ` L${(Math.random()*k*2)-k} ${k*10}`
-      };
+      for (k=1; k<65; k++) p+= ` L${(Math.random()*k*2)-k} ${k*10}`;
       zap.setAttribute("d", p);
       zap.d = {x: o.d.x, y: o.d.y, r:0, s:1, z:1, _dead_: true, _temp_: true};
       zap.d._update_ = _ => {};
-      objects.push(zap);
+      _objects_.push(zap);
       _update_(zap);
       l12.appendChild(zap);
       
       if (Math.abs(o.d.x - ship.d.x) < 25) { 
-        shields--;
+        shields-=wavecount;
         shieldhit += 5;
         _shields_()
       } else {
@@ -1133,18 +1213,19 @@
 
       o.d._update_ = u;
 
-      objects.push(o);
+      _objects_.push(o);
       enemies++;
       l12.appendChild(o);
 
       return o
     };
 
-    _enemywave_ = wave => {
-      // circling critters
+    _enemywave_ = _ => {
+      wave = wavec < 3 ? 0 : Math.round(Math.random()*3);
       _wave1_();
       s = 0.1;
       wavecount++;
+      wavec++;
 
       r = Math.floor(Math.random()*10);
 
@@ -1220,7 +1301,7 @@
           for (x = 0; x <= 64; ++x) {
             rx = ((32 - x) * ((slices + 1 - o.d.i) / 10)) / div;
 
-            hrz = sn.n((g.gx + rx)*g.f.lsx, ((o.d.i + g.gy) / div)*g.f.lsy);
+            hrz = sn.n((g.gx + rx)*(0.5+g.f.random[0]), ((o.d.i + g.gy) / div)*(0.5+g.f.random[1]));
             sq = o.d.i * o.d.i;
             s += x == 0 ? "M" : "L";
             s += `${x * 10} ${(100 - (gh * 3)) + ((gh / slices) * sq) + (hrz * sq / 2)}`
@@ -1229,19 +1310,15 @@
         } else {
           // warp tunnel
 
+          wx = sn.n(g.gx, g.gy/100) * 200;
           for (i=0; i<64; ++i) {
             x = Math.sin(i/63*(Math.PI*2));
             y = Math.cos(i/63*(Math.PI*2));
 
             rx = ((32 - (i%63)) * ((slices + 1 - o.d.i) / 10)) / div;
-            r = 1+(sn.n((g.gx + rx)*g.f.lsx, ((o.d.i + g.gy) / div)*g.f.lsy)*15);
-
+            r = 1+(sn.n((g.gx + rx)*(0.5+g.f.random[3]), ((o.d.i + g.gy) / div)*(0.5+g.f.random[2])))/10;
             s += i == 0 ? "M" : "L";
-
-            //console.log(r);
-
-            s += `${320+((320-ship.d.x)*(o.d.i/15))+(x*(r+(o.d.i*30)))} ${320+((320-ship.d.y)*(o.d.i/15))+(y*(r+(o.d.i*30)))}`
-
+            s += `${320+((320-ship.d.x+wx)*(o.d.i/15))+(x*((r*o.d.i*30)))} ${320+((320-ship.d.y)*(o.d.i/15))+(y*((r*o.d.i*30)))}`
           }
 
         };
@@ -1249,7 +1326,7 @@
         o.setAttribute("stroke", _factionmap_[ship.d.my][ship.d.mx].pcol);
         l10.appendChild(o)
       };
-      objects.push(o)
+      _objects_.push(o)
     };
 
     missiletime = 0;
@@ -1266,7 +1343,7 @@
       o.d.y = 320 + (my * 320);
       _update_(o)
     };
-    fxobjects.push(cursor);
+    _fxobjects_.push(cursor);
     _update_(cursor);
 
     vsync.d = { r: 0, x: 0, y: 0, z: 1 };
@@ -1275,13 +1352,9 @@
       if (o.d.y > 640) o.d.y = -200;
       _update_(o)
     };
-    fxobjects.push(vsync);
+    _fxobjects_.push(vsync);
 
     _showtitle_();
-    //_showmap_();
-    //_showgame_();
-    //_showorbit_();
-    //_showtrade_();
 
     c.onmousedown = _ => {
       focus = true;
@@ -1313,19 +1386,19 @@
     gh = 10;
 
     _cleartemp_ = _ => {
-      x = objects.length;
-      objects2 = objects;
-      objects = [];
+      x = _objects_.length;
+      _ = _objects_;
+      _objects_ = [];
 
-      objects2.forEach(o => {
+      _.forEach(o => {
         if (o.d._temp_) {
           o.remove() 
         } else {
-          objects.push(o)
+          _objects_.push(o)
         }
       })
       ///#if 0
-      console.log(`${x-objects.length} objects culled`)
+      console.log(`${x-_objects_.length} _objects_ culled`)
       ///#endif
     };
 
@@ -1338,15 +1411,28 @@
     setInterval(_ => {
       if (!focus) return;
 
-      fxobjects.forEach(o => {
-        o.d._update_(o, g)
-      });
-
-      if (shields < 100) shields = _clamp_(shields+(ship.d.shields/100), 0, 100);
+      _fxobjects_.forEach(o => o.d._update_(o, g));
 
       if (researchtime > 0) researchtime--;
 
       if (!gameloop) return;
+
+      if (shields > 0 && shields<100) {
+        text(`Shields: ${shields.toFixed(0)}%`)
+      } else {
+        if (shields <= 0) {
+          _show_(tutorial);
+          tutorial.textContent = "G A M E O V E R";
+          ship.d._dead_=true;
+          _gameover_();
+          shields = 0;
+          gameloop = false;
+          return
+        }
+        //focus = false
+      };
+
+      if (shields < 100) shields = _clamp_(shields+(ship.d.shields/200), 0, 100);
 
       n += 0.025;
       warpdistance -= 1;
@@ -1377,19 +1463,19 @@
       g.gx= gx;
       g.gh= gh;
 
-      objects2 = objects;
-      objects = [];
+      _ = _objects_;
+      _objects_ = [];
 
-      objects2.forEach(o => {
+      _.forEach(o => {
         o.d._update_(o, g);
         if (o.d._dead_) {
           o.remove() 
         } else {
-          objects.push(o)
+          _objects_.push(o)
         }
       });
 
-      //console.log(objects.length);
+      //console.log(_objects_.length);
 
       if (enemies == 0) {
         wavetime--;
@@ -1401,7 +1487,7 @@
               _showorbit_()
             } else {
               wavetime = 25;
-              _enemywave_(Math.round(Math.random()*3)) 
+              _enemywave_() 
             }            
           } else {
             if (waves==0) {
@@ -1411,22 +1497,23 @@
             } else {
               waves--;
               wavetime = 25;
-              _enemywave_(Math.round(Math.random()*3))
+              _enemywave_()
             }
           }
         }
       };
 
-      if (shields > 0) {
-        text(`shields: ${shields.toFixed(0)}%`)
-      } else {
-        text("G A M E O V E R");
-        ship.d._dead_=true;
-        _gameover_();
-        shields = 0
-        //focus = false
+      if ( _tutorialtext_.length > 0) {
+        tutorialt++;
+        tutorial.textContent =  _tutorialtext_[0].t;
+        if ( _tutorialtext_[0].e != null) {
+          if ( _tutorialtext_[0].e()) {
+             _tutorialtext_.shift();
+            tutorialt = 0;
+            if ( _tutorialtext_.length == 0) _hide_(tutorial)
+          }
+        }
       }
-
 
     }, 50);
 
@@ -1441,7 +1528,8 @@
     zzfxM=(n,f,t,e=125)=>{let l,o,z,r,g,h,x,a,u,c,d,i,m,p,G,M=0,R=[],b=[],j=[],k=0,q=0,s=1,v={},w=zzfxR/e*60>>2;for(;s;k++)R=[s=a=d=m=0],t.map((e,d)=>{for(x=f[e][k]||[0,0,0],s|=!!f[e][k],G=m+(f[e][0].length-2-!a)*w,p=d==t.length-1,o=2,r=m;o<x.length+p;a=++o){for(g=x[o],u=o==x.length+p-1&&p||c!=(x[0]||0)|g|0,z=0;z<w&&a;z++>w-99&&u?i+=(i<1)/99:0)h=(1-i)*R[M++]/2||0,b[r]=(b[r]||0)-h*q+h,j[r]=(j[r++]||0)+h*q+h;g&&(i=g%1,q=x[1]||0,(g|=0)&&(R=v[[c=x[M=0]||0,g]]=v[[c,g]]||(l=[...n[c]],l[2]*=2**((g-12)/12),g>0?zzfxG(...l):[])))}m=G});return[b,j]};
 
     // http://aminet.net/package/mods/pro/somewhere
-    _songdata_ = zzfxM(...[[[.7,0,22,,.07,.07,2,0,,,.5,.01],[.5,0,196,,2,.5,3],[,0,655,,,.09,3,1.65,,,,,.02,3.8,-.1,,.2],[,0,84,,,,,.7,,,,.5,,6.7,1,.05],[3,0,43,,,.25,,,,,,,,2],[.75,0,196,,.08,.18,3]],[[[1,1,8,,,,,,,,,,,,8,,,,,,,,,,,,8,,,,,,,,6,,,,,,,,,,,6,,,,,,,,,,,,,6,,,,,,,,],[,-1,15,,,,13,,15,,,,13,,15,,18,,,,18,,,,18,,17,,15,,13,,15,,15,,,,13,,15,,,,13,,15,,18,,,,18,,,,18,,17,,15,,13,,15,,],[3,1,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,],[4,1,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,,,],[2,1,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,18,18,18]],[[5,-1,20,,20.5,,15.75,,20.75,,20,,20.5,,20,,15,,20.5,,15.75,,20.75,,15,,18,,20,,20.5,,18,,18.5,,22.75,,18.75,,18,,17,,15,,20.75,,18,,18.5,,22.75,,18.75,,22.75,,18.75,,22.92,,18.92,,22.92,,],[1,1,8,,,,,,,,,,,,8,,,,,,,,,,,,8,,,,,,,,6,,,,,,,,,,,6,,,,,,,,,,,,,6,,,,,,,,],[,-1,15,,,,13,,15,,,,13,,15,,18,,,,18,,,,18,,17,,15,,13,,15,,15,,,,13,,15,,,,13,,15,,18,,,,18,,,,18,,17,,15,,13,,15,,],[3,1,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,],[4,1,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,,,],[2,1,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,18,18,18]],[[5,-1,15,,10.5,,13,,15,,10.5,,13,,15,,18,,13.5,,18,,13.5,,18,,17,,15,,13,,15,,15,,10.5,,13,,15,,10.5,,13,,15,,18,,13.5,,18,,13.5,,18,,17,,15,,13,,15,,],[1,1,8,,,,,,,,,,,,8,,,,,,,,,,,,8,,,,,,,,6,,,,,,,,,,,6,,,,,,,,,,,,,6,,,,,,,,],[,-1,15,,,,13,,15,,,,13,,15,,18,,,,18,,,,18,,17,,15,,13,,15,,15,,,,13,,15,,,,13,,15,,18,,,,18,,,,18,,17,,15,,13,,15,,],[3,1,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,],[4,1,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,,,],[2,1,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,18,18,18]],[[5,-1,10,,8.5,,10.75,,8.75,,10.75,,8.75,,10.75,,8.75,,10.75,,8.75,,10.75,,8.75,,10.75,,8.75,,10.75,,8.75,,8,,6.5,,8.75,,6.75,,8.75,,6.75,,8.75,,6.75,,8.75,,6.75,,8.75,,6.75,,8.75,,6.75,,8.75,,6.75,,],[1,1,8,,,,,,,,,,,,8,,,,,,,,,,,,8,,,,,,,,6,,,,,,,,,,,6,,,,,,,,,,,,,6,,,,,,,,],[,-1,15,,,,13,,15,,,,13,,15,,18,,,,18,,,,18,,17,,15,,13,,15,,15,,,,13,,15,,,,13,,15,,18,,,,18,,,,18,,17,,15,,13,,15,,],[3,1,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,],[4,1,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,,,],[2,1,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,18,18,18]],[],[[5,-1,20,,15.5,,20.5,,15.75,,20.75,,15.75,,20.75,,15.75,,20.75,,15.75,,20.75,,15.75,,18,,18.75,,17,,17.75,,15,,10.5,,15.75,,10.75,,15.75,,10.75,,15.75,,10.75,,15.75,,10.75,,15.75,,10.75,,15.92,,10.92,,15.92,,10.92,,],[,1,15,,,,13,,15,,,,13,,15,,18,,,,18,,,,18,,17,,15,,13,,15,,15,,,,13,,15,,,,13,,15,,18,,,,18,,,,18,,17,,15,,13,,15,,],[1,-1,8,,,,,,,,,,,,8,,,,,,,,,,,,8,,,,,,,,6,,,,,,,,,,,6,,,,,,,,,,,,,6,,,,,,,,],[3,1,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,],[4,1,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,,,],[2,1,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,18,18,18]],[[5,-1,20,,15.5,,20.75,,15.75,,20.75,,15.75,,20.75,,15.75,,20,,15.5,,20.75,,15.75,,18,,18.5,,18.75,,18.75,,18,,22.5,,18.75,,22.75,,18.75,,22.75,,18.75,,22.75,,15,,10.5,,15,,22.5,,15.75,,22.75,,15,,22.75,,],[1,1,8,,,,,,,,,,,,8,,,,,,,,,,,,8,,,,,,,,6,,,,,,,,,,,6,,,,,,,,,,,,,6,,,,,,,,],[,-1,15,,,,13,,15,,,,13,,15,,18,,,,18,,,,18,,17,,15,,13,,15,,15,,,,13,,15,,,,13,,15,,18,,,,18,,,,18,,17,,15,,13,,15,,],[3,1,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,],[4,1,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,,,],[2,1,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,18,18,,]]],[0,0,5,6,6,2,2,1,1,6,6,2,2,1,1,6,5,3],120,{}]);
+    _songdata_x = [[[.7,0,22,,.07,.07,2,0,,,.5,.01],[.5,0,196,,2,.5,3],[,0,655,,,.09,3,1.65,,,,,.02,3.8,-.1,,.2],[,0,84,,,,,.7,,,,.5,,6.7,1,.05],[3,0,43,,,.25,,,,,,,,2],[.75,0,196,,.08,.18,3]],[[[1,1,8,,,,,,,,,,,,8,,,,,,,,,,,,8,,,,,,,,6,,,,,,,,,,,6,,,,,,,,,,,,,6,,,,,,,,],[,-1,15,,,,13,,15,,,,13,,15,,18,,,,18,,,,18,,17,,15,,13,,15,,15,,,,13,,15,,,,13,,15,,18,,,,18,,,,18,,17,,15,,13,,15,,],[3,1,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,],[4,1,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,,,],[2,1,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,18,18,18]],[[5,-1,20,,20.5,,15.75,,20.75,,20,,20.5,,20,,15,,20.5,,15.75,,20.75,,15,,18,,20,,20.5,,18,,18.5,,22.75,,18.75,,18,,17,,15,,20.75,,18,,18.5,,22.75,,18.75,,22.75,,18.75,,22.92,,18.92,,22.92,,],[1,1,8,,,,,,,,,,,,8,,,,,,,,,,,,8,,,,,,,,6,,,,,,,,,,,6,,,,,,,,,,,,,6,,,,,,,,],[,-1,15,,,,13,,15,,,,13,,15,,18,,,,18,,,,18,,17,,15,,13,,15,,15,,,,13,,15,,,,13,,15,,18,,,,18,,,,18,,17,,15,,13,,15,,],[3,1,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,],[4,1,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,,,],[2,1,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,18,18,18]],[[5,-1,15,,10.5,,13,,15,,10.5,,13,,15,,18,,13.5,,18,,13.5,,18,,17,,15,,13,,15,,15,,10.5,,13,,15,,10.5,,13,,15,,18,,13.5,,18,,13.5,,18,,17,,15,,13,,15,,],[1,1,8,,,,,,,,,,,,8,,,,,,,,,,,,8,,,,,,,,6,,,,,,,,,,,6,,,,,,,,,,,,,6,,,,,,,,],[,-1,15,,,,13,,15,,,,13,,15,,18,,,,18,,,,18,,17,,15,,13,,15,,15,,,,13,,15,,,,13,,15,,18,,,,18,,,,18,,17,,15,,13,,15,,],[3,1,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,],[4,1,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,,,],[2,1,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,18,18,18]],[[5,-1,10,,8.5,,10.75,,8.75,,10.75,,8.75,,10.75,,8.75,,10.75,,8.75,,10.75,,8.75,,10.75,,8.75,,10.75,,8.75,,8,,6.5,,8.75,,6.75,,8.75,,6.75,,8.75,,6.75,,8.75,,6.75,,8.75,,6.75,,8.75,,6.75,,8.75,,6.75,,],[1,1,8,,,,,,,,,,,,8,,,,,,,,,,,,8,,,,,,,,6,,,,,,,,,,,6,,,,,,,,,,,,,6,,,,,,,,],[,-1,15,,,,13,,15,,,,13,,15,,18,,,,18,,,,18,,17,,15,,13,,15,,15,,,,13,,15,,,,13,,15,,18,,,,18,,,,18,,17,,15,,13,,15,,],[3,1,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,],[4,1,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,,,],[2,1,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,18,18,18]],[],[[5,-1,20,,15.5,,20.5,,15.75,,20.75,,15.75,,20.75,,15.75,,20.75,,15.75,,20.75,,15.75,,18,,18.75,,17,,17.75,,15,,10.5,,15.75,,10.75,,15.75,,10.75,,15.75,,10.75,,15.75,,10.75,,15.75,,10.75,,15.92,,10.92,,15.92,,10.92,,],[,1,15,,,,13,,15,,,,13,,15,,18,,,,18,,,,18,,17,,15,,13,,15,,15,,,,13,,15,,,,13,,15,,18,,,,18,,,,18,,17,,15,,13,,15,,],[1,-1,8,,,,,,,,,,,,8,,,,,,,,,,,,8,,,,,,,,6,,,,,,,,,,,6,,,,,,,,,,,,,6,,,,,,,,],[3,1,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,],[4,1,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,,,],[2,1,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,18,18,18]],[[5,-1,20,,15.5,,20.75,,15.75,,20.75,,15.75,,20.75,,15.75,,20,,15.5,,20.75,,15.75,,18,,18.5,,18.75,,18.75,,18,,22.5,,18.75,,22.75,,18.75,,22.75,,18.75,,22.75,,15,,10.5,,15,,22.5,,15.75,,22.75,,15,,22.75,,],[1,1,8,,,,,,,,,,,,8,,,,,,,,,,,,8,,,,,,,,6,,,,,,,,,,,6,,,,,,,,,,,,,6,,,,,,,,],[,-1,15,,,,13,,15,,,,13,,15,,18,,,,18,,,,18,,17,,15,,13,,15,,15,,,,13,,15,,,,13,,15,,18,,,,18,,,,18,,17,,15,,13,,15,,],[3,1,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,20,,,,,,,,],[4,1,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,24,,,,,,],[2,1,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,,,,,,,,18,18,18,,]]],[0,0,5,6,6,2,2,1,1,6,6,2,2,1,1,6,5,3],120,{}];
+    _songdata_ = zzfxM(..._songdata_x);
 
     _lock_ = f => zzfx(...[, , f, .02, , .08, 1, 1.19, 11, , -344, .02, , , , , , .04, .02]); 
     _explosion_ = _ => zzfx(...[, , 585, .01, .23, .21, 4, 4.87, , , , , , .4, , .3, , .76, .13, .44]); 
