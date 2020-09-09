@@ -1,16 +1,6 @@
 <meta name="monetization" content="$ilp.uphold.com/qEBzYpLKbWr2">
 
 <body style="background: #000;cursor: none">
-  <!-- 
-    
-    TODO 
-  
-    * Max combo - actually do something, take locks into account
-    * location clues
-    * actual endgame
-    * handle long menus (pagninate?)
-  
-  -->
 
   <!--
   ///#define _decompose_ d_
@@ -32,6 +22,7 @@
   ///#define _crawltext_ v_
   ///#define _places_ w_
   ///#define _factions_ x_
+  ///#define _endtext_ y_
 
   ///#define _getWeighted_ az
   ///#define _showmap_ bz
@@ -259,6 +250,8 @@
         <path id="box" d="M-10 -10h20v20h-20z" fill-opacity="0"/>
         <path id="enemybox" d="M0 0"/>
         <path id="mapcell" d="M0 0h12v12h-12z" fill-opacity="0"/>
+        <circle id="transponder" cx="6" cy="6" r="4" stroke="#fff", fill-opacity="0" style="pointer-events:none"/>
+        <path id="yeti" d="M0 0 l 12 12 M0 12 l 12 -12" stroke="#fff" fill-opacity="0" stroke-width="2" style="pointer-events:none"/>
         <path id="ground" d="M0 0" stroke-width="0.6" stroke="#fff" fill-opacity="0"/>
       </g>
     </g>
@@ -431,7 +424,10 @@
         });
         _hideMenu_(next++)
       };
-      _addMenu_("> Enter Atmosphere", next++, {}, _ => {inwarp = false; _showgame_()});
+      _addMenu_("> Enter Atmosphere", next++, {}, _ => {
+        inwarp = false;
+        _showgame_()
+      });
       _hideMenu_(next++);
       _addMenu_("> Ship status", next++, {}, _ => {
         next = 0;
@@ -442,6 +438,10 @@
         _addMenu_(`Engines: ${ship.d.engines}`, next++);
         _addMenu_(`Scanner: ${ship.d.scanner}`, next++);
         _addMenu_(`Science: ${ship.d.science}`, next++);
+        _hideMenu_(next++);
+        if (ship.d.clue > 0) {
+          _addMenu_(`${ship.d.clue} transponder clues collected`, next++)
+        };
         _endMenu_(next)
       });
 
@@ -456,13 +456,66 @@
             v = _items_[d.i].v; 
 
             next = 0;
-            _addMenu_("< Exit", next++, {}, _ => _showorbit_());
-            _hideMenu_(next++);
-            if (v.weapons) { _addMenu_(`Weapons: +${v.weapons} : ${ship.d.weapons} => ${ship.d.weapons+v.weapons}`, next++); ship.d.weapons+=v.weapons};
-            if (v.shields) { _addMenu_(`Shields: +${v.shields} : ${ship.d.shields} => ${ship.d.shields+v.shields}`, next++); ship.d.shields+=v.shields};
-            if (v.engines) { _addMenu_(`Engines: +${v.engines} : ${ship.d.engines} => ${ship.d.engines+v.engines}`, next++); ship.d.engines+=v.engines};
-            if (v.scanner) { _addMenu_(`Scanner: +${v.scanner} : ${ship.d.scanner} => ${ship.d.scanner+v.scanner}`, next++); ship.d.scanner+=v.scanner};
-            if (v.science) { _addMenu_(`Science: +${v.science} : ${ship.d.science} => ${ship.d.science+v.science}`, next++); ship.d.science+=v.science};
+            if (!v.clue) {
+              _addMenu_("< Exit", next++, {}, _ => _showorbit_());
+              _hideMenu_(next++);
+              if (v.weapons) { _addMenu_(`Weapons: +${v.weapons} : ${ship.d.weapons} => ${ship.d.weapons+v.weapons}`, next++); ship.d.weapons+=v.weapons};
+              if (v.shields) { _addMenu_(`Shields: +${v.shields} : ${ship.d.shields} => ${ship.d.shields+v.shields}`, next++); ship.d.shields+=v.shields};
+              if (v.engines) { _addMenu_(`Engines: +${v.engines} : ${ship.d.engines} => ${ship.d.engines+v.engines}`, next++); ship.d.engines+=v.engines};
+              if (v.scanner) { _addMenu_(`Scanner: +${v.scanner} : ${ship.d.scanner} => ${ship.d.scanner+v.scanner}`, next++); ship.d.scanner+=v.scanner};
+              if (v.science) { _addMenu_(`Science: +${v.science} : ${ship.d.science} => ${ship.d.science+v.science}`, next++); ship.d.science+=v.science}
+            } else {
+              next = 0;
+              ship.d.clue++;
+
+              if (ship.d.clue != 3) {
+                _addMenu_("< Exit", next++, {}, _ => _showorbit_());
+                _hideMenu_(next++)
+              } else {
+                _hideMenu_(next++);
+                _hideMenu_(next++)
+              };
+
+              _addMenu_("Found ancient transponder!", next++);
+               
+              if (ship.d.clue > 3) {
+                _addMenu_("Not that we need any more!", next++)
+              } else if (ship.d.clue == 3) {
+                _addMenu_("We can now triangulate the Yeti's", next++);
+                _addMenu_("location...", next++);
+
+                j = 6;
+                for (i=1; i<4; ++i) {
+                  setTimeout(_ => {
+                    _addMenu_("... scanning ...", j++)
+                  }, 250*i)
+                };
+                setTimeout(_ => {
+                  _addMenu_("... LOCATION FOUND", 10);
+
+                  x = ship.d.mx;
+                  y = ship.d.my;
+
+                  while ((_calcdistance_(x,y) < 10) || (_calcdistance_(x,y) > 20)) {
+                    x = 2+Math.floor(Math.random() * 28);
+                    y = 2+Math.floor(Math.random() * 28)
+                  };
+
+                  o = yeti.cloneNode();
+                  o.removeAttribute("id");
+                  o.setAttribute("transform", "translate(" + ((x * 16) +40) + " " + ((y * 16) + 34) + ")");
+                  map.appendChild(o);
+
+                  _factionmap_[y][x].yeti = true;
+
+                  _addMenu_("> Galaxy Map", 0, {} , _ => _showmap_())
+                }, 1250)
+
+              } else {
+                _addMenu_(`With ${3-ship.d.clue} more we can triangulate the`, next++);
+                _addMenu_("Yeti's location", next++)
+              }
+            };
             _endMenu_(next);
 
             _inventory_.splice(_inventory_.indexOf(d.i), 1)
@@ -587,78 +640,90 @@
       if (f._trade_ >=5 ) _show_(base_sc3);
       if (f._trade_ >=8 ) _show_(base_sc1);
 
-      tradename.textContent = _places_[f._place_].name;
+      if (_factionmap_[ship.d.my][ship.d.mx].yeti) {
 
-      _inventory_.sort((a, b) => _itemvalue_(_items_[b], f) - _itemvalue_(_items_[a], f));
+        tradename.textContent = "Yeti Location";
 
-      maxfuel = ship.d.engines * 25;
-      text(`kredits: ${kr} ${kredits}   fuel: ${fuel}/${maxfuel}`);
-
-      _addMenu_("< Return to orbit", next++, {}, _ => _showorbit_());
-      _hideMenu_(next++);
-
-      if (f._trade_ == 0) {
-        _addMenu_("Search for scrap", next++, {}, _ => {
-
-          next = 2;
-
-          for (i=0; i<f._items_.length; ++i) {
-            _addMenu_(`Found ${_items_[f._items_[i]].name}!`, next++);
-            _inventory_.push(f._items_[i])
-          };
-
-          f._items_ = []
-
-        });
-
-        _hideMenu_(next++)
-
+        _factionmap_[ship.d.my][ship.d.mx].yeti = false;
+        for (next=0; next< _endtext_.length;) {
+          _addMenu_( _endtext_[next], next++, {}, _ => _showtrade_())
+        }
+      
       } else {
 
-        if (fuel < maxfuel) {
-          fuelcost = 5 + Math.floor(f.random[3]*10);
-          _addMenu_(`> Buy fuel : ${kr} ${fuelcost}`, next++, {v: fuelcost}, d => {
-            if (kredits >= d.v) {
-              kredits -= d.v;
-              fuel++;
-              _showtrade_()
-            }
-          })
-        };
+        tradename.textContent = _places_[f._place_].name;
 
-        if (shields < 100) {
-          shieldcost = _clamp_(Math.round((0.5+f.random[2])*(100-shields)/2), 3, 100);          
-          _addMenu_(`> Recharge shields : ${kr} ${shieldcost}`, next++, {v: shieldcost}, d => {
-            if (kredits >= d.v) {
-              kredits -= d.v;
-              shields = 100;
-              _showtrade_()
-            }
-          })
-        };
+        _inventory_.sort((a, b) => _itemvalue_(_items_[b], f) - _itemvalue_(_items_[a], f));
 
-        for (i=0; i<f._items_.length; ++i) {
-          v = _itemvalue_(_items_[f._items_[i]], f);
-          _addMenu_(`> Buy ${_items_[f._items_[i]].name} : ${kr} ${v}`, next++, {i: f._items_[i], v: v}, d => {
-            if (kredits >= d.v) {
-              _inventory_.push(d.i);
-              kredits -= d.v;
-              f._items_.splice(f._items_.indexOf(d.i), 1);
-              _showtrade_()
-            }
-          })
-        };
+        maxfuel = ship.d.engines * 25;
+        text(`kredits: ${kr} ${kredits}   fuel: ${fuel}/${maxfuel}`);
 
-        if (f._items_.length > 0) _hideMenu_(next++);
+        _addMenu_("< Return to orbit", next++, {}, _ => _showorbit_());
+        _hideMenu_(next++);
 
-        for (i=0; i<_inventory_.length; ++i) {
-          v = Math.round(_itemvalue_(_items_[_inventory_[i]], f) * 0.8);
-          if (v > 0) {
-            _addMenu_(`> Sell ${_items_[_inventory_[i]].name} : ${kr} ${v}`, next++, {i: _inventory_[i], v: v}, d => {
-              kredits += d.v;
-              _inventory_.splice(_inventory_.indexOf(d.i), 1);
-              _showtrade_()
+        if (f._trade_ == 0) {
+          _addMenu_("Search for scrap", next++, {}, _ => {
+
+            next = 2;
+
+            for (i=0; i<f._items_.length; ++i) {
+              _addMenu_(`Found ${_items_[f._items_[i]].name}!`, next++);
+              _inventory_.push(f._items_[i])
+            };
+
+            f._items_ = []
+
+          });
+
+          _hideMenu_(next++)
+
+        } else {
+
+          if (fuel < maxfuel) {
+            fuelcost = 5 + Math.floor(f.random[3]*10);
+            _addMenu_(`> Buy fuel : ${kr} ${fuelcost}`, next++, {v: fuelcost}, d => {
+              if (kredits >= d.v) {
+                kredits -= d.v;
+                fuel++;
+                _showtrade_()
+              }
             })
+          };
+
+          if (shields < 100) {
+            shieldcost = _clamp_(Math.round((0.5+f.random[2])*(100-shields)/2), 3, 100);          
+            _addMenu_(`> Recharge shields : ${kr} ${shieldcost}`, next++, {v: shieldcost}, d => {
+              if (kredits >= d.v) {
+                kredits -= d.v;
+                shields = 100;
+                _showtrade_()
+              }
+            })
+          };
+
+          for (i=0; i<f._items_.length; ++i) {
+            v = _itemvalue_(_items_[f._items_[i]], f);
+            _addMenu_(`> Buy ${_items_[f._items_[i]].name} : ${kr} ${v}`, next++, {i: f._items_[i], v: v}, d => {
+              if (kredits >= d.v) {
+                _inventory_.push(d.i);
+                kredits -= d.v;
+                f._items_.splice(f._items_.indexOf(d.i), 1);
+                _showtrade_()
+              }
+            })
+          };
+
+          if (f._items_.length > 0) _hideMenu_(next++);
+
+          for (i=0; i<_inventory_.length; ++i) {
+            v = Math.round(_itemvalue_(_items_[_inventory_[i]], f) * 0.8);
+            if (v > 0 && _items_[_inventory_[i]].v == null) {
+              _addMenu_(`> Sell ${_items_[_inventory_[i]].name} : ${kr} ${v}`, next++, {i: _inventory_[i], v: v}, d => {
+                kredits += d.v;
+                _inventory_.splice(_inventory_.indexOf(d.i), 1);
+                _showtrade_()
+              })
+            }
           }
         }
       };
@@ -698,7 +763,9 @@
       {w:90,  name:"Luxury goods",           _sci_:4, _trade_:8, _war_:5},
       {w:100, name:"Advanced technology",    _sci_:7, _trade_:9, _war_:8, _research_:10},
 
-      {w:999, name:"Bonus upgrade",          _sci_:0, _trade_:0, _war_:0, v: {weapons:2, shields:2, science:2, engines:2, scanner:2} }
+      {w:999, name:"Ancient transponder",    _sci_:3, _trade_:3, _war_:3, v: {clue:1}},
+      
+      {w:9999, name:"Bonus upgrade",         _sci_:0, _trade_:0, _war_:0, v: {weapons:2, shields:2, science:2, engines:2, scanner:2}}
     ];
 
     _places_ = [      
@@ -730,6 +797,21 @@
       ,
       "Good luck Commander, the whole galaxy",
       "depends on what you may find.",
+    ];
+
+    _endtext_ = [
+      /****************************************/
+      "And so the lost colony was found!",
+      "",
+      "Much old data was restored, and the",
+      "three factions united in the quest",
+      "to decypher all the ancient knowledge",
+      "required to finally defeat the enemy",
+      "threat once and for all.",
+      "",
+      "As for your crew, you decide to",
+      "continue your journey across the",
+      "galaxy..."
     ];
    
     tutorialt = 0;
@@ -792,6 +874,7 @@
       science: 1 + Math.floor(Math.random()*3),
       engines: 1 + Math.floor(Math.random()*3),
       scanner: 0 + Math.floor(Math.random()*3),
+      clue: 0,
       _update_: (o, g) => {
         o.d.x = (o.d.x * 0.8 + (320 + (mx * 320)) * 0.2);
         o.d.y = (o.d.y * 0.8 + (400 + (my * 100)) * 0.2);
@@ -885,10 +968,10 @@
           f._economy_ += " (A)"
         };
 
-        ///#if 0
-        if (combo >= 10)
-        console.log(`${x},${y} ${f._economy_} ${combo}`)
-        ///#endif
+        // ///#if 0
+        // if (combo >= 10)
+        // console.log(`${x},${y} ${f._economy_} ${combo}`)
+        // ///#endif
 
         for (i=0; i< Math.min(1+(f._trade_+f._salvage_),8); ++i) {
           f._items_.push(_getWeighted_(_items_))
@@ -896,6 +979,24 @@
 
         _factionmap_[y][x] = f
       }
+    };
+
+
+    clue = _items_.findIndex(_ => _.w==999);
+    for (i=0; i<10; ++i) {
+      if (i==0) {
+        x = ship.d.mx - 4 + Math.floor(Math.random() * 8);
+        y = ship.d.my - 4 + Math.floor(Math.random() * 8)
+      } else {
+        while (_calcdistance_(x,y) < 5 || _factionmap_[y][x]._items_.includes(clue)) {
+          x = Math.floor(Math.random() * 32);
+          y = Math.floor(Math.random() * 32)
+        }
+      };
+      _factionmap_[y][x]._items_.push(clue)
+      ///#if 0
+      console.log(`Clue at ${x},${y}`)
+      ///#endif
     };
 
     x = 10 + Math.floor(Math.random() * 22);
@@ -950,7 +1051,10 @@
     _updatemap_ = (x,y) => {
       if (_factionmap_[y][x]._scanned_) {
         _factionmap_[y][x].mapcell.setAttribute("fill", factionCol[_factionmap_[y][x].faction]);
-        _factionmap_[y][x].mapcell.setAttribute("fill-opacity", _factionmap_[y][x]._visited_ ? "0.9" : "0.4")
+        _factionmap_[y][x].mapcell.setAttribute("fill-opacity", _factionmap_[y][x]._visited_ ? "0.9" : "0.4");
+        if (_factionmap_[y][x].clue) {
+          _show_(_factionmap_[y][x].clue)
+        }
       }
     };
 
@@ -968,7 +1072,11 @@
     // build map
     for (y = 0; y < 32; ++y) {
       for (x = 0; x < 32; ++x) {
+
         o = mapcell.cloneNode();
+        o.removeAttribute("id");
+        o.setAttribute("transform", "translate(" + ((x * 16) +40) + " " + ((y * 16) + 34) + ")");
+
         o.d = { x: x, y: y };
 
         if (x == ship.d.mx && y == ship.d.my) {
@@ -981,9 +1089,7 @@
         _factionmap_[y][x].mapcell = o;
         
         _updatemap_(x,y);
-
-        o.removeAttribute("id");
-        o.setAttribute("transform", "translate(" + ((x * 16) +40) + " " + ((y * 16) + 34) + ")");
+        
         o.onmouseenter = _ => {
           d = _.target.d;
           f = _factionmap_[d.y][d.x];
@@ -998,7 +1104,9 @@
           cursorText1.textContent = `[${d.x},${d.y}]`;
           cursorText2.textContent = f._scanned_ ?  _factions_[f.faction].name : "";
           cursorText3.textContent = f._scanned_ ? f._economy_ : "";
-          cursorText4.textContent = f._explored_ ?  _places_[f._place_].name : ""
+          cursorText4.textContent = f._explored_ ?  _places_[f._place_].name : "";
+          if (f._scanned_ && f._items_.includes(clue)) cursorText4.textContent = "Transponder Signal!";
+          if (f.yeti) cursorText4.textContent = "YETI LOCATION!"
 
         };
         o.onmouseleave = _ => {
@@ -1024,7 +1132,18 @@
           }
         };
 
-        map.appendChild(o)
+        map.appendChild(o);
+
+        if (_factionmap_[y][x]._items_.includes(clue)) {    
+          o = transponder.cloneNode();
+          o.removeAttribute("id");
+          o.setAttribute("transform", "translate(" + ((x * 16) +40) + " " + ((y * 16) + 34) + ")");
+          map.appendChild(o);
+          if (!_factionmap_[y][x]._scanned_) {
+            _hide_(o)
+          };
+          _factionmap_[y][x].clue = o
+        }
       }
     };
 
@@ -1498,8 +1617,7 @@
     _gameover_ = _ => zzfx(...[,,533,,3,3,3,3.49,.5,.4,,,,.6,.2,.2,,.6,1]);
 
     // Space by Mattia Fortunati - https://www.mattiafortunati.com/
-    _songdata_x = [[[1.5,0,84,,,,,.7,,,,.5,,6.7,1,.05],[,0,655,,,.09,3,1.65,,,,,,3.8,,,1],[.5,0,80,,,1,3],[.3,0,80,,1,.35,3,,,,,,,,,,,,,1],[.3,0,240,,1,.35,3,,,,,,,,,,,,,1],[.5,0,4e3,,,.03,2,1.25,,,,,.02,6.8,-.3,,.3]],[[[,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,1,,],[1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,1],[5,,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5],[2,,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,5,12,8,12,5,12,8,12,5,12,8,12,5,12,8,12,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,8,15,12,15,8,15,12,15,8,15,12,15,8,15,12,15],[3,,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,8,8,8,,8,8,8,,8,8,8,,8,8,8],[4,,1,,,,,,,,,,,,10,,,,5,,,,,,,,,,,,6,,5,,1,,,,,,1,,5,,1,,5,,10,,8,,,,,,,,,,,,,6,5,3]],[[,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,1,,],[1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,1],[5,,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5],[2,,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,5,12,8,12,5,12,8,12,5,12,8,12,5,12,8,12,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,8,15,12,15,8,15,12,15,8,15,12,15,8,15,12,15],[3,,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,8,8,8,,8,8,8,,8,8,8,,8,8,8],[4,,1,8,5,8,1,,,,,,,,,,,,5,12,8,12,5,,,,,,,,,,,,1,5,8,10,8,,,,,,,,,,,,12,,,,8,,,,,,,,,,,,]],[[,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,1,,],[4,,1,,,,,,,,,,,,10,,,,5,,,,,,,,,,,,5,,,,1,,,,,,,,,,,,10,,,,8,,,,,,,,,,,,,,,,],[5,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,5,,5,,,5,,,],[1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,5,,,,]],[[,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,1,,],[1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,1],[5,,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5],[2,,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,5,12,8,12,5,12,8,12,5,12,8,12,5,12,8,12,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,8,15,12,15,8,15,12,15,8,15,12,15,8,15,12,15],[3,,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,8,8,8,,8,8,8,,8,8,8,,8,8,8],[4,,1,8,5,8,1,,,,,,,,,,,,5,12,8,12,5,,,,,,,,,,,,1,5,8,10,8,,,,,,,,,,,,12,,,,8,,,,,,,,,,,,]],[[,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,1,,],[1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,1],[5,,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5],[2,,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,5,12,8,12,5,12,8,12,5,12,8,12,5,12,8,12,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,8,15,12,15,8,15,12,15,8,15,12,15,8,15,12,15],[3,,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,8,8,8,,8,8,8,,8,8,8,,8,8,8],[4,,1,,,,,,,,,,,,10,,,,5,,,,,,,,,,,,6,,5,,1,,,,,,1,,5,,1,,5,,10,,8,,,,,,,,,,,,,6,5,3]],[[,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,1,,],[1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,1],[5,,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5],[2,,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,5,12,8,12,5,12,8,12,5,12,8,12,5,12,8,12,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,8,15,12,15,8,15,12,15,8,15,12,15,8,15,12,15],[3,,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,8,8,8,,8,8,8,,8,8,8,,8,8,8]],[[,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,1,,],[1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,1],[5,,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5],[2,,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,5,12,8,12,5,12,8,12,5,12,8,12,5,12,8,12,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,8,15,12,15,8,15,12,15,8,15,12,15,8,15,12,15],[3,,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,8,8,8,,8,8,8,,8,8,8,,8,8,8],[4,,1,,,,,,,,,,,,10,,,,5,,,,,,,,,,,,6,,5,,1,,,,,,,,,,,,10,,,,8,,,,,,,,,,,,,,,,]]],[2,0,1,4,3,5,4,3,5,6,0,1,4,3,5,5,6,0,4,3,1,5,5,6],85,];
-    _songdata_ = zzfxM(..._songdata_x)
+    _songdata_ = zzfxM(...[[[1.5,0,84,,,,,.7,,,,.5,,6.7,1,.05],[,0,655,,,.09,3,1.65,,,,,,3.8,,,1],[.5,0,80,,,1,3],[.3,0,80,,1,.35,3,,,,,,,,,,,,,1],[.3,0,240,,1,.35,3,,,,,,,,,,,,,1],[.5,0,4e3,,,.03,2,1.25,,,,,.02,6.8,-.3,,.3]],[[[,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,1,,],[1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,1],[5,,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5],[2,,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,5,12,8,12,5,12,8,12,5,12,8,12,5,12,8,12,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,8,15,12,15,8,15,12,15,8,15,12,15,8,15,12,15],[3,,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,8,8,8,,8,8,8,,8,8,8,,8,8,8],[4,,1,,,,,,,,,,,,10,,,,5,,,,,,,,,,,,6,,5,,1,,,,,,1,,5,,1,,5,,10,,8,,,,,,,,,,,,,6,5,3]],[[,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,1,,],[1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,1],[5,,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5],[2,,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,5,12,8,12,5,12,8,12,5,12,8,12,5,12,8,12,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,8,15,12,15,8,15,12,15,8,15,12,15,8,15,12,15],[3,,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,8,8,8,,8,8,8,,8,8,8,,8,8,8],[4,,1,8,5,8,1,,,,,,,,,,,,5,12,8,12,5,,,,,,,,,,,,1,5,8,10,8,,,,,,,,,,,,12,,,,8,,,,,,,,,,,,]],[[,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,1,,],[4,,1,,,,,,,,,,,,10,,,,5,,,,,,,,,,,,5,,,,1,,,,,,,,,,,,10,,,,8,,,,,,,,,,,,,,,,],[5,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,5,,5,,,5,,,],[1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,5,,,,]],[[,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,1,,],[1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,1],[5,,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5],[2,,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,5,12,8,12,5,12,8,12,5,12,8,12,5,12,8,12,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,8,15,12,15,8,15,12,15,8,15,12,15,8,15,12,15],[3,,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,8,8,8,,8,8,8,,8,8,8,,8,8,8],[4,,1,8,5,8,1,,,,,,,,,,,,5,12,8,12,5,,,,,,,,,,,,1,5,8,10,8,,,,,,,,,,,,12,,,,8,,,,,,,,,,,,]],[[,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,1,,],[1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,1],[5,,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5],[2,,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,5,12,8,12,5,12,8,12,5,12,8,12,5,12,8,12,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,8,15,12,15,8,15,12,15,8,15,12,15,8,15,12,15],[3,,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,8,8,8,,8,8,8,,8,8,8,,8,8,8],[4,,1,,,,,,,,,,,,10,,,,5,,,,,,,,,,,,6,,5,,1,,,,,,1,,5,,1,,5,,10,,8,,,,,,,,,,,,,6,5,3]],[[,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,1,,],[1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,1],[5,,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5],[2,,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,5,12,8,12,5,12,8,12,5,12,8,12,5,12,8,12,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,8,15,12,15,8,15,12,15,8,15,12,15,8,15,12,15],[3,,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,8,8,8,,8,8,8,,8,8,8,,8,8,8]],[[,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,1,,],[1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,1],[5,,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5],[2,,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,5,12,8,12,5,12,8,12,5,12,8,12,5,12,8,12,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,8,15,12,15,8,15,12,15,8,15,12,15,8,15,12,15],[3,,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,8,8,8,,8,8,8,,8,8,8,,8,8,8],[4,,1,,,,,,,,,,,,10,,,,5,,,,,,,,,,,,6,,5,,1,,,,,,,,,,,,10,,,,8,,,,,,,,,,,,,,,,]]],[2,0,1,4,3,5,4,3,5,6,0,1,4,3,5,5,6,0,4,3,1,5,5,6],85,])
 
   </script>
 </body>
