@@ -447,7 +447,7 @@ recharge shields / fuel somehow?
         _addMenu_(`Scanner: ${ship.d.scanner}`, next++);
         _addMenu_(`Science: ${ship.d.science}`, next++);
         _hideMenu_(next++);
-        _addMenu_(`Shield Power: ${shields}%`, next++);
+        _addMenu_(`Shield Power: ${shields.toFixed(0)}%`, next++);
         _addMenu_(`Warp Fuel: ${fuel}/${maxfuel}`, next++);
         _hideMenu_(next++);
         if (ship.d.clue > 0) {
