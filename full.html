@@ -1620,10 +1620,10 @@ recharge shields / fuel somehow?
         }
       });
 
-      if (rundistance < -200) {
-        _cleartemp_();
-        _showorbit_()
-      };
+      //if (rundistance < -500) {
+      //  _cleartemp_();
+      //  _showorbit_()
+      ///};
 
       if (enemies == 0) {
         wavetime--;
@@ -1637,6 +1637,7 @@ recharge shields / fuel somehow?
               _enemywave_() 
             }            
           } else {
+            rundistance = 1000;
             if (waves==0) {
               _cleartemp_();
               _showtrade_();
