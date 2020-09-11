@@ -471,13 +471,19 @@ recharge shields / fuel somehow?
 
             next = 0;
             if (!v.clue) {
-              _addMenu_("< Exit", next++, {}, _ => _showorbit_());
-              _hideMenu_(next++);
-              if (v.weapons) { _addMenu_(`Weapons: +${v.weapons} : ${ship.d.weapons} => ${ship.d.weapons+v.weapons}`, next++); ship.d.weapons+=v.weapons};
-              if (v.shields) { _addMenu_(`Shields: +${v.shields} : ${ship.d.shields} => ${ship.d.shields+v.shields}`, next++); ship.d.shields+=v.shields};
-              if (v.engines) { _addMenu_(`Engines: +${v.engines} : ${ship.d.engines} => ${ship.d.engines+v.engines}`, next++); ship.d.engines+=v.engines};
-              if (v.scanner) { _addMenu_(`Scanner: +${v.scanner} : ${ship.d.scanner} => ${ship.d.scanner+v.scanner}`, next++); ship.d.scanner+=v.scanner};
-              if (v.science) { _addMenu_(`Science: +${v.science} : ${ship.d.science} => ${ship.d.science+v.science}`, next++); ship.d.science+=v.science}
+              next=2;
+              _addMenu_(`Weapons: ${ship.d.weapons}`, next++);
+              _addMenu_(`Shields: ${ship.d.shields}`, next++);
+              _addMenu_(`Engines: ${ship.d.engines}`, next++);
+              _addMenu_(`Scanner: ${ship.d.scanner}`, next++);
+              _addMenu_(`Science: ${ship.d.science}`, next++);
+              i=1;
+              if (v.weapons) setTimeout(_ => {{ _addMenu_(`Weapons: +${v.weapons} : ${ship.d.weapons+v.weapons}`, 2); ship.d.weapons+=v.weapons}}, 1000*i++);
+              if (v.shields) setTimeout(_ => {{ _addMenu_(`Shields: +${v.shields} : ${ship.d.shields+v.shields}`, 3); ship.d.shields+=v.shields}}, 1000*i++);
+              if (v.engines) setTimeout(_ => {{ _addMenu_(`Engines: +${v.engines} : ${ship.d.engines+v.engines}`, 4); ship.d.engines+=v.engines}}, 1000*i++);
+              if (v.scanner) setTimeout(_ => {{ _addMenu_(`Scanner: +${v.scanner} : ${ship.d.scanner+v.scanner}`, 5); ship.d.scanner+=v.scanner}}, 1000*i++);
+              if (v.science) setTimeout(_ => {{ _addMenu_(`Science: +${v.science} : ${ship.d.science+v.science}`, 6); ship.d.science+=v.science}}, 1000*i++);
+              setTimeout(_ => {_addMenu_("< Exit", 0, {}, _ => _showorbit_())}, 1000*(i-1))
             } else {
               next = 0;
               ship.d.clue++;
