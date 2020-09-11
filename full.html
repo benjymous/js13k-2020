@@ -388,6 +388,8 @@ recharge shields / fuel somehow?
       f = _factionmap_[ship.d.my][ship.d.mx];
       f._visited_ = true;
 
+      warprange = ship.d.engines*2;
+
       orbit_planet.setAttribute("cx", f.random[0]*640);
       orbit_planet.setAttribute("cy", f.random[1]*640);
       orbit_planet.setAttribute("r", f.pradius);
@@ -448,7 +450,8 @@ recharge shields / fuel somehow?
         _addMenu_(`Science: ${ship.d.science}`, next++);
         _hideMenu_(next++);
         _addMenu_(`Shield Power: ${shields.toFixed(0)}%`, next++);
-        _addMenu_(`Warp Fuel: ${fuel}/${maxfuel}`, next++);
+        _addMenu_(`Warp fuel: ${fuel}/${maxfuel}`, next++);
+        _addMenu_(`Warp range: ${warprange}`, next++);
         _hideMenu_(next++);
         if (ship.d.clue > 0) {
           _addMenu_(`${ship.d.clue} transponder clue${ship.d.clue==1?"" : "s"} collected`, next++)
@@ -1116,8 +1119,13 @@ recharge shields / fuel somehow?
           d = _.target.d;
           f = _factionmap_[d.y][d.x];
           fuelneed = _calcfuel_(d);
-          text("Warp requires " + fuelneed + "mgb.  Fuel available: " + fuel + "mgb");
-          if (fuelneed <= fuel) {
+          dist = _calcdistance_(d.x, d.y);
+          if (dist > warprange) {
+            text("Beyond engine warp range ( " + warprange + " sectors )")
+          } else {
+            text("Warp requires " + fuelneed + "fuel.  Fuel available: " + fuel)
+          };
+          if (fuelneed <= fuel && dist <= warprange) {
             f.mapcell.setAttribute("stroke", "#fff")
           } else {
             f.mapcell.setAttribute("stroke", "#f00")
