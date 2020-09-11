@@ -362,7 +362,7 @@ recharge shields / fuel somehow?
 
       f = _factionmap_[ship.d.my][ship.d.mx];
       
-      waves = f._explored_? 0 : 1+f._war_ * f._war_;
+      waves = f._explored_? 0 : f.waves;
 
       if( _tutorialtext_.length > 0) waves = 2;
       
@@ -963,8 +963,17 @@ recharge shields / fuel somehow?
 
         f._sci_ = Math.floor(Math.random()*3 *  _factions_[f.faction]._sci_ *  _places_[f._place_]._sci_);
         f._trade_ = Math.round((1+Math.random()*2) *  _factions_[f.faction]._trade_ *  _places_[f._place_]._trade_);
-        f._war_ = Math.floor(Math.random()*3*  _factions_[f.faction]._war_);
+        f._war_ = Math.floor(Math.random()*4*  _factions_[f.faction]._war_);
         f._salvage_ = Math.round(Math.random()*3 *  _factions_[f.faction]._trade_ *  _places_[f._place_]._salvage_);
+
+        f.waves = Math.min(f._war_ * f._war_, Math.floor(dist/3)+1);
+        if (f.waves<=2) {
+          f.critters="low"
+        } else if (f.waves <=4) {
+          f.critters="med"
+        } else {
+          f.critters = "high"
+        };
 
         if (f._sci_ == f._trade_ && f._sci_ == f._war_) {
           f._economy_ = "Balanced"
@@ -1076,7 +1085,11 @@ recharge shields / fuel somehow?
 
     _updatemap_ = (x,y) => {
       if (_factionmap_[y][x]._scanned_) {
+        if (x == ship.d.mx && y == ship.d.my) {
+          _factionmap_[y][x].mapcell.setAttribute("stroke", "#ff0")
+          } else {
         _factionmap_[y][x].mapcell.setAttribute("stroke", "#fff5");
+          };
         _factionmap_[y][x].mapcell.setAttribute("fill", factionCol[_factionmap_[y][x].faction]);
         _factionmap_[y][x].mapcell.setAttribute("fill-opacity", _factionmap_[y][x]._visited_ ? "0.9" : "0.4");
         if (_factionmap_[y][x].clue) {
@@ -1129,7 +1142,7 @@ recharge shields / fuel somehow?
           if (dist > warprange) {
             text("Beyond engine warp range ( " + warprange + " sectors )")
           } else {
-            text("Warp requires " + fuelneed + "fuel.  Fuel available: " + fuel)
+            text("Warp requires " + fuelneed + " fuel. "+fuel+" available")
           };
           if (fuelneed <= fuel && dist <= warprange) {
             f.mapcell.setAttribute("stroke", "#fff")
@@ -1140,7 +1153,7 @@ recharge shields / fuel somehow?
           cursorText1.textContent = `[${d.x},${d.y}]`;
           cursorText2.textContent = f._scanned_ ?  _factions_[f.faction].name : "";
           cursorText3.textContent = f._scanned_ ? f._economy_ : "";
-          cursorText4.textContent = f._explored_ ?  _places_[f._place_].name : "";
+          cursorText4.textContent = f._explored_ ?  _places_[f._place_].name : (f._scanned_&&ship.d.scanner>1 ? "Critters: "+f.critters :"");
           if (f._scanned_ && f._items_.includes(clue)) cursorText4.textContent = "Transponder Signal!";
           if (f.yeti) cursorText4.textContent = "YETI LOCATION!"
 
