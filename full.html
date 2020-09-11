@@ -71,6 +71,7 @@ recharge shields / fuel somehow?
   ///#define _blip_ fxA
   ///#define _running_ fxB
   ///#define _alert_ fxC
+  ///#define _upgrade_ fxD
   ///#define zzfx fx
 
   ///#define _songdata_ fx0
@@ -363,6 +364,7 @@ recharge shields / fuel somehow?
       f = _factionmap_[ship.d.my][ship.d.mx];
       
       waves = f._explored_? 0 : f.waves;
+      if (!inwarp) rundistance = waves * 1000;
 
       if( _tutorialtext_.length > 0) waves = 2;
       
@@ -478,11 +480,11 @@ recharge shields / fuel somehow?
               _addMenu_(`Scanner: ${ship.d.scanner}`, next++);
               _addMenu_(`Science: ${ship.d.science}`, next++);
               i=1;
-              if (v.weapons) setTimeout(_ => {{ _addMenu_(`Weapons: +${v.weapons} : ${ship.d.weapons+v.weapons}`, 2); ship.d.weapons+=v.weapons}}, 1000*i++);
-              if (v.shields) setTimeout(_ => {{ _addMenu_(`Shields: +${v.shields} : ${ship.d.shields+v.shields}`, 3); ship.d.shields+=v.shields}}, 1000*i++);
-              if (v.engines) setTimeout(_ => {{ _addMenu_(`Engines: +${v.engines} : ${ship.d.engines+v.engines}`, 4); ship.d.engines+=v.engines}}, 1000*i++);
-              if (v.scanner) setTimeout(_ => {{ _addMenu_(`Scanner: +${v.scanner} : ${ship.d.scanner+v.scanner}`, 5); ship.d.scanner+=v.scanner}}, 1000*i++);
-              if (v.science) setTimeout(_ => {{ _addMenu_(`Science: +${v.science} : ${ship.d.science+v.science}`, 6); ship.d.science+=v.science}}, 1000*i++);
+              if (v.weapons) setTimeout(_ => {{ _upgrade_(); _addMenu_(`Weapons: +${v.weapons} : ${ship.d.weapons+v.weapons}`, 2); ship.d.weapons+=v.weapons}}, 1000*i++);
+              if (v.shields) setTimeout(_ => {{ _upgrade_(); _addMenu_(`Shields: +${v.shields} : ${ship.d.shields+v.shields}`, 3); ship.d.shields+=v.shields}}, 1000*i++);
+              if (v.engines) setTimeout(_ => {{ _upgrade_(); _addMenu_(`Engines: +${v.engines} : ${ship.d.engines+v.engines}`, 4); ship.d.engines+=v.engines}}, 1000*i++);
+              if (v.scanner) setTimeout(_ => {{ _upgrade_(); _addMenu_(`Scanner: +${v.scanner} : ${ship.d.scanner+v.scanner}`, 5); ship.d.scanner+=v.scanner}}, 1000*i++);
+              if (v.science) setTimeout(_ => {{ _upgrade_(); _addMenu_(`Science: +${v.science} : ${ship.d.science+v.science}`, 6); ship.d.science+=v.science}}, 1000*i++);
               setTimeout(_ => {_addMenu_("< Exit", 0, {}, _ => _showorbit_())}, 1000*(i-1))
             } else {
               next = 0;
@@ -593,10 +595,10 @@ recharge shields / fuel somehow?
 
     };
     _showwarp_ = _ => {
+      inwarp = true;
       _gowarp_();
       _entersystem_();
       _showgame_();
-      inwarp = true;
 
       // build stars
       for(i=0; i<200; ++i) {
@@ -789,13 +791,13 @@ recharge shields / fuel somehow?
     ];
 
     _places_ = [      
-      {w:50,  name:"Trading Post", _trade_:1, _salvage_: 0, _sci_:1},
-      {w:70,  name:"Abandoned colony", _trade_:0, _salvage_: 2, _sci_:1},
-      {w:80,  name:"Small colony", _trade_:2, _salvage_: 0,_sci_:1},
-      {w:89,  name:"Crashsite", _trade_:0, _salvage_: 3, _sci_:1},
-      {w:95,  name:"Medium colony", _trade_:3, _salvage_: 0,_sci_:1},
-      {w:98,  name:"Ancient Ruins", _trade_:0, _salvage_: 5, _sci_:1},
-      {w:100, name:"Large colony", _trade_:4, _salvage_: 0,_sci_:1}
+      {w: 40, name:"Abandoned colony", _trade_:0, _salvage_: 2, _sci_:1},
+      {w: 50, name:"Trading Post", _trade_:1, _salvage_: 0, _sci_:1},
+      {w: 70, name:"Small colony", _trade_:2, _salvage_: 0,_sci_:1},
+      {w: 88, name:"Crashsite", _trade_:0, _salvage_: 3, _sci_:1},
+      {w: 90, name:"Medium colony", _trade_:3, _salvage_: 0,_sci_:2},
+      {w: 95, name:"Ancient Ruins", _trade_:0, _salvage_: 5, _sci_:1},
+      {w:100, name:"Large colony", _trade_:4, _salvage_: 0,_sci_:3}
     ];
 
     _crawltext_ = [
@@ -867,10 +869,10 @@ recharge shields / fuel somehow?
     fuel = 25;
     maxfuel = 50;
     warprange = 5;
-    warpdistance = 0;
+    rundistance = 0;
     inwarp = false;
 
-    _calcfuel_ = d => _sqr_(Math.abs(d.x - ship.d.mx)) + _sqr_(Math.abs(d.y - ship.d.my));
+    _calcfuel_ = d => Math.abs(d.x - ship.d.mx) + Math.abs(d.y - ship.d.my);
     _calcdistance_ = (x,y) => Math.sqrt((x-ship.d.mx)*(x-ship.d.mx)+(y-ship.d.my)*(y-ship.d.my)); 
 
     titleclick = 0;
@@ -1086,10 +1088,10 @@ recharge shields / fuel somehow?
     _updatemap_ = (x,y) => {
       if (_factionmap_[y][x]._scanned_) {
         if (x == ship.d.mx && y == ship.d.my) {
-          _factionmap_[y][x].mapcell.setAttribute("stroke", "#ff0")
-          } else {
-        _factionmap_[y][x].mapcell.setAttribute("stroke", "#fff5");
-          };
+          _factionmap_[y][x].mapcell.setAttribute("stroke", "#fff")
+        } else {
+          _factionmap_[y][x].mapcell.setAttribute("stroke", "#fff5")
+        };
         _factionmap_[y][x].mapcell.setAttribute("fill", factionCol[_factionmap_[y][x].faction]);
         _factionmap_[y][x].mapcell.setAttribute("fill-opacity", _factionmap_[y][x]._visited_ ? "0.9" : "0.4");
         if (_factionmap_[y][x].clue) {
@@ -1124,7 +1126,8 @@ recharge shields / fuel somehow?
         o.d = { x: x, y: y };
 
         if (x == ship.d.mx && y == ship.d.my) {
-          o.setAttribute("stroke", "#ff0");
+          o.setAttribute("stroke", "#fff");
+          o.setAttribute("stroke-width", 3);
           shipcell = o
         } else {
           o.setAttribute("stroke", _factionmap_[y][x]._scanned_ ? "#fff5" : "#000")
@@ -1162,9 +1165,11 @@ recharge shields / fuel somehow?
           d = _.target.d;
           f = _factionmap_[d.y][d.x];
           if (_.target.d.x == ship.d.mx && _.target.d.y == ship.d.my) {
-            f.mapcell.setAttribute("stroke", "#ff0")
+            f.mapcell.setAttribute("stroke", "#fff");
+            o.setAttribute("stroke-width", 3)
           } else {
-            f.mapcell.setAttribute("stroke", _factionmap_[_.target.d.y][_.target.d.x]._scanned_ ? "#fff5" : "#000")
+            f.mapcell.setAttribute("stroke", _factionmap_[_.target.d.y][_.target.d.x]._scanned_ ? "#fff5" : "#000");
+            o.setAttribute("stroke-width", 1)
           }
         };
         o.onclick = _ => {
@@ -1175,7 +1180,7 @@ recharge shields / fuel somehow?
             _showorbit_()
           } else if (fuelneed <= fuel) {
             fuel -= fuelneed;
-            warpdistance = Math.max(100, fuelneed * 100);
+            rundistance = Math.max(100, fuelneed * 75);
             ship.d.mx = _.target.d.x;
             ship.d.my = _.target.d.y;
             f.mapcell.setAttribute("stroke", "#ff0");
@@ -1254,7 +1259,7 @@ recharge shields / fuel somehow?
       o.setAttribute("stroke", "#fff");
       o.setAttribute("stroke-width", "2");
       o.removeAttribute("id");
-      o.d = { r: 0, x: -200, y: -200, z: 1, t: null, f:0, _temp_:true,
+      o.d = { r: 0, x: -200, y: -200, z: 1, t: null, f:0, l:100, _temp_:true,
         _update_: (o, g) => {
           if (o.d.t && !o.d.t._dead_) {
             o.d.x = (o.d.x * 0.85) + (o.d.t.x * 0.15);
@@ -1262,8 +1267,9 @@ recharge shields / fuel somehow?
             o.d.z = o.d.z * 0.95;
             o.d.f++;
 
-            if (o.d.z < 0.001) {
-              o.d._dead_ = true
+            if (o.d.z < 0.001 || o.d.l-- == 0) {
+              o.d._dead_ = true;
+              missiles--
             };
 
             if (o.d.f > 20 && (Math.abs(o.d.x - o.d.t.x) + Math.abs(o.d.y - o.d.t.y)) < 50) {
@@ -1574,7 +1580,7 @@ recharge shields / fuel somehow?
       if (shields <= 10 && (Math.floor(n*10)%10)==0) _alert_();
 
       n += 0.025;
-      warpdistance -= 1;
+      rundistance -= 1;
 
       if (Math.random() < 0.05) {
         if (inwarp) {_inwarp_()} else{_running_()}
@@ -1614,11 +1620,16 @@ recharge shields / fuel somehow?
         }
       });
 
+      if (rundistance < -200) {
+        _cleartemp_();
+        _showorbit_()
+      };
+
       if (enemies == 0) {
         wavetime--;
         if (wavetime == 0) {
           if (inwarp) {
-            if (warpdistance<=0) {
+            if (rundistance<=0) {
               _cleartemp_();
               _showorbit_()
             } else {
@@ -1676,6 +1687,7 @@ recharge shields / fuel somehow?
     _running_ = _ => zzfx(...[,,43,,.19,1.72,1,1.53,,,,,,.3,,.9,.23,.92,.01,.01]);
     _gameover_ = _ => zzfx(...[,,533,,3,3,3,3.49,.5,.4,,,,.6,.2,.2,,.6,1]);
     _alert_ = _ => zzfx(...[,,150,,.9,0,,.1,,3.5,,,,,1.4,,.33,,.14]);
+    _upgrade_ = _ => zzfx(...[,,688,.28,.32,.38,2,,,-5.8,-827,.02,.09,,.1,,.14,.69,.03]);
 
     // Space by Mattia Fortunati - https://www.mattiafortunati.com/
     _songdata_ = zzfxM(...[[[1.5,0,84,,,,,.7,,,,.5,,6.7,1,.05],[,0,655,,,.09,3,1.65,,,,,,3.8,,,1],[.5,0,80,,,1,3],[.3,0,80,,1,.35,3,,,,,,,,,,,,,1],[.3,0,240,,1,.35,3,,,,,,,,,,,,,1],[.5,0,4e3,,,.03,2,1.25,,,,,.02,6.8,-.3,,.3],[.3,0,80,,.5,.35,3,,,,,.09,.05]],[[[,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,1,,],[1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,1],[5,,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5],[2,,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,5,12,8,12,5,12,8,12,5,12,8,12,5,12,8,12,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,8,15,12,15,8,15,12,15,8,15,12,15,8,15,12,15],[3,,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,8,8,8,,8,8,8,,8,8,8,,8,8,8],[4,,1,,,,,,,,,,,,10,,,,5,,,,,,,,,,,,6,,5,,1,,,,,,1,,5,,1,,5,,10,,8,,,,,,,,,,,,,6,5,3]],[[,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,1,,],[1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,1],[5,,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5],[2,,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,5,12,8,12,5,12,8,12,5,12,8,12,5,12,8,12,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,8,15,12,15,8,15,12,15,8,15,12,15,8,15,12,15],[3,,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,8,8,8,,8,8,8,,8,8,8,,8,8,8],[4,,1,8,5,8,1,,,,,,,,,,,,5,12,8,12,5,,,,,,,,,,,,1,5,8,10,8,,,,,,,,,,,,12,,,,8,,,,,,,,,,,,]],[[,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,1,,],[6,,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,5,12,8,12,5,12,8,12,5,12,8,12,5,12,8,12,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,8,15,12,15,8,15,12,15,8,,,,,,,,],[5,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,5,,5,,,,5,5],[1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,5,,,5],[6,,,,,,,,,,,,,,,,,,,5,5,5,,5,5,5,,,,,,,,,,,,,,,,,,,,,,,,,,8,8,8,,8,8,8,,,,,,,,,]],[[,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,1,,,,1,,],[1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,1],[5,,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,5,5,5],[2,,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,5,12,8,12,5,12,8,12,5,12,8,12,5,12,8,12,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,8,15,12,15,8,15,12,15,8,15,12,15,8,15,12,15],[3,,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,8,8,8,,8,8,8,,8,8,8,,8,8,8]],[[6,,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,5,12,8,12,5,12,8,12,5,12,8,12,5,12,8,12,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,8,15,12,15,8,15,12,15,8,15,12,15,8,15,12,15],[3,,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,5,5,5,,5,5,5,,5,5,5,,5,5,5,,1,1,1,,1,1,1,,1,1,1,,1,1,1,,8,8,8,,8,8,8,,8,8,8,,8,8,8],[4,,1,,,,,,,,,,,,10,,,,5,,,,,,,,,,,,6,,5,,1,,,,,,,,,,,,10,,,,8,,,,,,,,,,,,,,,,],[,,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1,,1,,,,1,,],[1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1,,,1],[5,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1,,1,,1,,1,,]],[[4,,1,,,,,,,,,,,,10,,,,5,,,,,,,,,,,,,,,,1,,,,,,,,,,,,5,,,,3,,,,,,,,1,,,,,,,,],[,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],[1,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],[5,,1,,1,,1,,1,,1,,1,,1,,1,,1,,,,1,,,,1,,,,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],[6,,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,5,12,8,12,5,12,8,12,5,12,8,12,5,12,8,12,1,8,5,8,1,8,5,8,1,8,5,8,1,8,5,8,5,12,8,12,5,12,8,12,5,12,8,12,5,,8,,],[3,,,1,1,1,,1,1,1,,,,,,,,,,5,5,5,,5,5,5,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,]]],[2,3,0,0,1,1,4,0,1,5],85,])
