@@ -360,7 +360,7 @@ recharge shields / fuel somehow?
       gameloop = true; _endMenu_(0);_show_(game); _hide_(orbit); _hide_(map); _hide_(title); _hide_(base); _hide_(titlef); text();
 
       combocount.d.v = 0; combocount.d.c = 0;
-      maxlock = ship.d.weapons;
+      maxlock = _clamp_(ship.d.weapons,1,8);
 
       f = _factionmap_[ship.d.my][ship.d.mx];
       
