@@ -1272,7 +1272,7 @@ recharge shields / fuel somehow?
               missiles--
             };
 
-            if (o.d.f > 20 && (Math.abs(o.d.x - o.d.t.x) + Math.abs(o.d.y - o.d.t.y)) < 50) {
+            if (o.d.f > 20 || (Math.abs(o.d.x - o.d.t.x) + Math.abs(o.d.y - o.d.t.y)) < 50) {
               _explosion_();
               o.d._dead_ = true;
               o.d.t._dead_ = true;
