@@ -265,8 +265,9 @@ recharge shields / fuel somehow?
   </svg>
 
   <script>
-    
-    document.monetization?.addEventListener('monetizationstart', _ => _inventory_.push(_items_.length-1));
+
+    bonus = 0;
+    document.monetization?.addEventListener('monetizationstart', _ => {if (bonus++==0) _inventory_.push(_items_.length-1)});
 
     // adapted from https://gist.github.com/banksean/304522
     SN = function () {this.g3 = [[1, 1, 0], [-1, 1, 0], [1, -1, 0], [-1, -1, 0], [1, 0, 1], [-1, 0, 1], [1, 0, -1], [-1, 0, -1], [0, 1, 1], [0, -1, 1], [0, 1, -1], [0, -1, -1]], this.p = []; for (var r = 0; r < 256; r++)this.p[r] = Math.floor(256 * Math.random()); this.m = []; for (r = 0; r < 512; r++)this.m[r] = this.p[255 & r]}; SN.prototype.n = function(t, r) {var i, h, o = (t + r) * (.5 * (Math.sqrt(3) - 1)), s = Math.floor(t + o), e = Math.floor(r + o), p = (3 - Math.sqrt(3)) / 6, a = (s + e) * p, m = t - (s - a), n = r - (e - a); m > n ? (i = 1, h = 0) : (i = 0, h = 1); var d = m - i + p, f = n - h + p, l = m - 1 + 2 * p, u = n - 1 + 2 * p, M = 255 & s, g = 255 & e, v = this.m[M + this.m[g]] % 12, c = this.m[M + i + this.m[g + h]] % 12, x = this.m[M + 1 + this.m[g + 1]] % 12, N = .5 - m * m - n * n, S = .5 - d * d - f * f, q = .5 - l * l - u * u; return 70 * ((N < 0 ? 0 : (N *= N) * N * dot(this.g3[v], m, n)) + (S < 0 ? 0 : (S *= S) * S * dot(this.g3[c], d, f)) + (q < 0 ? 0 : (q *= q) * q * dot(this.g3[x], l, u)))};
@@ -359,7 +360,7 @@ recharge shields / fuel somehow?
       gameloop = true; _endMenu_(0);_show_(game); _hide_(orbit); _hide_(map); _hide_(title); _hide_(base); _hide_(titlef); text();
 
       combocount.d.v = 0; combocount.d.c = 0;
-      maxlock = ship.d.weapons;
+      maxlock = _clamp_(ship.d.weapons,1,8);
 
       f = _factionmap_[ship.d.my][ship.d.mx];
       
